@@ -1,0 +1,77 @@
+.timelineContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.iconCircle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 210, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00d2ff;
+  background: rgba(0, 20, 40, 0.3);
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.05);
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.subtitle {
+  color: #8892b0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.connector {
+  flex-grow: 1;
+  position: relative;
+  height: 2px;
+  min-width: 60px;
+  margin: 0 24px;
+}
+
+.line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 210, 255, 0.3);
+  transform: translateY(-50%);
+}
+
+.dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: #00d2ff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px 2px rgba(0, 210, 255, 0.6);
+}

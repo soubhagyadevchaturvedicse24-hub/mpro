@@ -1,0 +1,691 @@
+.segmentContainer {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  background-color: #030712;
+  background-image: radial-gradient(circle at 50% 45%, rgba(0, 191, 255, 0.12) 0%, rgba(3, 7, 18, 0.94) 80%), url('/premium_bg.png');
+  background-size: cover;
+  background-position: center bottom;
+  padding: 90px 70px 40px 70px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ─── THREE-COLUMN DASHBOARD GRID (PROPORTION BALANCED) ─── */
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 370px 1fr 340px;
+  gap: 30px;
+  align-items: center;
+  width: 100%;
+  z-index: 10;
+  flex-grow: 1;
+}
+
+/* ─── LEFT COLUMN: HEADLINE & DESCRIPTION ─── */
+.headlineColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 10;
+}
+
+.mainHeading {
+  font-size: 3.2rem;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.8px;
+  margin: 0;
+}
+.textSilver {
+  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 500;
+}
+
+/* MAIN HIGHLIGHT: BLOCKCHAIN TEXT (SLEEK & AESTHETIC) */
+.textBlockchain {
+  background: linear-gradient(180deg, #00BFFF 0%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  font-size: 3.4rem;
+  letter-spacing: -0.5px;
+  display: inline-block;
+  filter: drop-shadow(0 0 12px rgba(0, 191, 255, 0.35));
+}
+
+.textConnected {
+  font-size: 1.4rem;
+  color: #94a3b8;
+  font-weight: 400;
+  margin-top: 6px;
+  display: block;
+}
+.textLife {
+  color: #00BFFF;
+  font-weight: 600;
+}
+
+/* EKG Pulse Line */
+.ekgContainer {
+  width: 100%;
+  height: 30px;
+  margin: 4px 0;
+}
+.ekgSvg {
+  width: 160px;
+  height: 100%;
+}
+.ekgPath {
+  fill: none;
+  stroke: #00BFFF;
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 8px #00BFFF);
+  stroke-dasharray: 200;
+  animation: ekgPulse 3s linear infinite;
+}
+@keyframes ekgPulse {
+  0% { stroke-dashoffset: 200; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.heroDescription {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.6;
+  max-width: 300px;
+  margin: 0;
+}
+.descHighlight {
+  color: #00BFFF;
+  font-weight: 500;
+}
+
+/* ─── CENTER BLOCKCHAIN STAGE (SLIGHTLY DECREASED SWEET SPOT) ─── */
+.centerEcosystem {
+  position: relative;
+  width: 100%;
+  height: 530px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.networkStage {
+  position: relative;
+  width: 580px;
+  height: 530px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.svgBeams {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.beamLine {
+  stroke: #00BFFF;
+  stroke-width: 1.5px;
+  stroke-dasharray: 6 6;
+  filter: drop-shadow(0 0 8px #00BFFF);
+  animation: dashMove 15s linear infinite;
+}
+@keyframes dashMove {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 300; }
+}
+.blockchainChainRing {
+  fill: none;
+  stroke: #00BFFF;
+  stroke-width: 3px;
+  stroke-dasharray: 10 10;
+  filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.6));
+}
+
+/* Center Floating Heart Pedestal */
+.centerHeartPedestal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  height: 250px;
+  z-index: 10;
+}
+.pedestalGlow {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 190px;
+  height: 48px;
+  background: radial-gradient(ellipse, rgba(0, 191, 255, 0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(16px);
+  z-index: 1;
+}
+.heartContainerInsideCube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 5;
+}
+.heartInCube {
+  transform: scale(1.05);
+  animation: antiGravityFloat 5s ease-in-out infinite alternate;
+}
+
+@keyframes antiGravityFloat {
+  0% {
+    transform: translateY(0px) rotateY(0deg) scale(1.05);
+    filter: drop-shadow(0 0 20px rgba(0, 191, 255, 0.4));
+  }
+  50% {
+    transform: translateY(-12px) rotateY(3deg) scale(1.08);
+    filter: drop-shadow(0 0 35px rgba(0, 191, 255, 0.7));
+  }
+  100% {
+    transform: translateY(0px) rotateY(0deg) scale(1.05);
+    filter: drop-shadow(0 0 20px rgba(0, 191, 255, 0.4));
+  }
+}
+
+/* ─── PREMIUM BLOCKCHAIN VAULT MODULES (BALANCED SIZE) ─── */
+.blockchainVaultModule {
+  position: absolute;
+  width: 165px;
+  height: 148px;
+  background: rgba(18, 35, 55, 0.45);
+  border: 8px solid #263445;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.08), 0 15px 35px rgba(8, 17, 29, 0.8), 0 0 20px rgba(0, 191, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 8px;
+  box-sizing: border-box;
+  z-index: 12;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: lockerFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Hover Animation: Lift 2px, Lock Rotates 25deg, Frame Glows #00BFFF */
+.blockchainVaultModule:hover {
+  transform: scale(1.06) translateY(-3px);
+  border-color: #00BFFF;
+  box-shadow: inset 0 0 22px rgba(0, 191, 255, 0.3), 0 20px 45px rgba(0, 191, 255, 0.35), 0 0 35px rgba(0, 191, 255, 0.45);
+}
+.blockchainVaultModule:hover .combinationLockWheel,
+.blockchainVaultModule:hover .combinationLockWheelPurple,
+.blockchainVaultModule:hover .combinationLockWheelOrange {
+  transform: rotate(25deg);
+  border-color: #00BFFF;
+}
+
+@keyframes lockerFadeIn {
+  0% { opacity: 0; transform: scale(0.8) translateY(15px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Mechanical Hinges on Left Side */
+.hingeTopLeft {
+  position: absolute;
+  left: -11px;
+  top: 25px;
+  width: 6px;
+  height: 22px;
+  background: linear-gradient(180deg, #3A4B5F, #1A2438);
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.8);
+}
+.hingeBottomLeft {
+  position: absolute;
+  left: -11px;
+  bottom: 25px;
+  width: 6px;
+  height: 22px;
+  background: linear-gradient(180deg, #3A4B5F, #1A2438);
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.8);
+}
+
+/* Titanium Corner Security Bolts */
+.boltTL { position: absolute; top: -6px; left: -6px; width: 9px; height: 9px; border-radius: 50%; background: #3A4B5F; border: 1px solid #1A2438; box-shadow: inset 0 0 4px #00BFFF; }
+.boltTR { position: absolute; top: -6px; right: -6px; width: 9px; height: 9px; border-radius: 50%; background: #3A4B5F; border: 1px solid #1A2438; box-shadow: inset 0 0 4px #00BFFF; }
+.boltBL { position: absolute; bottom: -6px; left: -6px; width: 9px; height: 9px; border-radius: 50%; background: #3A4B5F; border: 1px solid #1A2438; box-shadow: inset 0 0 4px #00BFFF; }
+.boltBR { position: absolute; bottom: -6px; right: -6px; width: 9px; height: 9px; border-radius: 50%; background: #3A4B5F; border: 1px solid #1A2438; box-shadow: inset 0 0 4px #00BFFF; }
+
+/* Vault Header & Content */
+.vaultHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.vaultIconCyan { color: #00BFFF; filter: drop-shadow(0 0 8px #00BFFF); }
+.vaultIconPurple { color: #8B5CF6; filter: drop-shadow(0 0 8px #8B5CF6); }
+.vaultIconOrange { color: #FFC247; filter: drop-shadow(0 0 8px #FFC247); }
+
+.vaultTitle { font-size: 0.72rem; letter-spacing: 1.5px; color: #ffffff; font-weight: 600; text-transform: uppercase; }
+.vaultTitlePurple { font-size: 0.72rem; letter-spacing: 1.5px; color: #8B5CF6; font-weight: 600; text-transform: uppercase; }
+.vaultTitleOrange { font-size: 0.72rem; letter-spacing: 1.5px; color: #FFC247; font-weight: 600; text-transform: uppercase; }
+
+.vaultValue { font-size: 1.1rem; font-weight: 600; color: #00BFFF; font-family: monospace; }
+.vaultValueSmall { font-size: 0.75rem; font-weight: 500; color: #00BFFF; font-family: monospace; }
+.vaultValuePurple { font-size: 1.1rem; font-weight: 600; color: #8B5CF6; }
+.vaultValueOrange { font-size: 1.1rem; font-weight: 600; color: #FFC247; }
+
+/* Combination Lock Wheel (Scaled Up) */
+.combinationLockWheel {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1A2438 0%, #0D1622 100%);
+  border: 2px solid #3A4B5F;
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.35), inset 0 0 10px rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-top: 4px;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+}
+.combinationLockWheelPurple {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1A2438 0%, #0D1622 100%);
+  border: 2px solid #8B5CF6;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.35), inset 0 0 10px rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-top: 4px;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.combinationLockWheelOrange {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1A2438 0%, #0D1622 100%);
+  border: 2px solid #FFC247;
+  box-shadow: 0 0 15px rgba(255, 194, 71, 0.35), inset 0 0 10px rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-top: 4px;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lockDialTicks {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 191, 255, 0.4);
+}
+.lockInnerCenter {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #0D1622;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 0 8px rgba(0, 191, 255, 0.4);
+}
+
+.lockIconCyan { color: #00BFFF; }
+.lockIconPurple { color: #8B5CF6; }
+.lockIconOrange { color: #FFC247; }
+
+/* NODE POSITIONS (SCALED SPACING) */
+.nodeTop { top: -10px; left: calc(50% - 90px); }
+.nodeTopRight { top: 95px; right: -15px; }
+.nodeBottomRight { bottom: 95px; right: -15px; }
+.nodeBottom { bottom: -10px; left: calc(50% - 90px); }
+.nodeBottomLeft { bottom: 95px; left: -15px; }
+.nodeTopLeft { top: 95px; left: -15px; }
+
+/* ─── RIGHT COLUMN: ACCESS PORTAL ─── */
+.accessPortalCard {
+  background: rgba(18, 35, 55, 0.42);
+  border: 1.5px solid #263445;
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 191, 255, 0.05);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.headerLockIcon {
+  color: #00BFFF;
+}
+.cardTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #00BFFF;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.portalList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.portalItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  text-decoration: none;
+  color: #f8fafc;
+  transition: all 0.3s ease;
+}
+.portalItem:hover {
+  background: rgba(0, 191, 255, 0.12);
+  border-color: rgba(0, 191, 255, 0.4);
+  transform: translateX(4px);
+}
+.portalLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.portalIcon {
+  color: #00BFFF;
+}
+.portalName {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.portalSub {
+  font-size: 0.7rem;
+  color: #00BFFF;
+  transition: color 0.3s ease;
+}
+.portalItem:hover .portalSub {
+  color: #48CFFF;
+}
+
+/* ─── BOTTOM 7-STEP PROCESS TIMELINE ─── */
+.workflowTimeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-top: 24px;
+  margin-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 10;
+}
+.timelineTrackLine {
+  position: absolute;
+  top: 44px;
+  left: 40px;
+  right: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, #0284c7, #00BFFF, #00FF88);
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.timelineItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.timelineIconCircle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(18, 35, 55, 0.6);
+  border: 1px solid rgba(0, 191, 255, 0.4);
+  color: #00BFFF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 12px rgba(0, 191, 255, 0.2);
+}
+.timelineIconCirclePurple {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(18, 35, 55, 0.6);
+  border: 1px solid #8B5CF6;
+  color: #8B5CF6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+}
+.timelineIconCircleGreen {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(18, 35, 55, 0.6);
+  border: 1px solid #00FF88;
+  color: #00FF88;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
+
+.timelineLabel {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 400;
+  text-align: center;
+}
+.timelineArrow {
+  color: #475569;
+  font-size: 1rem;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   DAY MODE: MEDICAL TECHNOLOGY EXPERIENCE (data-theme='light')
+   ════════════════════════════════════════════════════════════════════ */
+.segmentContainer[data-theme='light'] {
+  background-color: #F8FAFC;
+  background-image: radial-gradient(circle at 50% 45%, rgba(25, 118, 255, 0.05) 0%, rgba(248, 250, 252, 0.85) 80%), url('/medical-background.jpg');
+  background-size: cover;
+  background-position: center center;
+  color: #17212B;
+}
+
+.segmentContainer[data-theme='light'] .textSilver {
+  background: linear-gradient(180deg, #17212B 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.segmentContainer[data-theme='light'] .textBlockchain {
+  background: linear-gradient(180deg, #1976FF 0%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 10px rgba(25, 118, 255, 0.25));
+}
+.segmentContainer[data-theme='light'] .textConnected {
+  color: #5F6E7D;
+}
+.segmentContainer[data-theme='light'] .textLife {
+  color: #1976FF;
+}
+.segmentContainer[data-theme='light'] .heroDescription {
+  color: #5F6E7D;
+}
+.segmentContainer[data-theme='light'] .descHighlight {
+  color: #1976FF;
+}
+
+.segmentContainer[data-theme='light'] .ekgPath {
+  stroke: #1976FF;
+  filter: drop-shadow(0 0 6px rgba(25, 118, 255, 0.4));
+}
+.segmentContainer[data-theme='light'] .beamLine {
+  stroke: #1976FF;
+  filter: drop-shadow(0 0 6px rgba(25, 118, 255, 0.3));
+}
+.segmentContainer[data-theme='light'] .blockchainChainRing {
+  stroke: #1976FF;
+  filter: drop-shadow(0 0 8px rgba(25, 118, 255, 0.3));
+}
+.segmentContainer[data-theme='light'] .pedestalGlow {
+  background: radial-gradient(ellipse, rgba(25, 118, 255, 0.4) 0%, transparent 70%);
+}
+
+/* Day Mode Blockchain Vault Modules */
+.segmentContainer[data-theme='light'] .blockchainVaultModule {
+  background: rgba(255, 255, 255, 0.85);
+  border: 8px solid #E2E8F0;
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.9), 0 15px 35px rgba(25, 118, 255, 0.08);
+}
+.segmentContainer[data-theme='light'] .blockchainVaultModule:hover {
+  border-color: #1976FF;
+  box-shadow: inset 0 0 20px rgba(25, 118, 255, 0.15), 0 20px 45px rgba(25, 118, 255, 0.15);
+}
+
+.segmentContainer[data-theme='light'] .hingeTopLeft,
+.segmentContainer[data-theme='light'] .hingeBottomLeft {
+  background: linear-gradient(180deg, #CBD5E1, #94A3B8);
+  box-shadow: 0 0 4px rgba(0,0,0,0.15);
+}
+
+.segmentContainer[data-theme='light'] .boltTL,
+.segmentContainer[data-theme='light'] .boltTR,
+.segmentContainer[data-theme='light'] .boltBL,
+.segmentContainer[data-theme='light'] .boltBR {
+  background: #CBD5E1;
+  border: 1px solid #94A3B8;
+  box-shadow: inset 0 0 4px #1976FF;
+}
+
+.segmentContainer[data-theme='light'] .vaultTitle {
+  color: #17212B;
+}
+.segmentContainer[data-theme='light'] .vaultValue {
+  color: #1976FF;
+}
+.segmentContainer[data-theme='light'] .vaultIconCyan {
+  color: #1976FF;
+  filter: drop-shadow(0 0 4px rgba(25, 118, 255, 0.3));
+}
+
+.segmentContainer[data-theme='light'] .combinationLockWheel {
+  background: radial-gradient(circle, #FFFFFF 0%, #F1F5F9 100%);
+  border: 2px solid #CBD5E1;
+  box-shadow: 0 0 10px rgba(25, 118, 255, 0.15), inset 0 0 6px rgba(0,0,0,0.05);
+}
+.segmentContainer[data-theme='light'] .combinationLockWheelPurple {
+  background: radial-gradient(circle, #FFFFFF 0%, #F1F5F9 100%);
+  border: 2px solid #CBD5E1;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.15), inset 0 0 6px rgba(0,0,0,0.05);
+}
+.segmentContainer[data-theme='light'] .combinationLockWheelOrange {
+  background: radial-gradient(circle, #FFFFFF 0%, #F1F5F9 100%);
+  border: 2px solid #CBD5E1;
+  box-shadow: 0 0 10px rgba(255, 194, 71, 0.25), inset 0 0 6px rgba(0,0,0,0.05);
+}
+.segmentContainer[data-theme='light'] .lockInnerCenter {
+  background: #FFFFFF;
+  box-shadow: inset 0 0 6px rgba(25, 118, 255, 0.2);
+}
+.segmentContainer[data-theme='light'] .lockIconCyan {
+  color: #1976FF;
+}
+.segmentContainer[data-theme='light'] .lockIconPurple {
+  color: #8B5CF6;
+}
+.segmentContainer[data-theme='light'] .lockIconOrange {
+  color: #F59E0B;
+}
+
+/* Day Mode Access Portal */
+.segmentContainer[data-theme='light'] .accessPortalCard {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid #E2E8F0;
+  box-shadow: 0 15px 35px rgba(25, 118, 255, 0.06);
+}
+.segmentContainer[data-theme='light'] .cardHeader {
+  border-bottom-color: rgba(25, 118, 255, 0.1);
+}
+.segmentContainer[data-theme='light'] .headerLockIcon,
+.segmentContainer[data-theme='light'] .cardTitle {
+  color: #1976FF;
+}
+.segmentContainer[data-theme='light'] .portalItem {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  color: #17212B;
+}
+.segmentContainer[data-theme='light'] .portalItem:hover {
+  background: rgba(25, 118, 255, 0.06);
+  border-color: rgba(25, 118, 255, 0.3);
+}
+.segmentContainer[data-theme='light'] .portalIcon {
+  color: #1976FF;
+}
+.segmentContainer[data-theme='light'] .portalSub {
+  color: #1976FF;
+}
+
+/* Day Mode 7-Step Workflow Timeline */
+.segmentContainer[data-theme='light'] .workflowTimeline {
+  border-top-color: rgba(25, 118, 255, 0.1);
+}
+.segmentContainer[data-theme='light'] .timelineTrackLine {
+  background: linear-gradient(90deg, #1976FF, #0284c7, #20C997);
+  opacity: 0.25;
+}
+.segmentContainer[data-theme='light'] .timelineIconCircle {
+  background: #FFFFFF;
+  border: 1px solid rgba(25, 118, 255, 0.3);
+  color: #1976FF;
+  box-shadow: 0 4px 12px rgba(25, 118, 255, 0.1);
+}
+.segmentContainer[data-theme='light'] .timelineIconCirclePurple {
+  background: #FFFFFF;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  color: #8B5CF6;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+.segmentContainer[data-theme='light'] .timelineIconCircleGreen {
+  background: #FFFFFF;
+  border: 1px solid rgba(32, 201, 151, 0.5);
+  color: #10B981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+.segmentContainer[data-theme='light'] .timelineLabel {
+  color: #5F6E7D;
+}
+.segmentContainer[data-theme='light'] .timelineArrow {
+  color: #94A3B8;
+}

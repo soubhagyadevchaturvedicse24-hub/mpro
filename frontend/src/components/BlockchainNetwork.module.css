@@ -1,0 +1,142 @@
+.networkContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 10;
+  perspective: 1200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.linesSvg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1000px;
+  height: 1000px;
+  overflow: visible;
+}
+
+:global(.energyCircle) {
+  fill: none;
+  stroke: rgba(var(--accent-rgb), 0.2);
+  stroke-width: 1;
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
+  transform-origin: 0 0;
+}
+
+:global(.nodeLine) {
+  fill: none;
+  stroke: rgba(var(--accent-rgb), 0.6);
+  stroke-width: 2;
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+}
+
+.centerCubeWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  height: 380px;
+  transform-style: preserve-3d;
+  opacity: 0; /* hidden by default, animated by GSAP */
+}
+
+.cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  /* subtle continuous rotation */
+  animation: rotateCube 20s linear infinite;
+}
+
+.cubeFace {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  /* we will animate border/background with GSAP later if needed, or keep it static and scale the whole wrapper */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+:global(.glassFace) {
+  background: rgba(var(--accent-rgb), 0.05);
+  backdrop-filter: blur(2px);
+  border: 2px solid var(--accent-primary);
+  box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.4), inset 0 0 20px rgba(var(--accent-rgb), 0.2);
+}
+
+.cubeFace.front  { transform: rotateY(0deg) translateZ(190px); }
+.cubeFace.back   { transform: rotateY(180deg) translateZ(190px); }
+.cubeFace.right  { transform: rotateY(90deg) translateZ(190px); }
+.cubeFace.left   { transform: rotateY(-90deg) translateZ(190px); }
+.cubeFace.top    { transform: rotateX(90deg) translateZ(190px); }
+.cubeFace.bottom { transform: rotateX(-90deg) translateZ(190px); }
+
+@keyframes rotateCube {
+  0% { transform: rotateX(10deg) rotateY(0deg); }
+  100% { transform: rotateX(10deg) rotateY(360deg); }
+}
+
+.nodesWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+
+.nodeWrapper {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%);
+  transform-style: preserve-3d;
+  opacity: 0;
+}
+
+.smallCube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: rotateNode 15s linear infinite reverse;
+}
+
+.smallCube .cubeFace {
+  background: rgba(var(--accent-rgb), 0.1);
+  border: 1.5px solid var(--accent-primary);
+  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.4);
+}
+
+.smallCube .cubeFace.front  { transform: rotateY(0deg) translateZ(40px); }
+.smallCube .cubeFace.back   { transform: rotateY(180deg) translateZ(40px); }
+.smallCube .cubeFace.right  { transform: rotateY(90deg) translateZ(40px); }
+.smallCube .cubeFace.left   { transform: rotateY(-90deg) translateZ(40px); }
+.smallCube .cubeFace.top    { transform: rotateX(90deg) translateZ(40px); }
+.smallCube .cubeFace.bottom { transform: rotateX(-90deg) translateZ(40px); }
+
+@keyframes rotateNode {
+  0% { transform: rotateX(-15deg) rotateY(0deg); }
+  100% { transform: rotateX(-15deg) rotateY(360deg); }
+}
+
+:global(.nodeLock) {
+  opacity: 0;
+  filter: drop-shadow(0 0 5px var(--accent-primary));
+}
