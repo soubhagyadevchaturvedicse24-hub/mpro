@@ -155,18 +155,19 @@ const Home = () => {
       const lastSnapPoint = snapPoints[snapPoints.length - 1];
       const currentY = container.scrollTop;
 
-      // 1. SCROLLING UP (e.deltaY < 0):
-      // When moving up from footer / LifeSaved to Blockchain segment, keep scrolling NORMAL
-      if (e.deltaY < 0 && currentY >= ecoPoint - 50) {
-        return; // Allow natural normal browser scroll up
+      // 1. SCROLLING UP (e.deltaY < 0) from Ecosystem segment: 1 unit scroll automatically goes to top (Hero, y = 0)
+      if (e.deltaY < 0 && currentY <= ecoPoint + 200) {
+        e.preventDefault();
+        smoothScrollTo(0, 800);
+        return;
       }
 
-      // 2. SCROLLING DOWN (e.deltaY > 0) past LifeSaved into footer:
+      // 2. SCROLLING DOWN (e.deltaY > 0) past LifeSaved into footer: allow free scrolling
       if (currentY >= lastSnapPoint - 10 && e.deltaY > 0) {
-        return; // Allow natural normal browser scroll down into footer
+        return;
       }
 
-      // 3. SCROLLING DOWN from top -> Blockchain -> LifeSaved: Force-crawl snap scroll
+      // 3. Otherwise, snap to target section in direction of scroll
       e.preventDefault();
 
       wheelAccumulator += e.deltaY;
@@ -180,16 +181,16 @@ const Home = () => {
 
         let target = null;
         if (direction > 0) {
-          target = snapPoints.find((p) => p > currentY + 80);
+          target = snapPoints.find((p) => p > currentY + 50);
         } else {
           const reversed = [...snapPoints].reverse();
-          target = reversed.find((p) => p < currentY - 80);
+          target = reversed.find((p) => p < currentY - 50);
         }
 
         if (target !== undefined && target !== null) {
-          smoothScrollTo(target, 850);
+          smoothScrollTo(target, 800);
         }
-      }, 40);
+      }, 25);
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
