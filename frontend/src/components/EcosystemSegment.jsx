@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
   Thermometer, MapPin, ShieldCheck, Bell, BatteryCharging, 
   Box, ArrowRight, Building2, Landmark, Heart, 
-  Wifi, Lock, Network, UserCheck
+  Wifi, Lock, Network, UserCheck, HeartPulse
 } from 'lucide-react';
 import Heart3D from './Heart3D';
 import styles from './EcosystemSegment.module.css';
@@ -11,7 +11,17 @@ import styles from './EcosystemSegment.module.css';
 const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
   return (
     <section id={id} className={styles.segmentContainer} data-theme={theme}>
-      
+
+      {/* ── TOP BADGE (absorbed from divider) ── */}
+      <div className={styles.internalTopBadge}>
+        <div className={styles.internalBadgeLine} />
+        <div className={styles.internalBadgeChip}>
+          <ShieldCheck size={14} />
+          <span>ORGAN SECURED</span>
+        </div>
+        <div className={styles.internalBadgeLine} />
+      </div>
+
       {/* ─── MAIN THREE-COLUMN LAYOUT ─── */}
       <div className={styles.dashboardGrid}>
         
@@ -47,15 +57,15 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
             <svg className={styles.svgBeams} viewBox="0 0 600 600">
               {/* Radial Energy Spoke Lines */}
               <line x1="300" y1="300" x2="300" y2="80" className={styles.beamLine} />
-              <line x1="300" y1="300" x2="490" y2="190" className={styles.beamLine} />
-              <line x1="300" y1="300" x2="490" y2="410" className={styles.beamLine} />
+              <line x1="300" y1="300" x2="519" y2="162" className={styles.beamLine} />
+              <line x1="300" y1="300" x2="519" y2="437" className={styles.beamLine} />
               <line x1="300" y1="300" x2="300" y2="520" className={styles.beamLine} />
-              <line x1="300" y1="300" x2="110" y2="410" className={styles.beamLine} />
-              <line x1="300" y1="300" x2="110" y2="190" className={styles.beamLine} />
+              <line x1="300" y1="300" x2="81" y2="437" className={styles.beamLine} />
+              <line x1="300" y1="300" x2="81" y2="162" className={styles.beamLine} />
               
               {/* Interlink Chain Ring */}
               <polygon 
-                points="300,80 490,190 490,410 300,520 110,410 110,190" 
+                points="300,80 519,162 519,437 300,520 81,437 81,162" 
                 className={styles.blockchainChainRing} 
               />
             </svg>
@@ -329,6 +339,15 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
           <span className={styles.timelineLabel}>Trusted Access</span>
         </div>
 
+      </div>
+
+      {/* ── BOTTOM HEARTBEAT DIVIDER (absorbed from divider) ── */}
+      <div className={styles.internalBottomDivider}>
+        <div className={styles.internalDividerLine} />
+        <div className={styles.internalHeartIcon}>
+          <HeartPulse size={22} strokeWidth={1.5} />
+        </div>
+        <div className={styles.internalDividerLine} />
       </div>
 
     </section>

@@ -8,6 +8,7 @@ import Button from '../components/Button';
 import Heart3D from '../components/Heart3D';
 import EcosystemSegment from '../components/EcosystemSegment';
 import LifeSavedSegment from '../components/LifeSavedSegment';
+import HomeFooter from '../components/HomeFooter';
 import styles from './Home.module.css';
 
 const Home = () => {
@@ -24,6 +25,7 @@ const Home = () => {
   const [heartScrollOffsetY, setHeartScrollOffsetY] = useState(0);
   const containerRef = useRef(null);
   const dropdownRef = useRef(null);
+  const isSnappingRef = useRef(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -96,6 +98,104 @@ const Home = () => {
 
     container.addEventListener('scroll', handleScroll, { passive: true });
     return () => container.removeEventListener('scroll', handleScroll);
+  }, [isHeroActive]);
+
+  // ── JS-based smooth scroll snapping (controlled speed) ──────────────────
+  useEffect(() => {
+    if (!isHeroActive) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Easing function: ease-in-out cubic
+    const easeInOutCubic = (t) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const smoothScrollTo = (targetY, duration = 900) => {
+      const startY = container.scrollTop;
+      const distance = targetY - startY;
+      const startTime = performance.now();
+
+      const step = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        container.scrollTop = startY + distance * easeInOutCubic(progress);
+        if (progress < 1) requestAnimationFrame(step);
+        else isSnappingRef.current = false;
+      };
+
+      isSnappingRef.current = true;
+      requestAnimationFrame(step);
+    };
+
+    const getSnapPoints = () => {
+      const points = [];
+      // Section 1: Hero (always starts at 0)
+      points.push(0);
+      // Section 2: Ecosystem
+      const eco = document.getElementById('ecosystem-segment');
+      if (eco) points.push(eco.offsetTop);
+      // Section 3: LifeSaved — sits after dividers
+      const lifeSaved = document.getElementById('life-saved-segment');
+      if (lifeSaved) points.push(lifeSaved.offsetTop);
+      return points;
+    };
+
+    let wheelAccumulator = 0;
+    let wheelTimeout = null;
+
+    const handleWheel = (e) => {
+      if (isSnappingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      const snapPoints = getSnapPoints();
+      if (snapPoints.length === 0) return;
+      const lastSnapPoint = snapPoints[snapPoints.length - 1];
+      const currentY = container.scrollTop;
+
+      // Allow free scrolling BELOW the last segment
+      // 1. If at or below the last segment and scrolling down -> let browser handle it
+      if (currentY >= lastSnapPoint - 2 && e.deltaY > 0) {
+        return; 
+      }
+      // 2. If strictly below the last segment and scrolling up -> let browser handle it
+      if (currentY > lastSnapPoint + 2 && e.deltaY < 0) {
+        return;
+      }
+
+      // Otherwise, we are in the snapping zone. Intercept the scroll.
+      e.preventDefault();
+
+      wheelAccumulator += e.deltaY;
+
+      clearTimeout(wheelTimeout);
+      wheelTimeout = setTimeout(() => {
+        const currentY = container.scrollTop;
+        const snapPoints = getSnapPoints();
+        const direction = wheelAccumulator > 0 ? 1 : -1;
+        wheelAccumulator = 0;
+
+        // Find nearest snap point in the scroll direction
+        let target = null;
+        if (direction > 0) {
+          target = snapPoints.find((p) => p > currentY + 80);
+        } else {
+          const reversed = [...snapPoints].reverse();
+          target = reversed.find((p) => p < currentY - 80);
+        }
+
+        if (target !== undefined && target !== null) {
+          smoothScrollTo(target, 900);
+        }
+      }, 50);
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      clearTimeout(wheelTimeout);
+    };
   }, [isHeroActive]);
 
   useEffect(() => {
@@ -312,37 +412,19 @@ const Home = () => {
         />
       </div>
 
-      {/* ─── NEW VISUAL SEPARATION DIVIDER ─── */}
-      {isHeroActive && (
-        <div className={styles.topTransitionDivider}>
-          <div className={styles.topTransitionLine} />
-          <div className={styles.topTransitionBadge}>
-            <ShieldCheck size={16} />
-            <span>ORGAN SECURED</span>
-          </div>
-          <div className={styles.topTransitionLine} />
-        </div>
-      )}
-
       {/* ─── NEXT SCROLL SEGMENT: BLOCKCHAIN ECOSYSTEM & TELEMETRY (Section 2) ─── */}
       {isHeroActive && (
         <EcosystemSegment id="ecosystem-segment" theme={theme} mousePos={mousePos} />
       )}
 
-      {/* ─── HEART TRANSITION DIVIDER ─── */}
-      {isHeroActive && (
-        <div className={styles.heartTransitionDivider}>
-          <div className={styles.heartTransitionLine} />
-          <div className={styles.heartTransitionIcon}>
-            <HeartPulse size={28} strokeWidth={1.5} />
-          </div>
-          <div className={styles.heartTransitionLine} />
-        </div>
-      )}
-
       {/* ─── LIFE SAVED SEGMENT (Section 3) ─── */}
       {isHeroActive && (
         <LifeSavedSegment theme={theme} />
+      )}
+
+      {/* ─── FOOTER ─── */}
+      {isHeroActive && (
+        <HomeFooter />
       )}
 
     </div>

@@ -6,12 +6,12 @@
   background-image: radial-gradient(circle at 50% 45%, rgba(0, 191, 255, 0.12) 0%, rgba(3, 7, 18, 0.94) 80%), url('/premium_bg.png');
   background-size: cover;
   background-position: center bottom;
-  padding: 80px 70px 60px 70px;
+  padding: 90px 70px 12px 70px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 40px;
+  justify-content: space-between;
+  gap: 0;
   position: relative;
   overflow: hidden;
   color: #ffffff;
@@ -27,6 +27,64 @@
   width: 100%;
   z-index: 10;
   flex-grow: 1;
+}
+
+/* ─── INTERNAL TOP BADGE (absorbed from standalone divider) ─── */
+.internalTopBadge {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0 8px 0;
+  flex-shrink: 0;
+}
+.internalBadgeLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 210, 255, 0.4), transparent);
+}
+.internalBadgeChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  background: rgba(0, 210, 255, 0.08);
+  border: 1px solid rgba(0, 210, 255, 0.22);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #00d2ff;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+
+/* ─── INTERNAL BOTTOM HEARTBEAT DIVIDER ─── */
+.internalBottomDivider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0 10px 0;
+  flex-shrink: 0;
+}
+.internalDividerLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(25, 118, 255, 0.4), rgba(0, 200, 140, 0.4), transparent);
+}
+.internalHeartIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(25, 118, 255, 0.3);
+  color: #1976ff;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 18px rgba(25, 118, 255, 0.18);
+  flex-shrink: 0;
+  animation: heartbeat 1.6s ease-in-out infinite;
 }
 
 /* ─── LEFT COLUMN: HEADLINE & DESCRIPTION ─── */
@@ -114,15 +172,15 @@
 .centerEcosystem {
   position: relative;
   width: 100%;
-  height: 530px;
+  height: 440px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .networkStage {
   position: relative;
-  width: 580px;
-  height: 530px;
+  width: 500px;
+  height: 440px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -356,12 +414,12 @@
 .lockIconOrange { color: #FFC247; }
 
 /* NODE POSITIONS (SCALED SPACING) */
-.nodeTop { top: -10px; left: calc(50% - 90px); }
-.nodeTopRight { top: 95px; right: -15px; }
-.nodeBottomRight { bottom: 95px; right: -15px; }
-.nodeBottom { bottom: -10px; left: calc(50% - 90px); }
-.nodeBottomLeft { bottom: 95px; left: -15px; }
-.nodeTopLeft { top: 95px; left: -15px; }
+.nodeTop { top: -15px; left: calc(50% - 82px); }
+.nodeTopRight { top: 45px; right: -15px; }
+.nodeBottomRight { bottom: 45px; right: -15px; }
+.nodeBottom { bottom: -15px; left: calc(50% - 82px); }
+.nodeBottomLeft { bottom: 45px; left: -15px; }
+.nodeTopLeft { top: 45px; left: -15px; }
 
 /* ─── RIGHT COLUMN: ACCESS PORTAL ─── */
 .accessPortalCard {
@@ -516,11 +574,9 @@
    DAY MODE: MEDICAL TECHNOLOGY EXPERIENCE (data-theme='light')
    ════════════════════════════════════════════════════════════════════ */
 .segmentContainer[data-theme='light'] {
-  background-color: #F8FAFC;
-  background-image: radial-gradient(circle at 50% 45%, rgba(25, 118, 255, 0.05) 0%, rgba(248, 250, 252, 0.85) 80%), url('/medical-background.jpg');
-  background-size: cover;
-  background-position: center center;
-  color: #17212B;
+  background-color: transparent;
+  background-image: none;
+  color: #1a202c;
 }
 
 .segmentContainer[data-theme='light'] .textSilver {
