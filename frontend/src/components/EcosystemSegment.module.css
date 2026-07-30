@@ -167,19 +167,19 @@
   font-weight: 500;
 }
 
-/* ─── CENTER BLOCKCHAIN STAGE (SLIGHTLY DECREASED SWEET SPOT) ─── */
+/* ─── CENTER BLOCKCHAIN STAGE (EXPANDED SPACING) ─── */
 .centerEcosystem {
   position: relative;
   width: 100%;
-  height: 440px;
+  height: 520px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .networkStage {
   position: relative;
-  width: 500px;
-  height: 440px;
+  width: 600px;
+  height: 520px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -413,13 +413,13 @@
 .lockIconPurple { color: #8B5CF6; }
 .lockIconOrange { color: #FFC247; }
 
-/* NODE POSITIONS (SCALED SPACING) */
-.nodeTop { top: -15px; left: calc(50% - 82px); }
-.nodeTopRight { top: 45px; right: -15px; }
-.nodeBottomRight { bottom: 45px; right: -15px; }
-.nodeBottom { bottom: -15px; left: calc(50% - 82px); }
-.nodeBottomLeft { bottom: 45px; left: -15px; }
-.nodeTopLeft { top: 45px; left: -15px; }
+/* NODE POSITIONS (EXPANDED SPACING) */
+.nodeTop { top: 0px; left: calc(50% - 82px); }
+.nodeTopRight { top: 75px; right: 0px; }
+.nodeBottomRight { bottom: 75px; right: 0px; }
+.nodeBottom { bottom: 0px; left: calc(50% - 82px); }
+.nodeBottomLeft { bottom: 75px; left: 0px; }
+.nodeTopLeft { top: 75px; left: 0px; }
 
 /* ─── RIGHT COLUMN: ACCESS PORTAL ─── */
 .accessPortalCard {

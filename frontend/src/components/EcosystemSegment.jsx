@@ -54,18 +54,18 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
           <div className={styles.networkStage}>
             
             {/* SVG 3D Metallic Interlink Chain Paths */}
-            <svg className={styles.svgBeams} viewBox="0 0 600 600">
+            <svg className={styles.svgBeams} viewBox="0 0 600 520">
               {/* Radial Energy Spoke Lines (stopping outside heart and outside cards) */}
-              <line x1="300" y1="220" x2="300" y2="150" className={styles.beamLine} />
-              <line x1="369" y1="260" x2="430" y2="225" className={styles.beamLine} />
-              <line x1="369" y1="340" x2="430" y2="375" className={styles.beamLine} />
-              <line x1="300" y1="380" x2="300" y2="450" className={styles.beamLine} />
-              <line x1="231" y1="340" x2="170" y2="375" className={styles.beamLine} />
-              <line x1="231" y1="260" x2="170" y2="225" className={styles.beamLine} />
+              <line x1="300" y1="175" x2="300" y2="148" className={styles.beamLine} />
+              <line x1="373" y1="217" x2="435" y2="182" className={styles.beamLine} />
+              <line x1="373" y1="303" x2="435" y2="338" className={styles.beamLine} />
+              <line x1="300" y1="345" x2="300" y2="372" className={styles.beamLine} />
+              <line x1="227" y1="303" x2="165" y2="338" className={styles.beamLine} />
+              <line x1="227" y1="217" x2="165" y2="182" className={styles.beamLine} />
               
               {/* Interlink Chain Ring (connecting outer node edges) */}
               <polygon 
-                points="300,150 430,225 430,375 300,450 170,375 170,225" 
+                points="300,148 435,182 435,338 300,372 165,338 165,182" 
                 className={styles.blockchainChainRing} 
               />
             </svg>
