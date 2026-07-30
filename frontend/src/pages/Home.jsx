@@ -151,20 +151,22 @@ const Home = () => {
 
       const snapPoints = getSnapPoints();
       if (snapPoints.length === 0) return;
+      const ecoPoint = snapPoints[1] || 0; // Ecosystem / Blockchain segment offsetTop
       const lastSnapPoint = snapPoints[snapPoints.length - 1];
       const currentY = container.scrollTop;
 
-      // Allow free scrolling BELOW the last segment
-      // 1. If at or below the last segment and scrolling down -> let browser handle it
-      if (currentY >= lastSnapPoint - 2 && e.deltaY > 0) {
-        return; 
-      }
-      // 2. If strictly below the last segment and scrolling up -> let browser handle it
-      if (currentY > lastSnapPoint + 2 && e.deltaY < 0) {
-        return;
+      // 1. SCROLLING UP (e.deltaY < 0):
+      // When moving up from footer / LifeSaved to Blockchain segment, keep scrolling NORMAL
+      if (e.deltaY < 0 && currentY >= ecoPoint - 50) {
+        return; // Allow natural normal browser scroll up
       }
 
-      // Otherwise, we are in the snapping zone. Intercept the scroll.
+      // 2. SCROLLING DOWN (e.deltaY > 0) past LifeSaved into footer:
+      if (currentY >= lastSnapPoint - 10 && e.deltaY > 0) {
+        return; // Allow natural normal browser scroll down into footer
+      }
+
+      // 3. SCROLLING DOWN from top -> Blockchain -> LifeSaved: Force-crawl snap scroll
       e.preventDefault();
 
       wheelAccumulator += e.deltaY;
@@ -176,7 +178,6 @@ const Home = () => {
         const direction = wheelAccumulator > 0 ? 1 : -1;
         wheelAccumulator = 0;
 
-        // Find nearest snap point in the scroll direction
         let target = null;
         if (direction > 0) {
           target = snapPoints.find((p) => p > currentY + 80);
@@ -186,9 +187,9 @@ const Home = () => {
         }
 
         if (target !== undefined && target !== null) {
-          smoothScrollTo(target, 900);
+          smoothScrollTo(target, 850);
         }
-      }, 50);
+      }, 40);
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
@@ -228,8 +229,12 @@ const Home = () => {
 
   return (
     <div className={styles.container} data-theme={theme} ref={containerRef}>
-      {/* ─── AMBIENT BACKGROUND ─── */}
-      <div className={styles.ambientBackground} />
+      {/* ─── AMBIENT BACKGROUND WITH DYNAMIC GLOWING ORBS ─── */}
+      <div className={styles.ambientBackground}>
+        <div className={styles.orbPrimary} />
+        <div className={styles.orbSecondary} />
+        <div className={styles.orbTertiary} />
+      </div>
 
       {/* ─── PURE APPLE HEALTHCARE LOADER UI ─── */}
       {!isHeroActive && (
@@ -424,7 +429,7 @@ const Home = () => {
 
       {/* ─── FOOTER ─── */}
       {isHeroActive && (
-        <HomeFooter />
+        <HomeFooter theme={theme} />
       )}
 
     </div>

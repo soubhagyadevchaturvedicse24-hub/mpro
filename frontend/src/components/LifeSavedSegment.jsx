@@ -85,28 +85,35 @@ const ReceiverLoginButton = () => (
 );
 
 /* ─── Main Component ─────────────────────────────────────────── */
-const LifeSavedSegment = () => {
+const LifeSavedSegment = ({ theme = 'dark' }) => {
+  const isLight = theme === 'light';
+
   return (
     <section
       id="life-saved-segment"
-      className="relative w-full font-sans h-screen overflow-hidden flex flex-col justify-center pt-[90px] bg-gradient-to-b from-white/90 via-blue-50/80 to-white/95 backdrop-blur-md"
+      className="relative w-full font-sans min-h-screen overflow-hidden flex flex-col justify-between pt-[90px]"
+      style={{
+        background: isLight ? '#F5F5F7' : 'linear-gradient(180deg, rgba(3, 7, 18, 0.45) 0%, rgba(3, 7, 18, 0.78) 100%)',
+        backdropFilter: isLight ? 'none' : 'blur(12px)',
+        WebkitBackdropFilter: isLight ? 'none' : 'blur(12px)',
+      }}
     >
-      {/* Muted ambient glowing background blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
-        <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: '450px', height: '450px', borderRadius: '50%', background: 'rgba(147,197,253,0.3)', filter: 'blur(100px)' }} />
-        <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: '450px', height: '450px', borderRadius: '50%', background: 'rgba(187,247,208,0.25)', filter: 'blur(100px)' }} />
-      </div>
+      {/* Muted ambient glowing background blobs for dark mode */}
+      {!isLight && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+          <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: '450px', height: '450px', borderRadius: '50%', background: 'rgba(147,197,253,0.25)', filter: 'blur(100px)' }} />
+          <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: '450px', height: '450px', borderRadius: '50%', background: 'rgba(187,247,208,0.2)', filter: 'blur(100px)' }} />
+        </div>
+      )}
 
       <motion.div
-        className="relative z-10 max-w-[1300px] mx-auto px-6 py-6 flex flex-col gap-6 w-full"
+        className="relative z-10 max-w-[1300px] mx-auto px-6 py-6 flex flex-col gap-6 w-full flex-grow justify-center"
         variants={stagger}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '-60px' }}
       >
-        {/* ══════════════════════════════════════════════════════
-            1. TOP ROW: Life Saved Card (Left) & 3D Hospital (Right)
-        ══════════════════════════════════════════════════════ */}
+        {/* 1. TOP ROW: Life Saved Card (Left) & 3D Hospital (Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center w-full">
           
           {/* Left Column: Life Saved Card */}
@@ -117,18 +124,18 @@ const LifeSavedSegment = () => {
               className="w-full"
             >
               <div style={{
-                background: 'rgba(255,255,255,0.45)',
-                backdropFilter: 'blur(14px)',
-                WebkitBackdropFilter: 'blur(14px)',
-                border: '1px solid rgba(255,255,255,0.6)',
-                borderRadius: '28px',
+                background: isLight ? '#FFFFFF' : 'rgba(10, 20, 35, 0.45)',
+                backdropFilter: isLight ? 'none' : 'blur(14px)',
+                WebkitBackdropFilter: isLight ? 'none' : 'blur(14px)',
+                border: isLight ? '1px solid #E8E8ED' : '1px solid rgba(255,255,255,0.12)',
+                borderRadius: '24px',
                 padding: '10px',
-                boxShadow: '0 16px 48px rgba(96,165,250,0.18), inset 0 1px 0 rgba(255,255,255,0.95)',
+                boxShadow: isLight ? '0 4px 24px rgba(0,0,0,0.06)' : '0 16px 48px rgba(0, 191, 255, 0.12), inset 0 1px 0 rgba(255,255,255,0.2)',
               }}>
                 <img
                   src="/life_saved_card.png"
                   alt="Life Saved — Hope Delivered"
-                  style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '20px' }}
+                  style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '16px' }}
                 />
               </div>
             </motion.div>
@@ -138,7 +145,7 @@ const LifeSavedSegment = () => {
           <div className="lg:col-span-4 w-full flex justify-center items-center pl-4 lg:pl-0">
             <motion.div
               variants={fadeUp}
-              initial={{ filter: 'drop-shadow(0 12px 24px rgba(34,197,94,0.22))' }}
+              initial={{ filter: 'drop-shadow(0 12px 24px rgba(34,197,94,0.3))' }}
               whileHover={{ 
                 scale: 1.04, 
                 y: -6, 
@@ -158,25 +165,21 @@ const LifeSavedSegment = () => {
           </div>
         </div>
 
-        {/* ══════════════════════════════════════════════════════
-            2. MIDDLE ROW: CTA Buttons
-        ══════════════════════════════════════════════════════ */}
-        <motion.div variants={fadeUp} className="flex justify-center items-center gap-6 w-full">
+        {/* 2. MIDDLE ROW: CTA Buttons */}
+        <motion.div variants={fadeUp} className="flex justify-center items-center gap-6 w-full py-2">
           <DonorLoginButton />
           <ReceiverLoginButton />
         </motion.div>
 
-        {/* ══════════════════════════════════════════════════════
-            3. BOTTOM ROW: Image Timeline Strip (Interactive)
-        ══════════════════════════════════════════════════════ */}
-        <div className="w-full flex justify-center">
+        {/* 3. BOTTOM ROW: Image Timeline Strip (Interactive) */}
+        <div className="w-full flex justify-center py-4">
           <motion.div
             variants={fadeUp}
-            initial={{ filter: 'drop-shadow(0 8px 20px rgba(96,165,250,0.15))' }}
+            initial={{ filter: isLight ? 'none' : 'drop-shadow(0 8px 20px rgba(0,210,255,0.2))' }}
             whileHover={{ 
               scale: 1.02, 
               y: -4, 
-              filter: 'drop-shadow(0 15px 35px rgba(96,165,250,0.6)) drop-shadow(0 0 25px rgba(96,165,250,0.4))' 
+              filter: isLight ? 'drop-shadow(0 4px 16px rgba(0,0,0,0.06))' : 'drop-shadow(0 15px 35px rgba(0,210,255,0.5)) drop-shadow(0 0 25px rgba(0,210,255,0.4))' 
             }}
             whileTap={{ scale: 0.99 }}
             className="w-[90%] max-w-[1000px] flex justify-center items-center cursor-pointer px-4 lg:px-0"
@@ -188,9 +191,6 @@ const LifeSavedSegment = () => {
             />
           </motion.div>
         </div>
-
-
-
       </motion.div>
     </section>
   );
