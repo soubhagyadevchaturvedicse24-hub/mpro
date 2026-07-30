@@ -24,11 +24,11 @@ const HomeFooter = ({ theme = 'dark' }) => {
   return (
     <footer
       style={{
-        background: isLight ? '#F5F5F7' : 'linear-gradient(180deg, rgba(3, 7, 18, 0.78) 0%, rgba(3, 7, 18, 0.95) 100%)',
+        background: isLight ? '#F5F5F7' : 'linear-gradient(180deg, rgba(3, 7, 18, 0.94) 0%, #030712 100%)',
         borderTop: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.08)',
         fontFamily: 'Inter, sans-serif',
-        backdropFilter: isLight ? 'none' : 'blur(16px)',
-        WebkitBackdropFilter: isLight ? 'none' : 'blur(16px)',
+        backdropFilter: isLight ? 'none' : 'blur(20px)',
+        WebkitBackdropFilter: isLight ? 'none' : 'blur(20px)',
       }}
     >
       {/* Main Footer Content */}

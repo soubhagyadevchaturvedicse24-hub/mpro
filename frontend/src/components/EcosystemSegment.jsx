@@ -341,15 +341,6 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
 
       </div>
 
-      {/* ── BOTTOM HEARTBEAT DIVIDER (absorbed from divider) ── */}
-      <div className={styles.internalBottomDivider}>
-        <div className={styles.internalDividerLine} />
-        <div className={styles.internalHeartIcon}>
-          <HeartPulse size={22} strokeWidth={1.5} />
-        </div>
-        <div className={styles.internalDividerLine} />
-      </div>
-
     </section>
   );
 };
