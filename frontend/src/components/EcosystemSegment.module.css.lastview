@@ -1,0 +1,351 @@
+Created At: 2026-07-30T00:15:08+05:30
+Completed At: 2026-07-30T00:15:08+05:30
+File Path: `file:///D:/Development/Projects/Organ-Transport-System/frontend/src/components/EcosystemSegment.jsx`
+Total Lines: 343
+Total Bytes: 14290
+Showing lines 1 to 343
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import React from 'react';
+2: import { Link } from 'react-router-dom';
+3: import { 
+4:   Thermometer, MapPin, ShieldCheck, Bell, BatteryCharging, 
+5:   Box, ArrowRight, Building2, Landmark, Heart, 
+6:   Wifi, Lock, Network, UserCheck
+7: } from 'lucide-react';
+8: import Heart3D from './Heart3D';
+9: import styles from './EcosystemSegment.module.css';
+10: 
+11: const EcosystemSegment = ({ theme = 'dark', mousePos }) => {
+12:   return (
+13:     <section className={styles.segmentContainer} data-theme={theme}>
+14:       
+15:       {/* ─── MAIN THREE-COLUMN LAYOUT ─── */}
+16:       <div className={styles.dashboardGrid}>
+17:         
+18:         {/* LEFT COLUMN: HEADLINE & DESCRIPTION */}
+19:         <div className={styles.headlineColumn}>
+20:           <h1 className={styles.mainHeading}>
+21:             <span className={styles.textSilver}>Secured by</span> <br />
+22:             <span className={styles.textBlockchain}>Blockchain.</span> <br />
+23:             <span className={styles.textConnected}>Connected for <span className={styles.textLife}>Life.</span></span>
+24:           </h1>
+25: 
+26:           {/* Animated EKG Wave Line */}
+27:           <div className={styles.ekgContainer}>
+28:             <svg className={styles.ekgSvg} viewBox="0 0 200 40">
+29:               <path 
+30:                 d="M 0 20 L 40 20 L 48 10 L 56 30 L 64 5 L 72 35 L 80 20 L 200 20" 
+31:                 className={styles.ekgPath} 
+32:               />
+33:             </svg>
+34:           </div>
+35: 
+36:           <p className={styles.heroDescription}>
+37:             Every organ. Every update. Every beat. Secured, verified and connected through the power of 
+38:             <span className={styles.descHighlight}> Blockchain</span>.
+39:           </p>
+40:         </div>
+41: 
+42:         {/* CENTER COLUMN: 3D HEART & 6 BLOCKCHAIN VAULT MODULES */}
+43:         <div className={styles.centerEcosystem}>
+44:           <div className={styles.networkStage}>
+45:             
+46:             {/* SVG 3D Metallic Interlink Chain Paths */}
+47:             <svg className={styles.svgBeams} viewBox="0 0 600 600">
+48:               {/* Radial Energy Spoke Lines */}
+49:               <line x1="300" y1="300" x2="300" y2="80" className={styles.beamLine} />
+50:               <line x1="300" y1="300" x2="490" y2="190" className={styles.beamLine} />
+51:               <line x1="300" y1="300" x2="490" y2="410" className={styles.beamLine} />
+52:               <line x1="300" y1="300" x2="300" y2="520" className={styles.beamLine} />
+53:               <line x1="300" y1="300" x2="110" y2="410" className={styles.beamLine} />
+54:               <line x1="300" y1="300" x2="110" y2="190" className={styles.beamLine} />
+55:               
+56:               {/* Interlink Chain Ring */}
+57:               <polygon 
+58:                 points="300,80 490,190 490,410 300,520 110,410 110,190" 
+59:                 className={styles.blockchainChainRing} 
+60:               />
+61:             </svg>
+62: 
+63:             {/* Center Floating Heart Pedestal */}
+64:             <div className={styles.centerHeartPedestal}>
+65:               <div className={styles.pedestalGlow} />
+66:               <div className={styles.heartContainerInsideCube}>
+67:                 <Heart3D 
+68:                   mousePos={mousePos} 
+69:                   modelUrl="/heart3d.glb" 
+70:                   className={styles.heartInCube} 
+71:                 />
+72:               </div>
+73:             </div>
+74: 
+75:             {/* ─── VAULT MODULE 1: TOP - TEMPERATURE ─── */}
+76:             <div className={`${styles.blockchainVaultModule} ${styles.nodeTop}`}>
+77:               {/* Metallic Frame & Corner Security Bolts */}
+78:               <div className={styles.boltTL} />
+79:               <div className={styles.boltTR} />
+80:               <div className={styles.boltBL} />
+81:               <div className={styles.boltBR} />
+82:               {/* Mechanical Hinges on Left Side */}
+83:               <div className={styles.hingeTopLeft} />
+84:               <div className={styles.hingeBottomLeft} />
+85: 
+86:               <div className={styles.vaultHeader}>
+87:                 <Thermometer size={16} className={styles.vaultIconCyan} />
+88:                 <span className={styles.vaultTitle}>TEMPERATURE</span>
+89:               </div>
+90:               <div className={styles.vaultValue}>4.0°C</div>
+91: 
+92:               {/* Combination Lock Wheel */}
+93:               <div className={styles.combinationLockWheel}>
+94:                 <div className={styles.lockDialTicks} />
+95:                 <div className={styles.lockInnerCenter}>
+96:                   <Lock size={12} className={styles.lockIconCyan} />
+97:                 </div>
+98:               </div>
+99:             </div>
+100: 
+101:             {/* ─── VAULT MODULE 2: TOP RIGHT - TAMPER ─── */}
+102:             <div className={`${styles.blockchainVaultModule} ${styles.nodeTopRight}`}>
+103:               <div className={styles.boltTL} />
+104:               <div className={styles.boltTR} />
+105:               <div className={styles.boltBL} />
+106:               <div className={styles.boltBR} />
+107:               <div className={styles.hingeTopLeft} />
+108:               <div className={styles.hingeBottomLeft} />
+109: 
+110:               <div className={styles.vaultHeader}>
+111:                 <ShieldCheck size={16} className={styles.vaultIconCyan} />
+112:                 <span className={styles.vaultTitle}>TAMPER</span>
+113:               </div>
+114:               <div className={styles.vaultValue}>Secure</div>
+115: 
+116:               <div className={styles.combinationLockWheel}>
+117:                 <div className={styles.lockDialTicks} />
+118:                 <div className={styles.lockInnerCenter}>
+119:                   <Lock size={12} className={styles.lockIconCyan} />
+120:                 </div>
+121:               </div>
+122:             </div>
+123: 
+124:             {/* ─── VAULT MODULE 3: BOTTOM RIGHT - BLOCKCHAIN ─── */}
+125:             <div className={`${styles.blockchainVaultModule} ${styles.nodeBottomRight}`}>
+126:               <div className={styles.boltTL} />
+127:               <div className={styles.boltTR} />
+128:               <div className={styles.boltBL} />
+129:               <div className={styles.boltBR} />
+130:               <div className={styles.hingeTopLeft} />
+131:               <div className={styles.hingeBottomLeft} />
+132: 
+133:               <div className={styles.vaultHeader}>
+134:                 <Box size={16} className={styles.vaultIconPurple} />
+135:                 <span className={styles.vaultTitlePurple}>BLOCKCHAIN</span>
+136:               </div>
+137:               <div className={styles.vaultValuePurple}>Verified</div>
+138: 
+139:               <div className={styles.combinationLockWheelPurple}>
+140:                 <div className={styles.lockDialTicks} />
+141:                 <div className={styles.lockInnerCenter}>
+142:                   <Lock size={12} className={styles.lockIconPurple} />
+143:                 </div>
+144:               </div>
+145:             </div>
+146: 
+147:             {/* ─── VAULT MODULE 4: BOTTOM - ALERT / BUZZER ─── */}
+148:             <div className={`${styles.blockchainVaultModule} ${styles.nodeBottom}`}>
+149:               <div className={styles.boltTL} />
+150:               <div className={styles.boltTR} />
+151:               <div className={styles.boltBL} />
+152:               <div className={styles.boltBR} />
+153:               <div className={styles.hingeTopLeft} />
+154:               <div className={styles.hingeBottomLeft} />
+155: 
+156:               <div className={styles.vaultHeader}>
+157:                 <Bell size={16} className={styles.vaultIconOrange} />
+158:                 <span className={styles.vaultTitleOrange}>ALERT</span>
+159:               </div>
+160:               <div className={styles.vaultValueOrange}>Silent</div>
+161: 
+162:               <div className={styles.combinationLockWheelOrange}>
+163:                 <div className={styles.lockDialTicks} />
+164:                 <div className={styles.lockInnerCenter}>
+165:                   <Lock size={12} className={styles.lockIconOrange} />
+166:                 </div>
+167:               </div>
+168:             </div>
+169: 
+170:             {/* ─── VAULT MODULE 5: BOTTOM LEFT - BATTERY ─── */}
+171:             <div className={`${styles.blockchainVaultModule} ${styles.nodeBottomLeft}`}>
+172:               <div className={styles.boltTL} />
+173:               <div className={styles.boltTR} />
+174:               <div className={styles.boltBL} />
+175:               <div className={styles.boltBR} />
+176:               <div className={styles.hingeTopLeft} />
+177:               <div className={styles.hingeBottomLeft} />
+178: 
+179:               <div className={styles.vaultHeader}>
+180:                 <BatteryCharging size={16} className={styles.vaultIconCyan} />
+181:                 <span className={styles.vaultTitle}>BATTERY</span>
+182:               </div>
+183:               <div className={styles.vaultValue}>92%</div>
+184: 
+185:               <div className={styles.combinationLockWheel}>
+186:                 <div className={styles.lockDialTicks} />
+187:                 <div className={styles.lockInnerCenter}>
+188:                   <Lock size={12} className={styles.lockIconCyan} />
+189:                 </div>
+190:               </div>
+191:             </div>
+192: 
+193:             {/* ─── VAULT MODULE 6: TOP LEFT - LOCATION ─── */}
+194:             <div className={`${styles.blockchainVaultModule} ${styles.nodeTopLeft}`}>
+195:               <div className={styles.boltTL} />
+196:               <div className={styles.boltTR} />
+197:               <div className={styles.boltBL} />
+198:               <div className={styles.boltBR} />
+199:               <div className={styles.hingeTopLeft} />
+200:               <div className={styles.hingeBottomLeft} />
+201: 
+202:               <div className={styles.vaultHeader}>
+203:                 <MapPin size={16} className={styles.vaultIconCyan} />
+204:                 <span className={styles.vaultTitle}>LOCATION</span>
+205:               </div>
+206:               <div className={styles.vaultValueSmall}>21.2514° N</div>
+207: 
+208:               <div className={styles.combinationLockWheel}>
+209:                 <div className={styles.lockDialTicks} />
+210:                 <div className={styles.lockInnerCenter}>
+211:                   <Lock size={12} className={styles.lockIconCyan} />
+212:                 </div>
+213:               </div>
+214:             </div>
+215: 
+216:           </div>
+217:         </div>
+218: 
+219:         {/* RIGHT COLUMN: ACCESS PORTAL SHORTCUTS */}
+220:         <div className={styles.accessPortalCard}>
+221:           <div className={styles.cardHeader}>
+222:             <Lock size={16} className={styles.headerLockIcon} />
+223:             <span className={styles.cardTitle}>ACCESS PORTAL</span>
+224:           </div>
+225: 
+226:           <div className={styles.portalList}>
+227:             <Link to="/login?role=hospital" className={styles.portalItem}>
+228:               <div className={styles.portalLeft}>
+229:                 <Building2 size={20} className={styles.portalIcon} />
+230:                 <span className={styles.portalName}>Hospitals</span>
+231:               </div>
+232:               <span className={styles.portalSub}>Login &rarr;</span>
+233:             </Link>
+234: 
+235:             <Link to="/login?role=sotto" className={styles.portalItem}>
+236:               <div className={styles.portalLeft}>
+237:                 <Landmark size={20} className={styles.portalIcon} />
+238:                 <span className={styles.portalName}>SOTTO</span>
+239:               </div>
+240:               <span className={styles.portalSub}>Login &rarr;</span>
+241:             </Link>
+242: 
+243:             <Link to="/login?role=rotto" className={styles.portalItem}>
+244:               <div className={styles.portalLeft}>
+245:                 <Landmark size={20} className={styles.portalIcon} />
+246:                 <span className={styles.portalName}>ROTTO</span>
+247:               </div>
+248:               <span className={styles.portalSub}>Login &rarr;</span>
+249:             </Link>
+250: 
+251:             <Link to="/login?role=notto" className={styles.portalItem}>
+252:               <div className={styles.portalLeft}>
+253:                 <Landmark size={20} className={styles.portalIcon} />
+254:                 <span className={styles.portalName}>NOTTO</span>
+255:               </div>
+256:               <span className={styles.portalSub}>Login &rarr;</span>
+257:             </Link>
+258: 
+259:             <Link to="/login?role=transplant" className={styles.portalItem}>
+260:               <div className={styles.portalLeft}>
+261:                 <Heart size={20} className={styles.portalIcon} />
+262:                 <span className={styles.portalName}>Transplant Team</span>
+263:               </div>
+264:               <span className={styles.portalSub}>Login &rarr;</span>
+265:             </Link>
+266:           </div>
+267:         </div>
+268: 
+269:       </div>
+270: 
+271:       {/* ─── BOTTOM 7-STEP WORKFLOW TIMELINE ─── */}
+272:       <div className={styles.workflowTimeline}>
+273:         <div className={styles.timelineTrackLine} />
+274:         
+275:         <div className={styles.timelineItem}>
+276:           <div className={styles.timelineIconCircle}>
+277:             <Heart size={18} />
+278:           </div>
+279:           <span className={styles.timelineLabel}>Organ Secured</span>
+280:         </div>
+281: 
+282:         <span className={styles.timelineArrow}>&rarr;</span>
+283: 
+284:         <div className={styles.timelineItem}>
+285:           <div className={styles.timelineIconCircle}>
+286:             <Wifi size={18} />
+287:           </div>
+288:           <span className={styles.timelineLabel}>IoT Sensors</span>
+289:         </div>
+290: 
+291:         <span className={styles.timelineArrow}>&rarr;</span>
+292: 
+293:         <div className={styles.timelineItem}>
+294:           <div className={styles.timelineIconCircle}>
+295:             <Lock size={18} />
+296:           </div>
+297:           <span className={styles.timelineLabel}>Data Encrypted</span>
+298:         </div>
+299: 
+300:         <span className={styles.timelineArrow}>&rarr;</span>
+301: 
+302:         <div className={styles.timelineItem}>
+303:           <div className={styles.timelineIconCirclePurple}>
+304:             <Box size={18} />
+305:           </div>
+306:           <span className={styles.timelineLabel}>Blockchain Ledger</span>
+307:         </div>
+308: 
+309:         <span className={styles.timelineArrow}>&rarr;</span>
+310: 
+311:         <div className={styles.timelineItem}>
+312:           <div className={styles.timelineIconCircle}>
+313:             <Network size={18} />
+314:           </div>
+315:           <span className={styles.timelineLabel}>Decentralized Network</span>
+316:         </div>
+317: 
+318:         <span className={styles.timelineArrow}>&rarr;</span>
+319: 
+320:         <div className={styles.timelineItem}>
+321:           <div className={styles.timelineIconCircle}>
+322:             <ShieldCheck size={18} />
+323:           </div>
+324:           <span className={styles.timelineLabel}>Verified Data</span>
+325:         </div>
+326: 
+327:         <span className={styles.timelineArrow}>&rarr;</span>
+328: 
+329:         <div className={styles.timelineItem}>
+330:           <div className={styles.timelineIconCircleGreen}>
+331:             <UserCheck size={18} />
+332:           </div>
+333:           <span className={styles.timelineLabel}>Trusted Access</span>
+334:         </div>
+335: 
+336:       </div>
+337: 
+338:     </section>
+339:   );
+340: };
+341: 
+342: export default EcosystemSegment;
+343: 
+The above content shows the entire, complete file contents of the requested file.

@@ -6,12 +6,11 @@
   background-image: radial-gradient(circle at 50% 45%, rgba(0, 191, 255, 0.12) 0%, rgba(3, 7, 18, 0.94) 80%), url('/premium_bg.png');
   background-size: cover;
   background-position: center bottom;
-  padding: 80px 70px 60px 70px;
+  padding: 90px 70px 40px 70px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 40px;
+  justify-content: space-between;
   position: relative;
   overflow: hidden;
   color: #ffffff;
@@ -167,7 +166,7 @@
 }
 .pedestalGlow {
   position: absolute;
-  bottom: 32px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   width: 190px;
@@ -560,11 +559,7 @@
   filter: drop-shadow(0 0 8px rgba(25, 118, 255, 0.3));
 }
 .segmentContainer[data-theme='light'] .pedestalGlow {
-  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.45) 0%, transparent 70%);
-  width: 140px;
-  height: 30px;
-  bottom: 47px;
-  filter: blur(8px);
+  background: radial-gradient(ellipse, rgba(25, 118, 255, 0.4) 0%, transparent 70%);
 }
 
 /* Day Mode Blockchain Vault Modules */

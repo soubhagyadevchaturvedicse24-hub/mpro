@@ -2,12 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ChevronDown, HeartPulse, Building2, User, ShieldCheck, 
-  Box, Lock, Sun, Moon
+  Box, Lock, Users, FileText, Clock, Sun, Moon
 } from 'lucide-react';
 import Button from '../components/Button';
 import Heart3D from '../components/Heart3D';
 import EcosystemSegment from '../components/EcosystemSegment';
-import LifeSavedSegment from '../components/LifeSavedSegment';
 import styles from './Home.module.css';
 
 const Home = () => {
@@ -17,12 +16,6 @@ const Home = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [theme, setTheme] = useState('dark');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [heartScrollOpacity, setHeartScrollOpacity] = useState(1);
-  const [heartScrollScale, setHeartScrollScale] = useState(1);
-  const [heartScrollLeft, setHeartScrollLeft] = useState(75);
-  const [heartScrollOffsetX, setHeartScrollOffsetX] = useState(0);
-  const [heartScrollOffsetY, setHeartScrollOffsetY] = useState(0);
-  const containerRef = useRef(null);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -45,58 +38,6 @@ const Home = () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
-
-  // Scroll-driven heart transition: Hero -> Ecosystem (dock) -> Life Saved (fade out)
-  useEffect(() => {
-    if (!isHeroActive) return;
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const vh = window.innerHeight;
-      const scrollY = container.scrollTop;
-      
-      // Phase 1: Scroll from 0 to Ecosystem Segment
-      // Dynamically calculate the section offset so the heart docks exactly when the section is perfectly framed.
-      const ecoSection = document.getElementById('ecosystem-segment');
-      const ecoTop = ecoSection ? ecoSection.offsetTop : vh;
-      
-      const p1 = Math.min(1, Math.max(0, scrollY / ecoTop));
-      const newLeft = 75 - (25 * p1); // 75 -> 50
-      const newScale = 1 - (0.72 * p1); // 1.0 -> 0.28
-      const newOffsetX = 15 * p1; // 0px -> 15px
-      
-      // Dynamically find the exact vertical center of the node ring
-      let targetOffsetY = -67; // Fallback
-      const stageCenter = document.getElementById('network-stage-center');
-      if (stageCenter && ecoSection) {
-        const ecoRect = ecoSection.getBoundingClientRect();
-        const stageRect = stageCenter.getBoundingClientRect();
-        // Calculate the center of the nodes relative to the top of the Ecosystem section
-        const centerRelToEco = (stageRect.top - ecoRect.top) + (stageRect.height / 2);
-        // The Y offset needed from 50vh to hit this exact center
-        targetOffsetY = centerRelToEco - (vh / 2);
-      }
-      
-      // Interpolate the vertical offset.
-      // At scrollY = 0, newOffsetY = 0 (centered in Hero).
-      // At scrollY >= ecoTop, p1 = 1, and newOffsetY perfectly locks the heart to the node center 
-      // even if the user scrolls past it (ecoTop - scrollY = -excessScroll).
-      const newOffsetY = p1 * (ecoTop - scrollY + targetOffsetY);
-      
-      // No abrupt fade out; it stays stable in the segment.
-      const newOpacity = 1;
-
-      setHeartScrollLeft(newLeft);
-      setHeartScrollScale(newScale);
-      setHeartScrollOffsetX(newOffsetX);
-      setHeartScrollOffsetY(newOffsetY);
-      setHeartScrollOpacity(newOpacity);
-    };
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [isHeroActive]);
 
   useEffect(() => {
     let mounted = true;
@@ -127,7 +68,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className={styles.container} data-theme={theme} ref={containerRef}>
+    <div className={styles.container} data-theme={theme}>
       {/* ─── AMBIENT BACKGROUND ─── */}
       <div className={styles.ambientBackground} />
 
@@ -167,7 +108,8 @@ const Home = () => {
 
       {/* ─── HERO UI (Section 1) ─── */}
       {isHeroActive && (
-        <>
+        <div className={styles.heroUI}>
+          
           {/* NAVIGATION BAR */}
           <nav className={styles.navbar}>
             <div className={styles.navLogoSection}>
@@ -228,9 +170,8 @@ const Home = () => {
             </div>
           </nav>
 
-          <div className={styles.heroUI}>
-            {/* MAIN CONTENT (Left Side) */}
-            <main className={styles.mainContent}>
+          {/* MAIN CONTENT (Left Side) */}
+          <main className={styles.mainContent}>
             <div className={styles.textContent}>
               <h1 className={styles.headline}>
                 Every donation deserves <br />
@@ -282,28 +223,20 @@ const Home = () => {
                 </Button>
               </div>
             </div>
-            </main>
-          </div>
-        </>
+          </main>
+        </div>
       )}
 
       {/* ─── SINGLE CONTINUOUS 3D HEART INSTANCE ─── */}
-      {/* Stays fixed during loader, transitions to hero-right, docks into Ecosystem on scroll, fades out for LifeSaved */}
-      <div 
-        className={`${styles.heartWrapper} ${(isHeroActive || isLoaderFading) ? styles.heartShiftRight : styles.heartLoading}`}
-        style={isHeroActive ? {
-          opacity: heartScrollOpacity,
-          left: `calc(${heartScrollLeft}% + ${heartScrollOffsetX}px)`,
-          top: `calc(50% + ${heartScrollOffsetY}px)`,
-          transform: `translate(-50%, -50%) scale(${heartScrollScale})`,
-          transition: heartScrollLeft < 75 ? 'none' : undefined, // Disable CSS lag when scrolling
-          pointerEvents: 'none'
-        } : {}}
-      >
+      <div className={`${styles.heartWrapper} ${(isHeroActive || isLoaderFading) ? styles.heartShiftRight : styles.heartLoading}`}>
         <div className={styles.ringOuter} />
         <div className={styles.ringMiddle} />
         <div className={styles.ringInner} />
         <div className={styles.glowBloom} />
+        
+        {!isHeroActive && (
+          <div className={`${styles.loaderHeartBaseGlow} ${isLoaderFading ? styles.fadeOut : ''}`} />
+        )}
 
         <Heart3D 
           mousePos={mousePos} 
@@ -312,37 +245,9 @@ const Home = () => {
         />
       </div>
 
-      {/* ─── NEW VISUAL SEPARATION DIVIDER ─── */}
-      {isHeroActive && (
-        <div className={styles.topTransitionDivider}>
-          <div className={styles.topTransitionLine} />
-          <div className={styles.topTransitionBadge}>
-            <ShieldCheck size={16} />
-            <span>ORGAN SECURED</span>
-          </div>
-          <div className={styles.topTransitionLine} />
-        </div>
-      )}
-
       {/* ─── NEXT SCROLL SEGMENT: BLOCKCHAIN ECOSYSTEM & TELEMETRY (Section 2) ─── */}
       {isHeroActive && (
-        <EcosystemSegment id="ecosystem-segment" theme={theme} mousePos={mousePos} />
-      )}
-
-      {/* ─── HEART TRANSITION DIVIDER ─── */}
-      {isHeroActive && (
-        <div className={styles.heartTransitionDivider}>
-          <div className={styles.heartTransitionLine} />
-          <div className={styles.heartTransitionIcon}>
-            <HeartPulse size={28} strokeWidth={1.5} />
-          </div>
-          <div className={styles.heartTransitionLine} />
-        </div>
-      )}
-
-      {/* ─── LIFE SAVED SEGMENT (Section 3) ─── */}
-      {isHeroActive && (
-        <LifeSavedSegment theme={theme} />
+        <EcosystemSegment theme={theme} mousePos={mousePos} />
       )}
 
     </div>

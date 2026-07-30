@@ -1,0 +1,265 @@
+Created At: 2026-07-30T00:14:43+05:30
+Completed At: 2026-07-30T00:14:43+05:30
+File Path: `file:///D:/Development/Projects/Organ-Transport-System/frontend/src/pages/Home.jsx`
+Total Lines: 257
+Total Bytes: 10387
+Showing lines 1 to 257
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import React, { useState, useEffect, useRef } from 'react';
+2: import { Link } from 'react-router-dom';
+3: import { 
+4:   ChevronDown, HeartPulse, Building2, User, ShieldCheck, 
+5:   Box, Lock, Users, FileText, Clock, Sun, Moon
+6: } from 'lucide-react';
+7: import Button from '../components/Button';
+8: import Heart3D from '../components/Heart3D';
+9: import EcosystemSegment from '../components/EcosystemSegment';
+10: import styles from './Home.module.css';
+11: 
+12: const Home = () => {
+13:   const [progress, setProgress] = useState(0);
+14:   const [isLoaderFading, setIsLoaderFading] = useState(false);
+15:   const [isHeroActive, setIsHeroActive] = useState(false);
+16:   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+17:   const [theme, setTheme] = useState('dark');
+18:   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+19:   const dropdownRef = useRef(null);
+20: 
+21:   useEffect(() => {
+22:     const handleClickOutside = (event) => {
+23:       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+24:         setIsDropdownOpen(false);
+25:       }
+26:     };
+27:     document.addEventListener('mousedown', handleClickOutside);
+28:     
+29:     const handleMouseMove = (e) => {
+30:       const x = (e.clientX / window.innerWidth - 0.5) * 2;
+31:       const y = (e.clientY / window.innerHeight - 0.5) * 2;
+32:       setMousePos({ x, y });
+33:     };
+34:     window.addEventListener('mousemove', handleMouseMove);
+35:     
+36:     return () => {
+37:       document.removeEventListener('mousedown', handleClickOutside);
+38:       window.removeEventListener('mousemove', handleMouseMove);
+39:     };
+40:   }, []);
+41: 
+42:   useEffect(() => {
+43:     let mounted = true;
+44:     let currentProgress = 0;
+45:     
+46:     const interval = setInterval(() => {
+47:       const increment = Math.max(1, Math.floor(Math.random() * 4));
+48:       currentProgress += increment;
+49:       if (currentProgress >= 100) {
+50:         currentProgress = 100;
+51:         clearInterval(interval);
+52:         setTimeout(() => {
+53:           if (mounted) {
+54:             setIsLoaderFading(true);
+55:             setTimeout(() => {
+56:               if (mounted) setIsHeroActive(true);
+57:             }, 800); 
+58:           }
+59:         }, 500);
+60:       }
+61:       if (mounted) setProgress(currentProgress);
+62:     }, 40);
+63: 
+64:     return () => {
+65:       mounted = false;
+66:       clearInterval(interval);
+67:     };
+68:   }, []);
+69: 
+70:   return (
+71:     <div className={styles.container} data-theme={theme}>
+72:       {/* ─── AMBIENT BACKGROUND ─── */}
+73:       <div className={styles.ambientBackground} />
+74: 
+75:       {/* ─── PURE APPLE HEALTHCARE LOADER UI ─── */}
+76:       {!isHeroActive && (
+77:         <div className={`${styles.loaderUI} ${isLoaderFading ? styles.fadeOut : ''}`}>
+78:           
+79:           {/* Top Medical Status Badge */}
+80:           <div className={styles.medicalStatusBadge}>
+81:             <div className={styles.pulseDot} />
+82:             <span>ORGAN TRANSPORTS NETWORK &bull; LIVE LOGISTICS TELEMETRY</span>
+83:           </div>
+84: 
+85:           {/* Central Soft Breathing Halo Ring */}
+86:           <div className={styles.medicalHalo} />
+87: 
+88:           {/* Bottom Typography & Progress Group */}
+89:           <div className={styles.loaderBottomGroup}>
+90:             <div className={styles.brandContainer}>
+91:               <span className={styles.brandText}>Ne</span>
+92:               <div className={styles.brandLogo}>
+93:                 <div className={styles.brandLogoInner} />
+94:               </div>
+95:               <span className={styles.brandText}>Life</span>
+96:             </div>
+97:             <div className={styles.loaderSubtitle}>THE FUTURE OF ORGAN TRANSPLANTATION</div>
+98:             
+99:             <div className={styles.progressBarContainer}>
+100:               <div className={styles.progressBarFill} style={{ width: `${progress}%` }} />
+101:             </div>
+102:             <div className={styles.progressText}>{progress}%</div>
+103:             <div className={styles.loadingText}>INITIALIZING TRANSPORTS NETWORK...</div>
+104:           </div>
+105: 
+106:         </div>
+107:       )}
+108: 
+109:       {/* ─── HERO UI (Section 1) ─── */}
+110:       {isHeroActive && (
+111:         <div className={styles.heroUI}>
+112:           
+113:           {/* NAVIGATION BAR */}
+114:           <nav className={styles.navbar}>
+115:             <div className={styles.navLogoSection}>
+116:               <div className={styles.navLogoIcon}>
+117:                 <HeartPulse size={24} className={styles.accentIcon} strokeWidth={2} />
+118:               </div>
+119:               <div className={styles.navLogoTextGroup}>
+120:                 <div className={styles.navBrandText}>
+121:                   Neo<span className={styles.accentText}>Life</span>
+122:                 </div>
+123:                 <div className={styles.navSubtitle}>OrganChain Network</div>
+124:               </div>
+125:             </div>
+126: 
+127:             <div className={styles.navCenterLinks}>
+128:               <a href="#home" className={`${styles.navLink} ${styles.navLinkActive}`}>Home</a>
+129:               <a href="#about" className={styles.navLink}>About</a>
+130:               <a href="#contact" className={styles.navLink}>Contact</a>
+131:             </div>
+132: 
+133:             <div className={styles.navRight}>
+134:               <button 
+135:                 className={styles.themeToggleBtn}
+136:                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+137:                 aria-label="Toggle theme"
+138:               >
+139:                 {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+140:               </button>
+141: 
+142:               <div 
+143:                 className={styles.loginDropdownContainer} 
+144:                 ref={dropdownRef}
+145:               >
+146:                 <Button 
+147:                   variant="secondary" 
+148:                   size="sm"
+149:                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+150:                 >
+151:                   Login <ChevronDown size={16} style={{ marginLeft: '4px' }} />
+152:                 </Button>
+153:                 {isDropdownOpen && (
+154:                   <div className={styles.dropdownMenu}>
+155:                     <Link to="/login" className={styles.dropdownItem}>
+156:                       <HeartPulse size={16} className={styles.dropdownIcon} /> Donor
+157:                     </Link>
+158:                     <Link to="/login" className={styles.dropdownItem}>
+159:                       <Building2 size={16} className={styles.dropdownIcon} /> Hospital
+160:                     </Link>
+161:                     <Link to="/login" className={styles.dropdownItem}>
+162:                       <User size={16} className={styles.dropdownIcon} /> Receiver
+163:                     </Link>
+164:                     <Link to="/login" className={styles.dropdownItem}>
+165:                       <ShieldCheck size={16} className={styles.dropdownIcon} /> Admin
+166:                     </Link>
+167:                   </div>
+168:                 )}
+169:               </div>
+170:             </div>
+171:           </nav>
+172: 
+173:           {/* MAIN CONTENT (Left Side) */}
+174:           <main className={styles.mainContent}>
+175:             <div className={styles.textContent}>
+176:               <h1 className={styles.headline}>
+177:                 Every donation deserves <br />
+178:                 <span className={styles.highlightText}>absolute trust.</span>
+179:               </h1>
+180:               <p className={styles.paragraph}>
+181:                 NeoLife is a blockchain-powered organ transplant ecosystem. 
+182:                 We bring total transparency, impenetrable security, and AI-driven 
+183:                 matching to the gift of life.
+184:               </p>
+185: 
+186:               <div className={styles.featureGrid}>
+187:                 <div className={styles.featureItem}>
+188:                   <div className={styles.featureIconBox}><ShieldCheck size={20} className={styles.featureIcon} /></div>
+189:                   <div className={styles.featureTextGroup}>
+190:                     <div className={styles.featureTitle}>SECURE</div>
+191:                     <div className={styles.featureSub}>Blockchain Secured</div>
+192:                   </div>
+193:                 </div>
+194:                 <div className={styles.featureItem}>
+195:                   <div className={styles.featureIconBox}><Box size={20} className={styles.featureIcon} /></div>
+196:                   <div className={styles.featureTextGroup}>
+197:                     <div className={styles.featureTitle}>SMART</div>
+198:                     <div className={styles.featureSub}>AI Powered Matching</div>
+199:                   </div>
+200:                 </div>
+201:                 <div className={styles.featureItem}>
+202:                   <div className={styles.featureIconBox}><HeartPulse size={20} className={styles.featureIcon} /></div>
+203:                   <div className={styles.featureTextGroup}>
+204:                     <div className={styles.featureTitle}>LIFE</div>
+205:                     <div className={styles.featureSub}>Connecting Life</div>
+206:                   </div>
+207:                 </div>
+208:                 <div className={styles.featureItem}>
+209:                   <div className={styles.featureIconBox}><Lock size={20} className={styles.featureIcon} /></div>
+210:                   <div className={styles.featureTextGroup}>
+211:                     <div className={styles.featureTitle}>TRUST</div>
+212:                     <div className={styles.featureSub}>Tamper Proof</div>
+213:                   </div>
+214:                 </div>
+215:               </div>
+216: 
+217:               <div className={styles.ctaGroup}>
+218:                 <Button variant="primary" size="lg" className={styles.btnExplore}>
+219:                   Explore the Network
+220:                 </Button>
+221:                 <Button variant="outline" size="lg" className={styles.btnWhitepaper}>
+222:                   Read Whitepaper
+223:                 </Button>
+224:               </div>
+225:             </div>
+226:           </main>
+227:         </div>
+228:       )}
+229: 
+230:       {/* ─── SINGLE CONTINUOUS 3D HEART INSTANCE ─── */}
+231:       <div className={`${styles.heartWrapper} ${(isHeroActive || isLoaderFading) ? styles.heartShiftRight : styles.heartLoading}`}>
+232:         <div className={styles.ringOuter} />
+233:         <div className={styles.ringMiddle} />
+234:         <div className={styles.ringInner} />
+235:         <div className={styles.glowBloom} />
+236:         
+237:         {!isHeroActive && (
+238:           <div className={`${styles.loaderHeartBaseGlow} ${isLoaderFading ? styles.fadeOut : ''}`} />
+239:         )}
+240: 
+241:         <Heart3D 
+242:           mousePos={mousePos} 
+243:           modelUrl={theme === 'light' ? "/heart3d.glb" : "/heart3d_night.glb"} 
+244:           className={theme === 'light' ? styles.heart3DBeatingDay : styles.heart3DBeating}
+245:         />
+246:       </div>
+247: 
+248:       {/* ─── NEXT SCROLL SEGMENT: BLOCKCHAIN ECOSYSTEM & TELEMETRY (Section 2) ─── */}
+249:       {isHeroActive && (
+250:         <EcosystemSegment theme={theme} mousePos={mousePos} />
+251:       )}
+252: 
+253:     </div>
+254:   );
+255: };
+256: 
+257: export default Home;
+The above content shows the entire, complete file contents of the requested file.

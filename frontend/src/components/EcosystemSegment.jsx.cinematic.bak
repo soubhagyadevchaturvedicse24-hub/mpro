@@ -8,9 +8,9 @@ import {
 import Heart3D from './Heart3D';
 import styles from './EcosystemSegment.module.css';
 
-const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
+const EcosystemSegment = ({ theme = 'dark', mousePos }) => {
   return (
-    <section id={id} className={styles.segmentContainer} data-theme={theme}>
+    <section className={styles.segmentContainer} data-theme={theme}>
       
       {/* ─── MAIN THREE-COLUMN LAYOUT ─── */}
       <div className={styles.dashboardGrid}>
@@ -61,10 +61,14 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
             </svg>
 
             {/* Center Floating Heart Pedestal */}
-            <div id="network-stage-center" className={styles.centerHeartPedestal}>
+            <div className={styles.centerHeartPedestal}>
               <div className={styles.pedestalGlow} />
               <div className={styles.heartContainerInsideCube}>
-                {/* Heart3D instance removed: The main floating heart from Home.jsx will dock here via scroll transition */}
+                <Heart3D 
+                  mousePos={mousePos} 
+                  modelUrl="/heart3d.glb" 
+                  className={styles.heartInCube} 
+                />
               </div>
             </div>
 

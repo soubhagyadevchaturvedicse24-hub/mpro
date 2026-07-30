@@ -53,7 +53,8 @@ const Heart3D = ({ mousePos, modelUrl, className }) => {
           height: '80%', 
           backgroundColor: 'transparent',
           '--progress-bar-color': 'transparent',
-          '--progress-bar-height': '0px'
+          '--progress-bar-height': '0px',
+          pointerEvents: 'none'
         }}
       >
       </model-viewer>
