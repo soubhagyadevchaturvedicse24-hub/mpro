@@ -713,6 +713,11 @@
 .container[data-theme='light'] .ambientBackground {
   display: block !important;
   opacity: 1;
+  background-color: #F5F5F7;
+  background-image: radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.08) 0%, rgba(147, 197, 253, 0.05) 50%, rgba(245, 245, 247, 0.4) 100%), url('/day_bg.png');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
 }
 
 .container[data-theme='light'] .brandText {

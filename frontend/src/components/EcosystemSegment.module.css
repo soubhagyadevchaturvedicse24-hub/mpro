@@ -573,8 +573,8 @@
    DAY MODE: MEDICAL TECHNOLOGY EXPERIENCE (data-theme='light')
    ════════════════════════════════════════════════════════════════════ */
 .segmentContainer[data-theme='light'] {
-  background-color: transparent;
-  background-image: none;
+  background: linear-gradient(180deg, rgba(245, 245, 247, 0.35) 0%, rgba(245, 245, 247, 0.70) 100%);
+  backdrop-filter: blur(10px);
   color: #1a202c;
 }
 

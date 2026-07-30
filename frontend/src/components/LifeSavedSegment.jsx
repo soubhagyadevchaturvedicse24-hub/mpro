@@ -93,9 +93,11 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
       id="life-saved-segment"
       className="relative w-full font-sans min-h-screen overflow-hidden flex flex-col justify-between pt-[90px]"
       style={{
-        background: isLight ? '#F5F5F7' : 'linear-gradient(180deg, rgba(3, 7, 18, 0.75) 0%, rgba(3, 7, 18, 0.94) 100%)',
-        backdropFilter: isLight ? 'none' : 'blur(14px)',
-        WebkitBackdropFilter: isLight ? 'none' : 'blur(14px)',
+        background: isLight 
+          ? 'linear-gradient(180deg, rgba(245, 245, 247, 0.70) 0%, rgba(245, 245, 247, 0.92) 100%)' 
+          : 'linear-gradient(180deg, rgba(3, 7, 18, 0.75) 0%, rgba(3, 7, 18, 0.94) 100%)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
       }}
     >
       {/* Muted ambient glowing background blobs for dark mode */}
