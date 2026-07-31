@@ -106,17 +106,32 @@ const Home = () => {
     const container = containerRef.current;
     if (!container) return;
 
-    const smoothScrollTo = (targetY) => {
+    // Easing function: ease-in-out cubic for a cinematic, highly controlled smooth scroll
+    const easeInOutCubic = (t) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const smoothScrollTo = (targetY, duration = 900) => {
+      const startY = container.scrollTop;
+      const distance = targetY - startY;
+      const startTime = performance.now();
+
+      const step = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        container.scrollTop = startY + distance * easeInOutCubic(progress);
+        
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          // Add a tiny buffer after scroll finishes before unlocking trackpad
+          setTimeout(() => {
+            isSnappingRef.current = false;
+          }, 50);
+        }
+      };
+
       isSnappingRef.current = true;
-      container.scrollTo({
-        top: targetY,
-        behavior: 'smooth'
-      });
-      
-      // Release lock after native scroll animation completes
-      setTimeout(() => {
-        isSnappingRef.current = false;
-      }, 800);
+      requestAnimationFrame(step);
     };
 
     const getSnapPoints = () => {
@@ -143,46 +158,34 @@ const Home = () => {
 
       const snapPoints = getSnapPoints();
       if (snapPoints.length === 0) return;
-      const ecoPoint = snapPoints[1] || 0; // Ecosystem / Blockchain segment offsetTop
       const lastSnapPoint = snapPoints[snapPoints.length - 1];
       const currentY = container.scrollTop;
 
-      // 1. SCROLLING UP (e.deltaY < 0) from Ecosystem segment: 1 unit scroll automatically goes to top (Hero, y = 0)
-      if (e.deltaY < 0 && currentY <= ecoPoint + 200) {
-        e.preventDefault();
-        smoothScrollTo(0);
-        return;
-      }
+      // Allow native bounce/overscroll at the very top and bottom bounds
+      if (currentY <= 10 && e.deltaY < 0) return;
+      if (currentY >= lastSnapPoint - 10 && e.deltaY > 0) return;
 
-      // 2. SCROLLING DOWN (e.deltaY > 0) past LifeSaved into footer: allow free scrolling
-      if (currentY >= lastSnapPoint - 10 && e.deltaY > 0) {
-        return;
-      }
-
-      // 3. Otherwise, snap to target section in direction of scroll
+      // Lock scroll and accumulate wheel deltas
       e.preventDefault();
-
       wheelAccumulator += e.deltaY;
 
       clearTimeout(wheelTimeout);
       wheelTimeout = setTimeout(() => {
-        const currentY = container.scrollTop;
-        const snapPoints = getSnapPoints();
         const direction = wheelAccumulator > 0 ? 1 : -1;
         wheelAccumulator = 0;
 
         let target = null;
         if (direction > 0) {
-          target = snapPoints.find((p) => p > currentY + 50);
+          target = snapPoints.find((p) => p > currentY + 10);
         } else {
           const reversed = [...snapPoints].reverse();
-          target = reversed.find((p) => p < currentY - 50);
+          target = reversed.find((p) => p < currentY - 10);
         }
 
         if (target !== undefined && target !== null) {
           smoothScrollTo(target);
         }
-      }, 20);
+      }, 35);
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
