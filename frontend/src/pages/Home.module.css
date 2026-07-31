@@ -52,7 +52,8 @@
   height: 100vh;
   min-height: 100vh;
   overflow-x: hidden;
-  overflow-y: hidden; /* Hide scrollbar entirely for pure JS control */
+  overflow-y: auto;
+  scroll-behavior: auto;
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
   background-color: var(--neo-base);
@@ -220,7 +221,6 @@
 /* ─── SECTION BACKGROUNDS — TRANSPARENT (aurora shows through) */
 .sectionHero {
   background: transparent;
-  height: 100vh;
 }
 .sectionEco {
   /* Ultra-thin tinted overlay for the ecosystem dark depth */
@@ -237,9 +237,6 @@
 .sectionDivider {
   width: 100%;
   height: 1px;
-  margin-top: -1px; /* Pull it up into the previous section so it takes 0 layout space */
-  position: relative;
-  z-index: 50;
   flex-shrink: 0;
   background: linear-gradient(
     90deg,
@@ -601,126 +598,66 @@
 
 .headline {
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 5rem; /* Match the large sizing in screenshot */
-  font-weight: 700;
-  line-height: 1.05;
-  margin-bottom: 20px;
+  font-size: 4rem;
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 24px;
   letter-spacing: -1.5px;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  color: #F8FAFC;
 }
 .highlightText {
-  font-weight: 700;
-  background: linear-gradient(90deg, #00d2ff 0%, #8b5cf6 100%);
+  font-weight: 500;
+  background: var(--highlight-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.heroEkgLine {
-  margin-bottom: 24px;
-  width: 400px;
-  max-width: 100%;
-}
-
 .paragraph {
   font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 1.1rem;
-  color: #94A3B8;
-  line-height: 1.6;
-  margin-bottom: 32px;
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 40px;
   max-width: 520px;
-}
-
-.ctaGroup {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 48px;
-}
-
-/* Button Customizations to match Screenshot EXACTLY */
-.btnRegisterHospital {
-  background: linear-gradient(180deg, rgba(0, 191, 255, 0.15) 0%, rgba(0, 191, 255, 0.05) 100%) !important;
-  border: 1px solid #00d2ff !important;
-  color: #00d2ff !important;
-  border-radius: 8px !important;
-  box-shadow: inset 0 0 12px rgba(0, 210, 255, 0.2), 0 0 15px rgba(0, 210, 255, 0.15) !important;
-}
-.btnRegisterHospital svg {
-  color: #00d2ff !important;
-}
-.btnRegisterHospital:hover {
-  background: rgba(0, 191, 255, 0.2) !important;
-  box-shadow: inset 0 0 16px rgba(0, 210, 255, 0.3), 0 0 25px rgba(0, 210, 255, 0.25) !important;
-}
-
-.btnBecomeDonor {
-  background: linear-gradient(90deg, #1e3a8a 0%, #4c1d95 100%) !important;
-  border: 1px solid rgba(0, 210, 255, 0.3) !important;
-  border-top: 1px solid #00d2ff !important; /* Prominent top edge highlight */
-  color: #ffffff !important;
-  border-radius: 8px !important;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 0 20px rgba(76, 29, 149, 0.4) !important;
-}
-.btnBecomeDonor svg {
-  color: #c7d2fe !important;
-}
-.btnBecomeDonor:hover {
-  background: linear-gradient(90deg, #2563eb 0%, #6d28d9 100%) !important;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 0 30px rgba(109, 40, 217, 0.6) !important;
-}
-
-.btnLearnMore {
-  background: rgba(0, 0, 0, 0.4) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  color: #f8fafc !important;
-  border-radius: 8px !important;
-  box-shadow: none !important;
-}
-.btnLearnMore svg {
-  color: #cbd5e1 !important;
-}
-.btnLearnMore:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
 /* Feature Grid */
 .featureGrid {
-  display: flex;
-  gap: 24px;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 45px;
 }
 
 .featureItem {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: transparent;
-  border: none;
-  padding: 0;
-  border-radius: 0;
-  backdrop-filter: none;
+  gap: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 16px 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
 .featureItem:hover {
-  background: transparent;
-  border-color: transparent;
+  background: var(--card-hover-bg);
+  border-color: var(--card-hover-border);
   transform: translateY(-2px);
-  box-shadow: none;
+  box-shadow: 0 10px 30px rgba(0, 210, 255, 0.1);
 }
 
 .featureIconBox {
-  background: transparent;
-  padding: 0;
-  border-radius: 0;
+  background: var(--icon-box-bg);
+  padding: 12px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: none;
+  border: 1px solid var(--icon-box-border);
 }
 .featureIcon {
-  color: #38bdf8;
-  opacity: 0.8;
+  color: var(--primary-accent);
 }
 .featureTextGroup {
   display: flex;
@@ -728,16 +665,29 @@
 }
 .featureTitle {
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #E2E8F0;
-  letter-spacing: 0px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: 1px;
 }
 .featureSub {
   font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 0.75rem;
-  color: #64748B;
-  line-height: 1.3;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.ctaGroup {
+  display: flex;
+  gap: 20px;
+}
+.btnExplore {
+  padding: 0 32px;
+  font-weight: 500;
+  box-shadow: 0 0 20px rgba(0, 119, 255, 0.4);
+}
+.btnWhitepaper {
+  padding: 0 32px;
+  color: var(--text-muted);
 }
 
 
@@ -1226,33 +1176,4 @@
 @keyframes pulseEkg {
   0% { opacity: 0.3; transform: scale(1.01); }
   100% { opacity: 0.7; transform: scale(1); }
-}
-
-/* ─── CINEMATIC 3D TYPOGRAPHY (PHASE 1 & 2) ─── */
-.cinematicTextContainer {
-  position: absolute;
-  top: 45%; /* Slightly above center to sit nicely behind text */
-  left: 50%;
-  transform: translate(-50%, -50%) rotateX(8deg) rotateY(-12deg);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 0;
-  perspective: 1200px;
-  transform-style: preserve-3d;
-}
-
-.cinematicTextLayer {
-  position: absolute;
-  font-family: 'Inter', sans-serif;
-  font-weight: 900;
-  font-size: 22rem;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  text-transform: uppercase;
-  color: transparent;
-  /* Basic styling will be layered on top via inline style mapping */
 }

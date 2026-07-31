@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ChevronDown, HeartPulse, Building2, User, ShieldCheck, 
-  Box, Lock, Sun, Moon, BrainCircuit, Target, Play
+  Box, Lock, Sun, Moon
 } from 'lucide-react';
 import Button from '../components/Button';
 import Heart3D from '../components/Heart3D';
@@ -18,10 +18,14 @@ const Home = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [theme, setTheme] = useState('dark');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [heartScrollOpacity, setHeartScrollOpacity] = useState(1);
+  const [heartScrollScale, setHeartScrollScale] = useState(1);
+  const [heartScrollLeft, setHeartScrollLeft] = useState(75);
+  const [heartScrollOffsetX, setHeartScrollOffsetX] = useState(0);
+  const [heartScrollOffsetY, setHeartScrollOffsetY] = useState(0);
   const containerRef = useRef(null);
   const dropdownRef = useRef(null);
   const isSnappingRef = useRef(false);
-  const heartWrapperRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -85,93 +89,114 @@ const Home = () => {
       // No abrupt fade out; it stays stable in the segment.
       const newOpacity = 1;
 
-      if (heartWrapperRef.current) {
-        const style = heartWrapperRef.current.style;
-        style.opacity = newOpacity;
-        style.left = `calc(${newLeft}% + ${newOffsetX}px)`;
-        style.top = `calc(50% + ${newOffsetY}px)`;
-        style.transform = `translate(-50%, -50%) scale(${newScale})`;
-        style.transition = newLeft < 75 ? 'none' : '';
-      }
+      setHeartScrollLeft(newLeft);
+      setHeartScrollScale(newScale);
+      setHeartScrollOffsetX(newOffsetX);
+      setHeartScrollOffsetY(newOffsetY);
+      setHeartScrollOpacity(newOpacity);
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
     return () => container.removeEventListener('scroll', handleScroll);
   }, [isHeroActive]);
-  // ── CUSTOM SLOW-MOTION JS SCROLLING ────────────────────────────────
+
+  // ── JS-based smooth scroll snapping (controlled speed) ──────────────────
   useEffect(() => {
     if (!isHeroActive) return;
     const container = containerRef.current;
     if (!container) return;
 
-    let isSnapping = false;
-    let wheelAccumulator = 0;
-    let wheelTimeout = null;
-    let currentSegmentIndex = 0;
+    // Easing function: ease-in-out cubic
+    const easeInOutCubic = (t) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-    // Use specific targets (3 full screens + 1 short footer)
-    const getTargets = () => {
-      const vh = window.innerHeight;
-      const footer = document.querySelector('footer');
-      const footerHeight = footer ? footer.offsetHeight : 0;
-      return [
-        0,                 // Hero
-        vh,                // Ecosystem
-        vh * 2,            // LifeSaved
-        vh * 2 + footerHeight // Footer
-      ];
-    };
-
-    // easeOutQuart: starts fast immediately (0 latency), slows down at the end
-    const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
-
-    const smoothScrollTo = (targetY, duration = 1000) => {
+    const smoothScrollTo = (targetY, duration = 900) => {
       const startY = container.scrollTop;
       const distance = targetY - startY;
       const startTime = performance.now();
-      isSnapping = true;
 
       const step = (currentTime) => {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        
-        container.scrollTop = startY + distance * easeOutQuart(progress);
-        
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        } else {
-          // Cooldown to absorb trackpad inertia and prevent double-jumping
-          setTimeout(() => {
-            isSnapping = false;
-          }, 200);
-        }
+        container.scrollTop = startY + distance * easeInOutCubic(progress);
+        if (progress < 1) requestAnimationFrame(step);
+        else isSnappingRef.current = false;
       };
 
+      isSnappingRef.current = true;
       requestAnimationFrame(step);
     };
 
+    const getSnapPoints = () => {
+      const points = [];
+      // Section 1: Hero (always starts at 0)
+      points.push(0);
+      // Section 2: Ecosystem
+      const eco = document.getElementById('ecosystem-segment');
+      if (eco) points.push(eco.offsetTop);
+      // Section 3: LifeSaved — sits after dividers
+      const lifeSaved = document.getElementById('life-saved-segment');
+      if (lifeSaved) points.push(lifeSaved.offsetTop);
+      return points;
+    };
+
+    let wheelAccumulator = 0;
+    let wheelTimeout = null;
+
     const handleWheel = (e) => {
-      e.preventDefault(); 
-      
-      if (isSnapping) return;
-
-      // Trigger instantly on ANY scroll direction
-      const targets = getTargets();
-      const maxIndex = targets.length - 1;
-
-      if (e.deltaY > 0 && currentSegmentIndex < maxIndex) {
-        currentSegmentIndex++;
-        smoothScrollTo(targets[currentSegmentIndex]);
-      } else if (e.deltaY < 0 && currentSegmentIndex > 0) {
-        currentSegmentIndex--;
-        smoothScrollTo(targets[currentSegmentIndex]);
+      if (isSnappingRef.current) {
+        e.preventDefault();
+        return;
       }
+
+      const snapPoints = getSnapPoints();
+      if (snapPoints.length === 0) return;
+      const ecoPoint = snapPoints[1] || 0; // Ecosystem / Blockchain segment offsetTop
+      const lastSnapPoint = snapPoints[snapPoints.length - 1];
+      const currentY = container.scrollTop;
+
+      // 1. SCROLLING UP (e.deltaY < 0) from Ecosystem segment: 1 unit scroll automatically goes to top (Hero, y = 0)
+      if (e.deltaY < 0 && currentY <= ecoPoint + 200) {
+        e.preventDefault();
+        smoothScrollTo(0, 800);
+        return;
+      }
+
+      // 2. SCROLLING DOWN (e.deltaY > 0) past LifeSaved into footer: allow free scrolling
+      if (currentY >= lastSnapPoint - 10 && e.deltaY > 0) {
+        return;
+      }
+
+      // 3. Otherwise, snap to target section in direction of scroll
+      e.preventDefault();
+
+      wheelAccumulator += e.deltaY;
+
+      clearTimeout(wheelTimeout);
+      wheelTimeout = setTimeout(() => {
+        const currentY = container.scrollTop;
+        const snapPoints = getSnapPoints();
+        const direction = wheelAccumulator > 0 ? 1 : -1;
+        wheelAccumulator = 0;
+
+        let target = null;
+        if (direction > 0) {
+          target = snapPoints.find((p) => p > currentY + 50);
+        } else {
+          const reversed = [...snapPoints].reverse();
+          target = reversed.find((p) => p < currentY - 50);
+        }
+
+        if (target !== undefined && target !== null) {
+          smoothScrollTo(target, 800);
+        }
+      }, 25);
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       container.removeEventListener('wheel', handleWheel);
-
+      clearTimeout(wheelTimeout);
     };
   }, [isHeroActive]);
 
@@ -313,103 +338,57 @@ const Home = () => {
             {/* Ambient EKG Lightning (Night Mode Only) */}
             {theme === 'dark' && <div className={styles.ambientEkgLightning} />}
             
-            {/* Phase 1-3: Layout & Premium 3D Typography */}
-            <div className={styles.cinematicTextContainer}>
-              {[...Array(15)].map((_, i) => {
-                // Front layer gets a subtle outline, back layers get darker/blurred
-                const isFront = i === 0;
-                const zOffset = -(i * 8); // Push back 8px per layer
-                const opacity = 1 - (i * 0.05); // Fade slightly as it goes back
-                const blur = i > 5 ? (i - 5) * 0.5 : 0; // Atmospheric depth of field blur
-
-                return (
-                  <span 
-                    key={i} 
-                    className={styles.cinematicTextLayer}
-                    style={{
-                      transform: `translateZ(${zOffset}px)`,
-                      opacity: opacity,
-                      filter: `blur(${blur}px)`,
-                      WebkitTextStroke: isFront ? '1px rgba(255, 255, 255, 0.1)' : 'none',
-                      color: isFront 
-                        ? 'transparent' // Front face is hollow/glassy
-                        : `rgba(15, 23, 42, ${1 - i * 0.02})`, // Deep navy extrusion body
-                      textShadow: isFront 
-                        ? '0 0 20px rgba(0, 191, 255, 0.1)' 
-                        : '0 4px 12px rgba(0,0,0,0.5)',
-                    }}
-                  >
-                    TRUST
-                  </span>
-                );
-              })}
-            </div>
-
             {/* MAIN CONTENT (Left Side) */}
             <main className={styles.mainContent}>
             <div className={styles.textContent}>
               <h1 className={styles.headline}>
-                Every donation <br />
-                deserves <br />
+                Every donation deserves <br />
                 <span className={styles.highlightText}>absolute trust.</span>
               </h1>
-              
-              <div className={styles.heroEkgLine}>
-                <svg viewBox="0 0 400 30" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M 0 15 L 100 15 L 115 5 L 130 25 L 150 -5 L 170 35 L 190 10 L 210 20 L 225 15 L 400 15" 
-                        fill="none" stroke="rgba(0, 191, 255, 0.8)" strokeWidth="2" 
-                        style={{ filter: 'drop-shadow(0px 0px 4px rgba(0,191,255,0.8))' }}/>
-                  <circle cx="400" cy="15" r="3" fill="rgba(0, 191, 255, 1)" style={{ filter: 'drop-shadow(0px 0px 6px rgba(0,191,255,1))' }} />
-                </svg>
-              </div>
-
               <p className={styles.paragraph}>
-                NeoLife is a blockchain-powered organ transplant 
-                ecosystem. We bring total transparency, impenetrable 
-                security, and AI-driven matching to the gift of life.
+                NeoLife is a blockchain-powered organ transplant ecosystem. 
+                We bring total transparency, impenetrable security, and AI-driven 
+                matching to the gift of life.
               </p>
-
-              <div className={styles.ctaGroup}>
-                <Button variant="outline" size="lg" className={styles.btnRegisterHospital}>
-                  <Building2 size={18} /> Register Hospital
-                </Button>
-                <Button variant="primary" size="lg" className={styles.btnBecomeDonor}>
-                  <User size={18} /> Become a Donor
-                </Button>
-                <Button variant="outline" size="lg" className={styles.btnLearnMore}>
-                  <Play size={18} /> Learn More
-                </Button>
-              </div>
 
               <div className={styles.featureGrid}>
                 <div className={styles.featureItem}>
                   <div className={styles.featureIconBox}><ShieldCheck size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>Blockchain Secured</div>
-                    <div className={styles.featureSub}>Immutable &<br/>verifiable</div>
+                    <div className={styles.featureTitle}>SECURE</div>
+                    <div className={styles.featureSub}>Blockchain Secured</div>
                   </div>
                 </div>
                 <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><BrainCircuit size={20} className={styles.featureIcon} /></div>
+                  <div className={styles.featureIconBox}><Box size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>AI-Powered Matching</div>
-                    <div className={styles.featureSub}>Smarter, faster<br/>better matches</div>
+                    <div className={styles.featureTitle}>SMART</div>
+                    <div className={styles.featureSub}>AI Powered Matching</div>
                   </div>
                 </div>
                 <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><Building2 size={20} className={styles.featureIcon} /></div>
+                  <div className={styles.featureIconBox}><HeartPulse size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>Hospital Network</div>
-                    <div className={styles.featureSub}>Trusted hospitals<br/>across India</div>
+                    <div className={styles.featureTitle}>LIFE</div>
+                    <div className={styles.featureSub}>Connecting Life</div>
                   </div>
                 </div>
                 <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><Target size={20} className={styles.featureIcon} /></div>
+                  <div className={styles.featureIconBox}><Lock size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>Live Organ Tracking</div>
-                    <div className={styles.featureSub}>Real-time updates<br/>every step</div>
+                    <div className={styles.featureTitle}>TRUST</div>
+                    <div className={styles.featureSub}>Tamper Proof</div>
                   </div>
                 </div>
+              </div>
+
+              <div className={styles.ctaGroup}>
+                <Button variant="primary" size="lg" className={styles.btnExplore}>
+                  Explore the Network
+                </Button>
+                <Button variant="outline" size="lg" className={styles.btnWhitepaper}>
+                  Read Whitepaper
+                </Button>
               </div>
             </div>
             </main>
@@ -420,9 +399,15 @@ const Home = () => {
       {/* ─── SINGLE CONTINUOUS 3D HEART INSTANCE ─── */}
       {/* Stays fixed during loader, transitions to hero-right, docks into Ecosystem on scroll, fades out for LifeSaved */}
       <div 
-        ref={heartWrapperRef}
         className={`${styles.heartWrapper} ${(isHeroActive || isLoaderFading) ? styles.heartShiftRight : styles.heartLoading}`}
-        style={isHeroActive ? { pointerEvents: 'none' } : {}}
+        style={isHeroActive ? {
+          opacity: heartScrollOpacity,
+          left: `calc(${heartScrollLeft}% + ${heartScrollOffsetX}px)`,
+          top: `calc(50% + ${heartScrollOffsetY}px)`,
+          transform: `translate(-50%, -50%) scale(${heartScrollScale})`,
+          transition: heartScrollLeft < 75 ? 'none' : undefined, // Disable CSS lag when scrolling
+          pointerEvents: 'none'
+        } : {}}
       >
         <div className={styles.ringOuter} />
         <div className={styles.ringMiddle} />

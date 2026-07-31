@@ -23,8 +23,6 @@
   color: var(--text-main);
   font-family: var(--font-sans, 'Inter', sans-serif);
   transition: background 0.5s ease, color 0.5s ease;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 /* ─── THREE-COLUMN DASHBOARD GRID (PROPORTION BALANCED) ─── */
