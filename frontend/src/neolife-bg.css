@@ -1,0 +1,235 @@
+/*
+ * ═══════════════════════════════════════════════════════════════
+ *  NeoLife OrganChain — Premium Background System
+ *  Version: 2.0  |  Scope: Home page (Day Mode + Night Mode)
+ *
+ *  Layering Architecture:
+ *   Layer 0  →  Root base color  (solid fill, GPU composited)
+ *   Layer 1  →  Primary radial glow  (top-center)
+ *   Layer 2  →  Secondary accent glow  (bottom-right corner)
+ *   Layer 3  →  Dot grid  (CSS radial-gradient, no PNG/SVG)
+ *   Layer 4  →  Section-level tone shift  (per-section override)
+ *   Layer 5  →  Horizontal gradient dividers  (between sections)
+ *
+ *  Rules:
+ *   - Zero filter: blur() on large elements (GPU safe)
+ *   - All colors via CSS custom properties
+ *   - Smooth 0.4s ease toggle, disabled under prefers-reduced-motion
+ *   - Dot grid via radial-gradient background-image only
+ * ═══════════════════════════════════════════════════════════════
+ */
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 1 · NIGHT MODE — CSS CUSTOM PROPERTIES
+   Applied to [data-theme="dark"] on .container (the scroll root)
+────────────────────────────────────────────────────────────── */
+
+.neoContainer[data-theme='dark'] {
+  /* ─ Base ─ */
+  --neo-base:           #0A0F1E;
+  --neo-root-bg:        #0A0F1E;
+
+  /* ─ Layer 1: Top-center primary glow (deep teal-navy) ─ */
+  --neo-glow1-from:     #0D2137;
+  --neo-glow1-to:       #0A0F1E;
+
+  /* ─ Layer 2: Bottom-right emerald accent glow ─ */
+  --neo-glow2-from:     rgba(11, 61, 46, 0.72);
+  --neo-glow2-to:       transparent;
+
+  /* ─ Layer 3: Dot grid ─ */
+  --neo-dot-color:      rgba(255, 255, 255, 0.03);
+  --neo-dot-size:       24px;
+
+  /* ─ Section tone shifts ─ */
+  --neo-hero-bg:        #0A0F1E;
+  --neo-eco-bg:         #080D18;
+  --neo-life-bg:        #0B1A2E;
+  --neo-cta-bg:         #06120F;
+
+  /* ─ Divider line ─ */
+  --neo-divider-peak:   #1A4A6B;
+
+  /* ─ Card styles ─ */
+  --neo-card-bg:        rgba(255, 255, 255, 0.04);
+  --neo-card-border:    rgba(255, 255, 255, 0.08);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 2 · DAY MODE — CSS CUSTOM PROPERTIES
+────────────────────────────────────────────────────────────── */
+
+.neoContainer[data-theme='light'] {
+  /* ─ Base ─ */
+  --neo-base:           #F0F4F8;
+  --neo-root-bg:        #F0F4F8;
+
+  /* ─ Layer 1: Top-center icy blue-white ─ */
+  --neo-glow1-from:     #E8F4FF;
+  --neo-glow1-to:       #F0F4F8;
+
+  /* ─ Layer 2: Top-right soft teal mint ─ */
+  --neo-glow2-from:     rgba(200, 234, 224, 0.65);
+  --neo-glow2-to:       transparent;
+
+  /* ─ Layer 3: Dot grid ─ */
+  --neo-dot-color:      rgba(176, 196, 216, 0.025);
+  --neo-dot-size:       24px;
+
+  /* ─ Section tone shifts ─ */
+  --neo-hero-bg:        #EAF2FB;
+  --neo-eco-bg:         #F5F9FC;
+  --neo-life-bg:        #EDF7F2;
+  --neo-cta-bg:         #E8F5EE;
+
+  /* ─ Divider line ─ */
+  --neo-divider-peak:   #CBD9E8;
+
+  /* ─ Card styles ─ */
+  --neo-card-bg:        rgba(255, 255, 255, 0.85);
+  --neo-card-border:    rgba(0, 0, 0, 0.07);
+  --neo-card-shadow:    0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 3 · AMBIENT BACKGROUND CANVAS
+   Fixed full-viewport element that paints all 3 gradient layers
+   plus the CSS dot grid — no images, no SVG, pure CSS.
+────────────────────────────────────────────────────────────── */
+
+.neoAmbient {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  /* GPU-only compositing — will-change avoids layout repaint */
+  will-change: opacity;
+
+  /*
+   * background-image layer order (painted back-to-front):
+   *   [0] Dot grid  — radial-gradient repeating tiny dots
+   *   [1] Glow 2    — bottom-right accent corner glow
+   *   [2] Glow 1    — top-center primary radial glow
+   * background-color → base fill (Layer 0)
+   */
+  background-color: var(--neo-base, #0A0F1E);
+
+  background-image:
+    /* Layer 3: Dot grid — 1px dots at 24px intervals */
+    radial-gradient(
+      circle,
+      var(--neo-dot-color, rgba(255,255,255,0.03)) 1px,
+      transparent 1px
+    ),
+    /* Layer 2: Bottom-right accent glow */
+    radial-gradient(
+      ellipse 55% 55% at 95% 95%,
+      var(--neo-glow2-from, rgba(11,61,46,0.72)) 0%,
+      var(--neo-glow2-to, transparent) 70%
+    ),
+    /* Layer 1: Top-center primary radial glow */
+    radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      var(--neo-glow1-from, #0D2137) 0%,
+      var(--neo-glow1-to, #0A0F1E) 100%
+    );
+
+  background-size:
+    var(--neo-dot-size, 24px) var(--neo-dot-size, 24px),
+    100% 100%,
+    100% 100%;
+
+  background-position: 0 0, right bottom, center top;
+  background-repeat: repeat, no-repeat, no-repeat;
+
+  transition: background-color 0.4s ease, background-image 0.4s ease;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 4 · PER-SECTION BACKGROUND OVERRIDES
+   Each section gets its own solid tone via --neo-*-bg.
+   The background is set directly on the section element
+   using the CSS variable — no JS needed.
+────────────────────────────────────────────────────────────── */
+
+/* Hero section background tone */
+.neoContainer .neoHeroBg {
+  background-color: var(--neo-hero-bg, #0A0F1E);
+  transition: background-color 0.4s ease;
+}
+
+/* Blockchain / Ecosystem section background tone */
+.neoContainer .neoEcoBg {
+  background-color: var(--neo-eco-bg, #080D18);
+  transition: background-color 0.4s ease;
+}
+
+/* Life Saved section background tone */
+.neoContainer .neoLifeBg {
+  background-color: var(--neo-life-bg, #0B1A2E);
+  transition: background-color 0.4s ease;
+}
+
+/* CTA / Footer section background tone */
+.neoContainer .neoCtaBg {
+  background-color: var(--neo-cta-bg, #06120F);
+  transition: background-color 0.4s ease;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 5 · SECTION DIVIDER LINES
+   Ultra-thin horizontal gradient lines between sections.
+   Usage: <div class="neoDivider" /> between any two sections.
+────────────────────────────────────────────────────────────── */
+
+.neoDivider {
+  width: 100%;
+  height: 1px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--neo-divider-peak, #1A4A6B) 50%,
+    transparent 100%
+  );
+  opacity: 0.7;
+  transition: background 0.4s ease, opacity 0.4s ease;
+  pointer-events: none;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 6 · CARD UTILITY OVERRIDES
+   These cascade from the per-theme variables.
+   Apply .neoCard to any card you want themed automatically.
+────────────────────────────────────────────────────────────── */
+
+.neoCard {
+  background: var(--neo-card-bg);
+  border: 1px solid var(--neo-card-border);
+  transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.neoContainer[data-theme='light'] .neoCard {
+  box-shadow: var(--neo-card-shadow, 0 2px 12px rgba(0,0,0,0.06));
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 7 · PREFERS-REDUCED-MOTION OVERRIDE
+   Respects OS accessibility setting — disables all transitions.
+────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .neoAmbient,
+  .neoContainer,
+  .neoContainer .neoHeroBg,
+  .neoContainer .neoEcoBg,
+  .neoContainer .neoLifeBg,
+  .neoContainer .neoCtaBg,
+  .neoDivider,
+  .neoCard {
+    transition: none !important;
+    animation: none !important;
+  }
+}

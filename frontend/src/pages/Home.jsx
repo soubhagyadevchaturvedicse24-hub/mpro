@@ -334,7 +334,7 @@ const Home = () => {
             </div>
           </nav>
 
-          <div className={styles.heroUI}>
+          <div className={`${styles.heroUI} ${styles.sectionHero}`}>
             {/* MAIN CONTENT (Left Side) */}
             <main className={styles.mainContent}>
             <div className={styles.textContent}>
@@ -418,15 +418,24 @@ const Home = () => {
         />
       </div>
 
+      {/* ─── SECTION DIVIDER: Hero → Ecosystem ─── */}
+      {isHeroActive && <div className={styles.sectionDivider} />}
+
       {/* ─── NEXT SCROLL SEGMENT: BLOCKCHAIN ECOSYSTEM & TELEMETRY (Section 2) ─── */}
       {isHeroActive && (
         <EcosystemSegment id="ecosystem-segment" theme={theme} mousePos={mousePos} />
       )}
 
+      {/* ─── SECTION DIVIDER: Ecosystem → Life Saved ─── */}
+      {isHeroActive && <div className={styles.sectionDivider} />}
+
       {/* ─── LIFE SAVED SEGMENT (Section 3) ─── */}
       {isHeroActive && (
         <LifeSavedSegment theme={theme} />
       )}
+
+      {/* ─── SECTION DIVIDER: Life Saved → Footer ─── */}
+      {isHeroActive && <div className={styles.sectionDivider} />}
 
       {/* ─── FOOTER ─── */}
       {isHeroActive && (

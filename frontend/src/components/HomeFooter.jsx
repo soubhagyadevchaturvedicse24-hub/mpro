@@ -24,13 +24,15 @@ const HomeFooter = ({ theme = 'dark' }) => {
   return (
     <footer
       style={{
+        /* Semi-transparent overlay — ambient canvas shows through */
         background: isLight 
-          ? 'linear-gradient(180deg, rgba(245, 245, 247, 0.92) 0%, #F5F5F7 100%)' 
-          : 'linear-gradient(180deg, rgba(3, 7, 18, 0.94) 0%, #030712 100%)',
+          ? 'linear-gradient(180deg, rgba(232, 245, 238, 0.72) 0%, rgba(232, 245, 238, 0.96) 100%)' 
+          : 'linear-gradient(180deg, rgba(6, 18, 15, 0.72) 0%, rgba(6, 18, 15, 0.97) 100%)',
         borderTop: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.08)',
         fontFamily: 'Inter, sans-serif',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
+        transition: 'background 0.4s ease',
       }}
     >
       {/* Main Footer Content */}

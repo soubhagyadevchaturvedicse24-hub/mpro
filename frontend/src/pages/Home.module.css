@@ -1,16 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 .container {
-  /* Default: Dark Theme */
-  --bg-color: #000000;
+  /* ── NIGHT MODE (default) ─────────────────────────────── */
+  /* Base & section tones */
+  --neo-base:           #0A0F1E;
+  --neo-hero-bg:        #0A0F1E;
+  --neo-eco-bg:         #080D18;
+  --neo-life-bg:        #0B1A2E;
+  --neo-cta-bg:         #06120F;
+  /* Glow layers */
+  --neo-glow1-from:     #0D2137;
+  --neo-glow1-to:       #0A0F1E;
+  --neo-glow2-from:     rgba(11, 61, 46, 0.72);
+  --neo-glow2-to:       transparent;
+  /* Dot grid */
+  --neo-dot-color:      rgba(255, 255, 255, 0.03);
+  --neo-dot-size:       24px;
+  /* Section dividers */
+  --neo-divider-peak:   #1A4A6B;
+  /* Card tokens */
+  --neo-card-bg:        rgba(255, 255, 255, 0.04);
+  --neo-card-border:    rgba(255, 255, 255, 0.08);
+
+  /* ── Legacy UI tokens (dark) ─────────────────────── */
+  --bg-color: #0A0F1E;
   --text-main: #ffffff;
   --text-muted: #8892b0;
-  --card-bg: rgba(20, 25, 35, 0.4);
-  --card-border: rgba(255, 255, 255, 0.05);
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --card-border: rgba(255, 255, 255, 0.08);
   --card-hover-bg: rgba(30, 40, 55, 0.6);
   --card-hover-border: rgba(0, 210, 255, 0.3);
-  --ambient-bg: #030712;
-  --ambient-bg-image: url('/night_bg.png');
+  --ambient-bg: #0A0F1E;
   --nav-link: #a0a0a0;
   --nav-link-hover: #ffffff;
   --dropdown-bg: rgba(10, 15, 25, 0.9);
@@ -24,7 +44,6 @@
   --btn-login-border: rgba(255, 255, 255, 0.2);
   --btn-login-hover-border: rgba(255, 255, 255, 0.5);
   --btn-login-hover-bg: rgba(255, 255, 255, 0.05);
-  
   --btn-sec-color: #00d2ff;
   --btn-sec-border: rgba(0, 210, 255, 0.3);
   --btn-sec-bg-hover: rgba(0, 210, 255, 0.08);
@@ -41,21 +60,43 @@
   scroll-behavior: auto;
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
-  background-color: #030712;
+  background-color: var(--neo-base);
   user-select: none;
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .container[data-theme='light'] {
-  --bg-color: #F8FAFC;
+  /* ── DAY MODE ─────────────────────────────────────────── */
+  /* Base & section tones */
+  --neo-base:           #F0F4F8;
+  --neo-hero-bg:        #EAF2FB;
+  --neo-eco-bg:         #F5F9FC;
+  --neo-life-bg:        #EDF7F2;
+  --neo-cta-bg:         #E8F5EE;
+  /* Glow layers */
+  --neo-glow1-from:     #E8F4FF;
+  --neo-glow1-to:       #F0F4F8;
+  --neo-glow2-from:     rgba(200, 234, 224, 0.65);
+  --neo-glow2-to:       transparent;
+  /* Dot grid */
+  --neo-dot-color:      rgba(176, 196, 216, 0.028);
+  --neo-dot-size:       24px;
+  /* Section dividers */
+  --neo-divider-peak:   #CBD9E8;
+  /* Card tokens */
+  --neo-card-bg:        rgba(255, 255, 255, 0.85);
+  --neo-card-border:    rgba(0, 0, 0, 0.07);
+  --neo-card-shadow:    0 2px 12px rgba(0, 0, 0, 0.06);
+
+  /* ── Legacy UI tokens (light) ─────────────────────── */
+  --bg-color: #F0F4F8;
   --text-main: #0F172A;
   --text-muted: #64748B;
-  --card-bg: rgba(255, 255, 255, 0.7);
-  --card-border: rgba(0, 0, 0, 0.05);
-  --card-hover-bg: rgba(255, 255, 255, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(0, 0, 0, 0.07);
+  --card-hover-bg: rgba(255, 255, 255, 0.95);
   --card-hover-border: rgba(0, 210, 255, 0.2);
   --ambient-bg: transparent;
-  --ambient-bg-image: url('/day_bg.png');
   --nav-link: #64748B;
   --nav-link-hover: #0F172A;
   --dropdown-bg: rgba(255, 255, 255, 0.95);
@@ -69,32 +110,141 @@
   --btn-login-border: rgba(0, 0, 0, 0.1);
   --btn-login-hover-border: rgba(0, 0, 0, 0.2);
   --btn-login-hover-bg: rgba(0, 0, 0, 0.05);
-
   --btn-sec-color: #0F172A;
   --btn-sec-border: rgba(0, 0, 0, 0.2);
   --btn-sec-bg-hover: rgba(0, 0, 0, 0.05);
   --btn-sec-border-hover: rgba(0, 0, 0, 0.3);
   --btn-ghost-color: #475569;
   --btn-ghost-hover: #0ea5e9;
-  background-color: #f8faff;
-  background-image: radial-gradient(circle at 50% 0%, #e8f4ff 0%, #f4f9ff 40%, #f8faff 100%);
-  background-attachment: fixed;
+
+  background-color: var(--neo-hero-bg);
   color: var(--text-main);
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
+/* ─── PREMIUM AMBIENT BACKGROUND ───────────────────────────
+   Pure CSS: 3 gradient layers + dot grid. No images. GPU-safe.
+   Layer order (back → front):
+     [0] Solid base fill          (background-color)
+     [1] Primary top-center glow  (radial, large ellipse)
+     [2] Secondary corner accent  (radial, ellipse)
+     [3] Dot grid                 (repeating radial, 24px)
+──────────────────────────────────────────────────────────── */
 .ambientBackground {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #030712;
-  background-image: radial-gradient(circle at 50% 30%, rgba(0, 191, 255, 0.12) 0%, rgba(139, 92, 246, 0.08) 50%, rgba(3, 7, 18, 0.6) 100%), var(--ambient-bg-image);
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
   z-index: 0;
   pointer-events: none;
+  will-change: opacity;
+
+  /* Base fill — pulled from current theme token */
+  background-color: var(--neo-base, #0A0F1E);
+
+  /* 3 gradient layers stacked */
+  background-image:
+    /* [3] Dot grid — 1px white/blue dots, 24px spacing */
+    radial-gradient(
+      circle,
+      var(--neo-dot-color, rgba(255,255,255,0.03)) 1px,
+      transparent 1px
+    ),
+    /* [2] Bottom-right accent glow */
+    radial-gradient(
+      ellipse 55% 55% at 95% 95%,
+      var(--neo-glow2-from, rgba(11,61,46,0.72)) 0%,
+      var(--neo-glow2-to, transparent) 70%
+    ),
+    /* [1] Top-center primary radial glow */
+    radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      var(--neo-glow1-from, #0D2137) 0%,
+      var(--neo-glow1-to, #0A0F1E) 100%
+    );
+
+  background-size:
+    var(--neo-dot-size, 24px) var(--neo-dot-size, 24px),
+    100% 100%,
+    100% 100%;
+
+  background-position: 0 0, right bottom, center top;
+  background-repeat: repeat, no-repeat, no-repeat;
+
+  transition:
+    background-color 0.4s ease,
+    background-image 0.4s ease;
+}
+
+/* Day mode: layer 2 moves to top-right (mint teal mist) */
+.container[data-theme='light'] .ambientBackground {
+  background-image:
+    radial-gradient(
+      circle,
+      var(--neo-dot-color, rgba(176,196,216,0.028)) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      ellipse 50% 50% at 95% 5%,
+      var(--neo-glow2-from, rgba(200,234,224,0.65)) 0%,
+      var(--neo-glow2-to, transparent) 70%
+    ),
+    radial-gradient(
+      ellipse 75% 55% at 50% 0%,
+      var(--neo-glow1-from, #E8F4FF) 0%,
+      var(--neo-glow1-to, #F0F4F8) 100%
+    );
+}
+
+/* ─── SECTION-LEVEL TONE BACKGROUNDS ──────────────────────
+   Applied as semi-transparent overlays on each section
+   so the ambient canvas shows through but each zone
+   reads with its own distinct temperature.
+──────────────────────────────────────────────────────────── */
+.sectionHero {
+  background-color: var(--neo-hero-bg, #0A0F1E);
+  transition: background-color 0.4s ease;
+}
+.sectionEco {
+  background-color: var(--neo-eco-bg, #080D18);
+  transition: background-color 0.4s ease;
+}
+.sectionLife {
+  background-color: var(--neo-life-bg, #0B1A2E);
+  transition: background-color 0.4s ease;
+}
+.sectionCta {
+  background-color: var(--neo-cta-bg, #06120F);
+  transition: background-color 0.4s ease;
+}
+
+/* ─── SECTION DIVIDER LINE ─────────────────────────────────
+   Thin horizontal gradient fade-in/out line between sections.
+──────────────────────────────────────────────────────────── */
+.sectionDivider {
+  width: 100%;
+  height: 1px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--neo-divider-peak, #1A4A6B) 50%,
+    transparent 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+  transition: background 0.4s ease, opacity 0.4s ease;
+}
+
+/* ─── REDUCED MOTION — disable all bg transitions ─────── */
+@media (prefers-reduced-motion: reduce) {
+  .ambientBackground,
+  .sectionHero, .sectionEco, .sectionLife, .sectionCta,
+  .sectionDivider {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 .orbPrimary {

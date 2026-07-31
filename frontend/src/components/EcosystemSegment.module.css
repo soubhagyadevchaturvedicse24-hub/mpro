@@ -2,7 +2,8 @@
   width: 100vw;
   height: 100vh;
   min-height: 100vh;
-  background: linear-gradient(180deg, rgba(3, 7, 18, 0.40) 0%, rgba(3, 7, 18, 0.75) 100%);
+  /* Night mode: semi-transparent overlay so ambient canvas shows through */
+  background: linear-gradient(180deg, rgba(8, 13, 24, 0.55) 0%, rgba(8, 13, 24, 0.82) 100%);
   backdrop-filter: blur(10px);
   background-position: center bottom;
   padding: 90px 70px 12px 70px;
@@ -15,6 +16,7 @@
   overflow: hidden;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
+  transition: background 0.4s ease;
 }
 
 /* ─── THREE-COLUMN DASHBOARD GRID (PROPORTION BALANCED) ─── */
@@ -572,8 +574,9 @@
 /* ════════════════════════════════════════════════════════════════════
    DAY MODE: MEDICAL TECHNOLOGY EXPERIENCE (data-theme='light')
    ════════════════════════════════════════════════════════════════════ */
+/* Day mode: uses --neo-eco-bg via semi-transparent overlay */
 .segmentContainer[data-theme='light'] {
-  background: linear-gradient(180deg, rgba(245, 245, 247, 0.35) 0%, rgba(245, 245, 247, 0.70) 100%);
+  background: linear-gradient(180deg, rgba(245, 249, 252, 0.55) 0%, rgba(245, 249, 252, 0.80) 100%);
   backdrop-filter: blur(10px);
   color: #1a202c;
 }
