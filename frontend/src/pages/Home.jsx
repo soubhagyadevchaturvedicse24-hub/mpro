@@ -338,12 +338,15 @@ const Home = () => {
             {/* Ambient EKG Lightning (Night Mode Only) */}
             {theme === 'dark' && <div className={styles.ambientEkgLightning} />}
             
-            {/* Phase 1-3: Layout & Premium 3D Typography */}
+            {/* Phase 1-3: Layout & Premium 3D Typography (Restored for Performance & Aesthetic) */}
             <div className={styles.cinematicTextContainer}>
-              {[...Array(25)].map((_, i) => {
+              {[...Array(15)].map((_, i) => {
+                // Front layer gets a subtle outline, back layers get darker/blurred
                 const isFront = i === 0;
-                const zOffset = -(i * 4); // tighter packing for solid block
-                const blur = i > 15 ? (i - 15) * 0.3 : 0; // blur only the deepest back end
+                const zOffset = -(i * 8); // Push back 8px per layer
+                const opacity = 1 - (i * 0.05); // Fade slightly as it goes back
+                // Performance fix: Limit blur to only the very last few elements to save GPU overhead
+                const blur = i > 10 ? (i - 10) * 0.5 : 0; 
 
                 return (
                   <span 
@@ -351,11 +354,15 @@ const Home = () => {
                     className={styles.cinematicTextLayer}
                     style={{
                       transform: `translateZ(${zOffset}px)`,
-                      filter: `blur(${blur}px)`,
-                      color: isFront ? '#0d1526' : '#040914', // Solid dark charcoal front, pitch black extrusion
+                      opacity: opacity,
+                      filter: blur > 0 ? `blur(${blur}px)` : 'none',
+                      WebkitTextStroke: isFront ? '1px rgba(255, 255, 255, 0.1)' : 'none',
+                      color: isFront 
+                        ? 'transparent' // Front face is hollow/glassy
+                        : `rgba(15, 23, 42, ${1 - i * 0.02})`, // Deep navy extrusion body
                       textShadow: isFront 
-                        ? '-1px -1px 2px rgba(0, 210, 255, 0.3), 0px 10px 30px rgba(0, 0, 0, 0.8)' 
-                        : 'none',
+                        ? '0 0 20px rgba(0, 191, 255, 0.1)' 
+                        : '0 4px 12px rgba(0,0,0,0.5)',
                     }}
                   >
                     TRUST

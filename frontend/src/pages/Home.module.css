@@ -1228,9 +1228,9 @@
 /* ─── CINEMATIC 3D TYPOGRAPHY (PHASE 1 & 2) ─── */
 .cinematicTextContainer {
   position: absolute;
-  top: 45%; 
-  left: 55%;
-  transform: translate(-50%, -50%) rotateX(15deg) rotateY(-18deg);
+  top: 45%; /* Slightly above center to sit nicely behind text */
+  left: 50%;
+  transform: translate(-50%, -50%) rotateX(8deg) rotateY(-12deg);
   width: 100%;
   height: 100%;
   display: flex;
@@ -1238,7 +1238,7 @@
   justify-content: center;
   pointer-events: none;
   z-index: 0;
-  perspective: 1500px;
+  perspective: 1200px;
   transform-style: preserve-3d;
 }
 
@@ -1246,9 +1246,10 @@
   position: absolute;
   font-family: 'Inter', sans-serif;
   font-weight: 900;
-  font-size: 32rem;
-  letter-spacing: -0.05em;
+  font-size: 22rem;
+  letter-spacing: -0.02em;
   line-height: 1;
   text-transform: uppercase;
   color: transparent;
+  will-change: transform, opacity, filter;
 }
