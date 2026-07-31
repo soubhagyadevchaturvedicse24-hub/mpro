@@ -15,62 +15,99 @@ const stagger = {
   show:   { transition: { staggerChildren: 0.1 } }
 };
 
-/* ─── Portal Entry Buttons with Night/Day Glow ──────────────── */
-const DonorLoginButton = () => (
-  <Link to="/dashboard/donor-consent" className="inline-block flex-1 max-w-[340px]">
+/* ─── Tactile 3D Physical Push-Button Component Wrapper ──────── */
+const TactilePushButton = ({ to, imageSrc, altText, shadowColor, hoverGlow }) => (
+  <Link to={to} className="inline-block flex-1 w-full max-w-[340px] no-underline">
     <motion.div
       variants={fadeUp}
-      initial={{ filter: 'drop-shadow(0 10px 25px rgba(59,130,246,0.35)) drop-shadow(0 0 15px rgba(59,130,246,0.2))' }}
-      whileHover={{ 
-        scale: 1.04, 
-        y: -5, 
-        filter: 'drop-shadow(0 18px 40px rgba(59,130,246,0.75)) drop-shadow(0 0 35px rgba(59,130,246,0.6))',
-        transition: { type: 'spring', stiffness: 300, damping: 20 } 
+      initial={{ 
+        y: 0, 
+        scale: 1,
+        filter: `drop-shadow(0 10px 22px ${shadowColor}) drop-shadow(0 0 12px ${shadowColor}) brightness(1)` 
       }}
-      whileTap={{ scale: 0.97 }}
-      style={{ cursor: 'pointer', width: '100%' }}
+      whileHover={{ 
+        scale: 1.045, 
+        y: -5, 
+        filter: `drop-shadow(0 20px 42px ${hoverGlow}) drop-shadow(0 0 35px ${hoverGlow}) brightness(1.1) contrast(1.03)`,
+        transition: { type: 'spring', stiffness: 350, damping: 18 } 
+      }}
+      whileTap={{ 
+        scale: 0.935, 
+        y: 4, 
+        filter: `drop-shadow(0 4px 10px ${shadowColor}) brightness(0.92)`,
+        transition: { type: 'spring', stiffness: 500, damping: 14 } 
+      }}
+      style={{ 
+        cursor: 'pointer', 
+        width: '100%', 
+        position: 'relative',
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        borderRadius: '24px',
+      }}
     >
-      <img src="/donor_button_3d.png" alt="Enter as Donor" style={{ width: '100%', height: 'auto', maxHeight: '100px', display: 'block', objectFit: 'contain' }} />
+      {/* 3D Tactile Edge Bevel Rim */}
+      <div 
+        className="w-full relative overflow-hidden rounded-[24px] p-1 transition-all duration-300"
+        style={{
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.3) 100%)',
+          boxShadow: 'inset 0 1.5px 0.5px rgba(255,255,255,0.7), inset 0 -3px 0.5px rgba(0,0,0,0.4)',
+        }}
+      >
+        {/* Subtle Glass Light Glare Line */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-40"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.05) 40%, transparent 80%)',
+            borderRadius: '24px',
+          }}
+        />
+
+        <img 
+          src={imageSrc} 
+          alt={altText} 
+          style={{ 
+            width: '100%', 
+            height: 'auto', 
+            maxHeight: '100px', 
+            display: 'block', 
+            objectFit: 'contain',
+            borderRadius: '20px',
+          }} 
+        />
+      </div>
     </motion.div>
   </Link>
+);
+
+const DonorLoginButton = () => (
+  <TactilePushButton 
+    to="/dashboard/donor-consent" 
+    imageSrc="/donor_button_3d.png" 
+    altText="Enter as Donor" 
+    shadowColor="rgba(59,130,246,0.35)" 
+    hoverGlow="rgba(59,130,246,0.75)" 
+  />
 );
 
 const ReceiverLoginButton = () => (
-  <Link to="/login" className="inline-block flex-1 max-w-[340px]">
-    <motion.div
-      variants={fadeUp}
-      initial={{ filter: 'drop-shadow(0 10px 25px rgba(167,139,250,0.32)) drop-shadow(0 0 15px rgba(167,139,250,0.2))' }}
-      whileHover={{ 
-        scale: 1.04, 
-        y: -5, 
-        filter: 'drop-shadow(0 18px 40px rgba(167,139,250,0.75)) drop-shadow(0 0 35px rgba(167,139,250,0.6))',
-        transition: { type: 'spring', stiffness: 300, damping: 20 } 
-      }}
-      whileTap={{ scale: 0.97 }}
-      style={{ cursor: 'pointer', width: '100%' }}
-    >
-      <img src="/receiver_button_3d.png" alt="Enter as Receiver" style={{ width: '100%', height: 'auto', maxHeight: '100px', display: 'block', objectFit: 'contain' }} />
-    </motion.div>
-  </Link>
+  <TactilePushButton 
+    to="/login" 
+    imageSrc="/receiver_button_3d.png" 
+    altText="Enter as Receiver" 
+    shadowColor="rgba(167,139,250,0.32)" 
+    hoverGlow="rgba(167,139,250,0.75)" 
+  />
 );
 
 const HospitalLoginButton = () => (
-  <Link to="/dashboard/hospital-registry" className="inline-block w-full max-w-[340px]">
-    <motion.div
-      variants={fadeUp}
-      initial={{ filter: 'drop-shadow(0 10px 25px rgba(34,197,94,0.35)) drop-shadow(0 0 15px rgba(34,197,94,0.2))' }}
-      whileHover={{ 
-        scale: 1.04, 
-        y: -5, 
-        filter: 'drop-shadow(0 18px 40px rgba(34,197,94,0.75)) drop-shadow(0 0 35px rgba(34,197,94,0.6))',
-        transition: { type: 'spring', stiffness: 300, damping: 20 } 
-      }}
-      whileTap={{ scale: 0.97 }}
-      style={{ cursor: 'pointer', width: '100%' }}
-    >
-      <img src="/hospital.png" alt="Enter as Hospital" style={{ width: '100%', height: 'auto', maxHeight: '100px', display: 'block', objectFit: 'contain' }} />
-    </motion.div>
-  </Link>
+  <TactilePushButton 
+    to="/dashboard/hospital-registry" 
+    imageSrc="/hospital.png" 
+    altText="Enter as Hospital" 
+    shadowColor="rgba(34,197,94,0.35)" 
+    hoverGlow="rgba(34,197,94,0.75)" 
+  />
 );
 
 /* ─── Main Component ─────────────────────────────────────────── */
