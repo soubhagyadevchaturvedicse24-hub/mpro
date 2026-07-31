@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   Package, ShieldCheck, MapPin, Building2, BedDouble, Activity, Heart, ArrowRight, Lock
 } from 'lucide-react';
@@ -25,7 +26,7 @@ const TIMELINE = [
   { icon: Activity,    label: 'Life\nSaved', active: true },
 ];
 
-/* ─── Existing Modular Components (Mocked as requested) ──────── */
+/* ─── Existing Modular Components ────────────────────────────── */
 const LifeSavedCard = () => (
   <motion.div
     variants={fadeUp}
@@ -51,37 +52,60 @@ const LifeSavedCard = () => (
 );
 
 const DonorLoginButton = () => (
-  <motion.div
-    variants={fadeUp}
-    initial={{ filter: 'drop-shadow(0 8px 20px rgba(34,197,94,0.25))' }}
-    whileHover={{ 
-      scale: 1.05, 
-      y: -5, 
-      filter: 'drop-shadow(0 15px 35px rgba(34,197,94,0.7)) drop-shadow(0 0 30px rgba(34,197,94,0.5))',
-      transition: { type: 'spring', stiffness: 300, damping: 20 } 
-    }}
-    whileTap={{ scale: 0.97 }}
-    style={{ cursor: 'pointer' }}
-  >
-    <img src="/donor_button_3d.png" alt="Log in as Donor" style={{ height: '110px', width: 'auto', display: 'block', objectFit: 'contain' }} />
-  </motion.div>
+  <Link to="/dashboard/donor-consent" className="inline-block">
+    <motion.div
+      variants={fadeUp}
+      initial={{ filter: 'drop-shadow(0 8px 20px rgba(59,130,246,0.3))' }}
+      whileHover={{ 
+        scale: 1.05, 
+        y: -5, 
+        filter: 'drop-shadow(0 15px 35px rgba(59,130,246,0.7)) drop-shadow(0 0 30px rgba(59,130,246,0.5))',
+        transition: { type: 'spring', stiffness: 300, damping: 20 } 
+      }}
+      whileTap={{ scale: 0.97 }}
+      style={{ cursor: 'pointer' }}
+    >
+      <img src="/donor_button_3d.png" alt="Enter as Donor" style={{ height: '95px', width: 'auto', display: 'block', objectFit: 'contain' }} />
+    </motion.div>
+  </Link>
 );
 
 const ReceiverLoginButton = () => (
-  <motion.div
-    variants={fadeUp}
-    initial={{ filter: 'drop-shadow(0 8px 20px rgba(167,139,250,0.28))' }}
-    whileHover={{ 
-      scale: 1.05, 
-      y: -5, 
-      filter: 'drop-shadow(0 15px 35px rgba(167,139,250,0.7)) drop-shadow(0 0 30px rgba(167,139,250,0.5))',
-      transition: { type: 'spring', stiffness: 300, damping: 20 } 
-    }}
-    whileTap={{ scale: 0.97 }}
-    style={{ cursor: 'pointer' }}
-  >
-    <img src="/receiver_button_3d.png" alt="Log in as Receiver" style={{ height: '110px', width: 'auto', display: 'block', objectFit: 'contain' }} />
-  </motion.div>
+  <Link to="/login" className="inline-block">
+    <motion.div
+      variants={fadeUp}
+      initial={{ filter: 'drop-shadow(0 8px 20px rgba(167,139,250,0.28))' }}
+      whileHover={{ 
+        scale: 1.05, 
+        y: -5, 
+        filter: 'drop-shadow(0 15px 35px rgba(167,139,250,0.7)) drop-shadow(0 0 30px rgba(167,139,250,0.5))',
+        transition: { type: 'spring', stiffness: 300, damping: 20 } 
+      }}
+      whileTap={{ scale: 0.97 }}
+      style={{ cursor: 'pointer' }}
+    >
+      <img src="/receiver_button_3d.png" alt="Enter as Receiver" style={{ height: '95px', width: 'auto', display: 'block', objectFit: 'contain' }} />
+    </motion.div>
+  </Link>
+);
+
+const HospitalLoginButton = () => (
+  <Link to="/dashboard/hospital-registry" className="inline-block">
+    <motion.div
+      variants={fadeUp}
+      initial={{ filter: 'drop-shadow(0 8px 20px rgba(34,197,94,0.3))' }}
+      whileHover={{ 
+        scale: 1.05, 
+        y: -5, 
+        filter: 'drop-shadow(0 15px 35px rgba(34,197,94,0.7)) drop-shadow(0 0 30px rgba(34,197,94,0.5))',
+        transition: { type: 'spring', stiffness: 300, damping: 20 } 
+      }}
+      whileTap={{ scale: 0.97 }}
+      style={{ cursor: 'pointer' }}
+    >
+      <img src="/hospital.png" alt="Enter as Hospital" style={{ height: '95px', width: 'auto', display: 'block', objectFit: 'contain' }} />
+    </motion.div>
+  </Link>
 );
 
 /* ─── Main Component ─────────────────────────────────────────── */
@@ -115,7 +139,7 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
         whileInView="show"
         viewport={{ once: true, margin: '-60px' }}
       >
-        {/* 1. TOP ROW: Life Saved Card (Left) & 3D Hospital (Right) */}
+        {/* 1. TOP ROW: Life Saved Card (Left) & 3D Hospital with Button Directly Below (Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center w-full">
           
           {/* Left Column: Life Saved Card */}
@@ -143,8 +167,8 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
             </motion.div>
           </div>
 
-          {/* Right Column: 3D Hospital Image */}
-          <div className="lg:col-span-4 w-full flex justify-center items-center pl-4 lg:pl-0">
+          {/* Right Column: 3D Hospital Image & Hospital Button Directly Below */}
+          <div className="lg:col-span-4 w-full flex flex-col justify-center items-center gap-2 pl-4 lg:pl-0">
             <motion.div
               variants={fadeUp}
               initial={{ filter: 'drop-shadow(0 12px 24px rgba(34,197,94,0.3))' }}
@@ -156,7 +180,7 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
                 filter: 'drop-shadow(0 20px 40px rgba(34,197,94,0.6)) drop-shadow(0 0 30px rgba(34,197,94,0.4))',
                 transition: { type: 'spring', stiffness: 280, damping: 20 } 
               }}
-              style={{ perspective: 1200, transformStyle: 'preserve-3d', width: '100%', maxWidth: '380px', cursor: 'pointer' }}
+              style={{ perspective: 1200, transformStyle: 'preserve-3d', width: '100%', maxWidth: '320px', cursor: 'pointer' }}
             >
               <img
                 src="/hospital_3d.png"
@@ -164,13 +188,17 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
                 style={{ width: '100%', height: 'auto', display: 'block' }}
               />
             </motion.div>
+
+            {/* Hospital Button directly underneath the Hospital 3D Component */}
+            <HospitalLoginButton />
           </div>
         </div>
 
-        {/* 2. MIDDLE ROW: CTA Buttons */}
-        <motion.div variants={fadeUp} className="flex justify-center items-center gap-6 w-full py-2">
+        {/* 2. MIDDLE ROW: CTA Portal Entry Buttons (Donor, Receiver, Hospital) */}
+        <motion.div variants={fadeUp} className="flex flex-wrap justify-center items-center gap-4 lg:gap-8 w-full py-2">
           <DonorLoginButton />
           <ReceiverLoginButton />
+          <HospitalLoginButton />
         </motion.div>
 
         {/* 3. BOTTOM ROW: Image Timeline Strip (Interactive) */}
