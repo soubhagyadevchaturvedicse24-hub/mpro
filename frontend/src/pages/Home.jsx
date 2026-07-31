@@ -106,25 +106,17 @@ const Home = () => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Easing function: ease-in-out cubic
-    const easeInOutCubic = (t) =>
-      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-    const smoothScrollTo = (targetY, duration = 750) => {
-      const startY = container.scrollTop;
-      const distance = targetY - startY;
-      const startTime = performance.now();
-
-      const step = (currentTime) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        container.scrollTop = startY + distance * easeInOutCubic(progress);
-        if (progress < 1) requestAnimationFrame(step);
-        else isSnappingRef.current = false;
-      };
-
+    const smoothScrollTo = (targetY) => {
       isSnappingRef.current = true;
-      requestAnimationFrame(step);
+      container.scrollTo({
+        top: targetY,
+        behavior: 'smooth'
+      });
+      
+      // Release lock after native scroll animation completes
+      setTimeout(() => {
+        isSnappingRef.current = false;
+      }, 800);
     };
 
     const getSnapPoints = () => {
@@ -158,7 +150,7 @@ const Home = () => {
       // 1. SCROLLING UP (e.deltaY < 0) from Ecosystem segment: 1 unit scroll automatically goes to top (Hero, y = 0)
       if (e.deltaY < 0 && currentY <= ecoPoint + 200) {
         e.preventDefault();
-        smoothScrollTo(0, 750);
+        smoothScrollTo(0);
         return;
       }
 
@@ -188,7 +180,7 @@ const Home = () => {
         }
 
         if (target !== undefined && target !== null) {
-          smoothScrollTo(target, 750);
+          smoothScrollTo(target);
         }
       }, 20);
     };
