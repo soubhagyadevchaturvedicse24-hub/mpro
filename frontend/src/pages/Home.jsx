@@ -17,7 +17,6 @@ const Home = () => {
   const [isHeroActive, setIsHeroActive] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [theme, setTheme] = useState('dark');
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [heartScrollOpacity, setHeartScrollOpacity] = useState(1);
   const [heartScrollScale, setHeartScrollScale] = useState(1);
   const [heartScrollLeft, setHeartScrollLeft] = useState(75);
@@ -29,10 +28,10 @@ const Home = () => {
 
   const cinematicText = React.useMemo(() => (
     <div className={styles.cinematicTextContainer}>
-      {[...Array(25)].map((_, i) => {
+      {[...Array(10)].map((_, i) => {
         const isFront = i === 0;
         const zOffset = -(i * 4); // tighter packing for solid block
-        const blur = i > 15 ? (i - 15) * 0.3 : 0; // blur only the deepest back end
+        const blur = i > 7 ? (i - 7) * 0.5 : 0; // blur only the deepest back end
 
         return (
           <span 
@@ -44,7 +43,7 @@ const Home = () => {
               color: isFront ? '#0d1526' : '#040914', // Solid dark charcoal front, pitch black extrusion
               textShadow: isFront 
                 ? '-1px -1px 2px rgba(0, 210, 255, 0.3), 0px 10px 30px rgba(0, 0, 0, 0.8)' 
-                : 'none',
+                : '-1px 1px 0px #040914, -2px 2px 0px #040914, -3px 3px 0px #040914', // Heavy shadow makes up for fewer layers
             }}
           >
             TRUST
@@ -62,22 +61,8 @@ const Home = () => {
     };
     document.addEventListener('mousedown', handleClickOutside);
     
-    let frameId;
-    const handleMouseMove = (e) => {
-      if (frameId) return;
-      frameId = requestAnimationFrame(() => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 2;
-        const y = (e.clientY / window.innerHeight - 0.5) * 2;
-        setMousePos({ x, y });
-        frameId = null;
-      });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (frameId) cancelAnimationFrame(frameId);
     };
   }, []);
 
@@ -127,106 +112,6 @@ const Home = () => {
     return () => {
       container.removeEventListener('scroll', handleScroll);
       if (scrollFrameId) cancelAnimationFrame(scrollFrameId);
-    };
-  }, [isHeroActive]);
-
-  // ── JS-based smooth scroll snapping (controlled speed) ──────────────────
-  useEffect(() => {
-    if (!isHeroActive) return;
-    const container = containerRef.current;
-    if (!container) return;
-
-    // Easing function: ease-in-out cubic
-    const easeInOutCubic = (t) =>
-      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-    const smoothScrollTo = (targetY, duration = 900) => {
-      const startY = container.scrollTop;
-      const distance = targetY - startY;
-      const startTime = performance.now();
-
-      const step = (currentTime) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        container.scrollTop = startY + distance * easeInOutCubic(progress);
-        if (progress < 1) requestAnimationFrame(step);
-        else isSnappingRef.current = false;
-      };
-
-      isSnappingRef.current = true;
-      requestAnimationFrame(step);
-    };
-
-    const getSnapPoints = () => {
-      const points = [];
-      // Section 1: Hero (always starts at 0)
-      points.push(0);
-      // Section 2: Ecosystem
-      const eco = document.getElementById('ecosystem-segment');
-      if (eco) points.push(eco.offsetTop);
-      // Section 3: LifeSaved — sits after dividers
-      const lifeSaved = document.getElementById('life-saved-segment');
-      if (lifeSaved) points.push(lifeSaved.offsetTop);
-      return points;
-    };
-
-    let wheelAccumulator = 0;
-    let wheelTimeout = null;
-
-    const handleWheel = (e) => {
-      if (isSnappingRef.current) {
-        e.preventDefault();
-        return;
-      }
-
-      const snapPoints = getSnapPoints();
-      if (snapPoints.length === 0) return;
-      const ecoPoint = snapPoints[1] || 0; // Ecosystem / Blockchain segment offsetTop
-      const lastSnapPoint = snapPoints[snapPoints.length - 1];
-      const currentY = container.scrollTop;
-
-      // 1. SCROLLING UP (e.deltaY < 0) from Ecosystem segment: 1 unit scroll automatically goes to top (Hero, y = 0)
-      if (e.deltaY < 0 && currentY <= ecoPoint + 200) {
-        e.preventDefault();
-        smoothScrollTo(0, 800);
-        return;
-      }
-
-      // 2. SCROLLING DOWN (e.deltaY > 0) past LifeSaved into footer: allow free scrolling
-      if (currentY >= lastSnapPoint - 10 && e.deltaY > 0) {
-        return;
-      }
-
-      // 3. Otherwise, snap to target section in direction of scroll
-      e.preventDefault();
-
-      wheelAccumulator += e.deltaY;
-
-      clearTimeout(wheelTimeout);
-      wheelTimeout = setTimeout(() => {
-        const currentY = container.scrollTop;
-        const snapPoints = getSnapPoints();
-        const direction = wheelAccumulator > 0 ? 1 : -1;
-        wheelAccumulator = 0;
-
-        let target = null;
-        if (direction > 0) {
-          target = snapPoints.find((p) => p > currentY + 50);
-        } else {
-          const reversed = [...snapPoints].reverse();
-          target = reversed.find((p) => p < currentY - 50);
-        }
-
-        if (target !== undefined && target !== null) {
-          smoothScrollTo(target, 800);
-        }
-      }, 25);
-    };
-
-    container.addEventListener('wheel', handleWheel, { passive: false });
-    return () => {
-      container.removeEventListener('wheel', handleWheel);
-      clearTimeout(wheelTimeout);
     };
   }, [isHeroActive]);
 

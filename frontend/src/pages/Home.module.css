@@ -47,18 +47,20 @@
   --btn-ghost-color: #8892b0;
   --btn-ghost-hover: #00c2ff;
 
-  position: relative;
   width: 100vw;
   height: 100vh;
-  min-height: 100vh;
-  overflow-x: hidden;
   overflow-y: auto;
-  scroll-behavior: auto;
+  overflow-x: hidden;
+  position: relative;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
   background-color: var(--neo-base);
   user-select: none;
   transition: background-color 0.4s ease, color 0.4s ease;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 210, 255, 0.5) rgba(15, 23, 42, 0.8);
 }
 
 .container[data-theme='light'] {
@@ -351,6 +353,7 @@
   );
   filter: blur(100px);
   animation: auroraBreath1 20s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 .container[data-theme='light'] .orbSecondary {
@@ -366,6 +369,7 @@
   );
   filter: blur(110px);
   animation: auroraBreath2 25s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 .container[data-theme='light'] .orbTertiary {
@@ -381,6 +385,7 @@
   );
   filter: blur(95px);
   animation: auroraBreath1 17s ease-in-out infinite alternate-reverse;
+  will-change: transform;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -427,17 +432,24 @@
   100% { transform: translate(25px, -20px) scale(0.92); }
 }
 
-/* ─── HERO UI (Base Section) ─── */
-.heroUI {
+/* ─── ECOSYSTEM SEGMENT WRAPPER ─── */
+.ecosystemSegment {
   position: relative;
-  width: 100vw;
+  width: 100%;
+  z-index: 10;
+  background: #020617;
+  scroll-snap-align: start;
+}
+
+/* ─── HERO UI (Base Section) ─── */
+.hero {
+  position: relative;
+  width: 100%;
   height: 100vh;
-  min-height: 100vh;
-  padding-top: 90px;
-  z-index: 20;
   display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  overflow: hidden;
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 1) 0%, rgba(2, 6, 23, 1) 100%);
+  scroll-snap-align: start;
 }
 
 /* ─── FIXED STICKY NAVBAR ─── */
@@ -781,6 +793,7 @@
   z-index: 5;
   mix-blend-mode: var(--heart-mix-blend); 
   animation: heartbeat 1.2s ease-in-out infinite;
+  will-change: transform;
 }
 
 .glowBloom {
@@ -810,6 +823,7 @@
   border-left: 2px solid rgba(0, 210, 255, 0.4);
   border-right: 2px solid rgba(0, 119, 255, 0.4);
   animation: spin 30s linear infinite;
+  will-change: transform;
 }
 
 .ringMiddle {
@@ -818,12 +832,14 @@
   border-top: 2px solid rgba(0, 210, 255, 0.6);
   border-bottom: 2px solid rgba(0, 210, 255, 0.6);
   animation: spin-reverse 20s linear infinite;
+  will-change: transform;
 }
 
 .ringInner {
   width: 460px; height: 460px;
   border: 2px dotted rgba(0, 210, 255, 0.3);
   animation: spin 40s linear infinite;
+  will-change: transform;
 }
 
 
@@ -1218,6 +1234,8 @@
   background-size: 100% auto;
   opacity: 0.5;
   animation: pulseEkg 4s infinite alternate;
+  will-change: transform, opacity; /* Hardware acceleration */
+  transform: translateZ(0); /* Force GPU layer */
 }
 
 @keyframes pulseEkg {
@@ -1240,6 +1258,7 @@
   z-index: 0;
   perspective: 1500px;
   transform-style: preserve-3d;
+  will-change: transform; /* Hardware acceleration */
 }
 
 .cinematicTextLayer {

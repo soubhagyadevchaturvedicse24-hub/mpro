@@ -1,9 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '@google/model-viewer';
 
-const Heart3D = ({ mousePos, modelUrl, className }) => {
+const Heart3D = ({ modelUrl, className }) => {
   const modelRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [localMousePos, setLocalMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    let frameId;
+    const handleMouseMove = (e) => {
+      if (frameId) return;
+      frameId = requestAnimationFrame(() => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 2;
+        const y = (e.clientY / window.innerHeight - 0.5) * 2;
+        setLocalMousePos({ x, y });
+        frameId = null;
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (frameId) cancelAnimationFrame(frameId);
+    };
+  }, []);
 
   useEffect(() => {
     const viewer = modelRef.current;
@@ -14,7 +33,6 @@ const Heart3D = ({ mousePos, modelUrl, className }) => {
 
     if (viewer) {
       viewer.addEventListener('load', handleLoad);
-      // Fallback in case it's already loaded or event fires too fast
       if (viewer.modelIsVisible) handleLoad();
     }
 
@@ -24,13 +42,12 @@ const Heart3D = ({ mousePos, modelUrl, className }) => {
   }, [modelUrl]);
 
   useEffect(() => {
-    if (modelRef.current && mousePos) {
-      // Calculate angles based on mouse position (-1 to 1)
-      const theta = mousePos.x * -45; // rotate left/right
-      const phi = 90 + (mousePos.y * -20); // rotate up/down (90 is straight on)
+    if (modelRef.current) {
+      const theta = localMousePos.x * -45; 
+      const phi = 90 + (localMousePos.y * -20); 
       modelRef.current.cameraOrbit = `${theta}deg ${phi}deg 105%`;
     }
-  }, [mousePos]);
+  }, [localMousePos]);
 
   return (
     <div style={{ 
