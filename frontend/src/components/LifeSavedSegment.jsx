@@ -1,9 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import {
-  Package, ShieldCheck, MapPin, Building2, BedDouble, Activity, Heart, ArrowRight, Lock
-} from 'lucide-react';
 
 /* ─── Animation Variants ─────────────────────────────────────── */
 const fadeUp = {
@@ -17,7 +14,7 @@ const stagger = {
 
 /* ─── Tactile 3D Physical Push-Button Component Wrapper ──────── */
 const TactilePushButton = ({ to, imageSrc, altText, shadowColor, hoverGlow }) => (
-  <Link to={to} className="inline-block flex-1 w-full max-w-[340px] no-underline">
+  <Link to={to} className="inline-block flex-1 w-full max-w-[360px] no-underline">
     <motion.div
       variants={fadeUp}
       initial={{ 
@@ -69,7 +66,7 @@ const TactilePushButton = ({ to, imageSrc, altText, shadowColor, hoverGlow }) =>
           style={{ 
             width: '100%', 
             height: 'auto', 
-            maxHeight: '100px', 
+            maxHeight: '105px', 
             display: 'block', 
             objectFit: 'contain',
             borderRadius: '20px',
@@ -117,7 +114,7 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
   return (
     <section
       id="life-saved-segment"
-      className="relative w-full font-sans min-h-screen overflow-hidden flex flex-col justify-between pt-[85px] pb-6"
+      className="relative w-full font-sans h-screen min-h-screen overflow-hidden flex flex-col justify-center items-center pt-[70px] pb-4"
       style={{
         background: isLight 
           ? 'linear-gradient(180deg, rgba(245, 245, 247, 0.70) 0%, rgba(245, 245, 247, 0.92) 100%)' 
@@ -135,111 +132,45 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
       )}
 
       <motion.div
-        className="relative z-10 max-w-[1320px] mx-auto px-6 py-4 flex flex-col gap-6 w-full flex-grow justify-center"
+        className="relative z-10 max-w-[1240px] mx-auto px-6 py-2 flex flex-col gap-6 w-full items-center justify-center"
         variants={stagger}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '-60px' }}
       >
-        {/* 1. MAIN 2-COLUMN GRID (8-Cols Left / 4-Cols Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch w-full">
-          
-          {/* LEFT COLUMN (8 Cols): Life Saved Card + Donor & Receiver Buttons */}
-          <div className="lg:col-span-8 w-full flex flex-col justify-between gap-5">
-            
-            {/* Top: Life Saved Card */}
-            <motion.div
-              variants={fadeUp}
-              whileHover={{ scale: 1.008, y: -4, rotateX: 1, rotateY: -1, transition: { type: 'spring', stiffness: 300, damping: 22 } }}
-              className="w-full"
-            >
-              <div style={{
-                background: isLight ? '#FFFFFF' : 'rgba(10, 20, 35, 0.45)',
-                backdropFilter: isLight ? 'none' : 'blur(14px)',
-                WebkitBackdropFilter: isLight ? 'none' : 'blur(14px)',
-                border: isLight ? '1px solid #E8E8ED' : '1px solid rgba(255,255,255,0.12)',
-                borderRadius: '24px',
-                padding: '10px',
-                boxShadow: isLight ? '0 4px 24px rgba(0,0,0,0.06)' : '0 16px 48px rgba(0, 191, 255, 0.12), inset 0 1px 0 rgba(255,255,255,0.2)',
-              }}>
-                <img
-                  src="/life_saved_card.png"
-                  alt="Life Saved — Hope Delivered"
-                  style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '16px' }}
-                />
-              </div>
-            </motion.div>
-
-            {/* Bottom: Donor & Receiver Entry Buttons Side-by-Side */}
-            <motion.div variants={fadeUp} className="flex flex-row items-center justify-between gap-4 w-full">
-              <DonorLoginButton />
-              <ReceiverLoginButton />
-            </motion.div>
-          </div>
-
-          {/* RIGHT COLUMN (4 Cols): Unified Hospital Glass Node Frame */}
-          <div className="lg:col-span-4 w-full flex flex-col justify-between items-center h-full">
-            <motion.div
-              variants={fadeUp}
-              className="w-full h-full flex flex-col justify-between items-center p-4"
-              style={{
-                background: isLight ? '#FFFFFF' : 'rgba(10, 20, 35, 0.45)',
-                backdropFilter: isLight ? 'none' : 'blur(14px)',
-                WebkitBackdropFilter: isLight ? 'none' : 'blur(14px)',
-                border: isLight ? '1px solid #E8E8ED' : '1px solid rgba(255,255,255,0.12)',
-                borderRadius: '24px',
-                boxShadow: isLight ? '0 4px 24px rgba(0,0,0,0.06)' : '0 16px 48px rgba(34, 197, 94, 0.14), inset 0 1px 0 rgba(255,255,255,0.2)',
-              }}
-            >
-              {/* 3D Hospital Model Component */}
-              <motion.div
-                initial={{ filter: 'drop-shadow(0 12px 24px rgba(34,197,94,0.3))' }}
-                whileHover={{ 
-                  scale: 1.05, 
-                  y: -6, 
-                  rotateX: 2, 
-                  rotateY: -2, 
-                  filter: 'drop-shadow(0 20px 40px rgba(34,197,94,0.65)) drop-shadow(0 0 30px rgba(34,197,94,0.45))',
-                  transition: { type: 'spring', stiffness: 280, damping: 20 } 
-                }}
-                className="w-full flex justify-center items-center py-2"
-                style={{ perspective: 1200, transformStyle: 'preserve-3d', cursor: 'pointer' }}
-              >
-                <img
-                  src="/hospital_3d.png"
-                  alt="Hospital Component"
-                  style={{ width: '100%', maxWidth: '280px', height: 'auto', display: 'block' }}
-                />
-              </motion.div>
-
-              {/* Enter as Hospital Button directly below the 3D Hospital */}
-              <div className="w-full flex justify-center pt-2">
-                <HospitalLoginButton />
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* 2. BOTTOM ROW: Interactive Timeline Process Strip */}
-        <div className="w-full flex justify-center pt-2 pb-2">
-          <motion.div
-            variants={fadeUp}
-            initial={{ filter: isLight ? 'none' : 'drop-shadow(0 10px 25px rgba(0,210,255,0.25))' }}
-            whileHover={{ 
-              scale: 1.015, 
-              y: -3, 
-              filter: isLight ? 'drop-shadow(0 4px 16px rgba(0,0,0,0.06))' : 'drop-shadow(0 18px 40px rgba(0,210,255,0.55)) drop-shadow(0 0 30px rgba(0,210,255,0.4))' 
-            }}
-            whileTap={{ scale: 0.99 }}
-            className="w-full max-w-[1240px] flex justify-center items-center cursor-pointer px-2"
-          >
-            <img 
-              src="/strip.png" 
-              alt="Process Timeline" 
-              style={{ width: '100%', maxHeight: '115px', objectFit: 'contain', display: 'block', borderRadius: '24px' }} 
+        {/* 1. TOP CENTER: Expanded Prominent 3D "Life Saved — Hope Delivered" Card */}
+        <motion.div
+          variants={fadeUp}
+          whileHover={{ scale: 1.018, y: -5, rotateX: 1.5, rotateY: -1, transition: { type: 'spring', stiffness: 300, damping: 22 } }}
+          className="w-full max-w-[1140px] z-10 cursor-pointer"
+          style={{ perspective: 1200, transformStyle: 'preserve-3d' }}
+        >
+          <div style={{
+            background: isLight ? '#FFFFFF' : 'rgba(10, 20, 35, 0.55)',
+            backdropFilter: isLight ? 'none' : 'blur(16px)',
+            WebkitBackdropFilter: isLight ? 'none' : 'blur(16px)',
+            border: isLight ? '1px solid #E2E8F0' : '1px solid rgba(255, 255, 255, 0.18)',
+            borderRadius: '28px',
+            padding: '12px',
+            boxShadow: isLight ? '0 8px 32px rgba(0,0,0,0.07)' : '0 25px 65px rgba(0, 191, 255, 0.22), inset 0 1.5px 0 rgba(255,255,255,0.4), 0 0 40px rgba(0, 191, 255, 0.18)',
+          }}>
+            <img
+              src="/life_saved_card.png"
+              alt="Life Saved — Hope Delivered"
+              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '20px' }}
             />
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
+
+        {/* 2. BOTTOM CENTER: 3 Tactile 3D Portal Entry Buttons (Donor, Receiver, Hospital) */}
+        <motion.div 
+          variants={fadeUp} 
+          className="flex flex-row items-center justify-center gap-4 lg:gap-8 w-full max-w-[1140px] pt-2"
+        >
+          <DonorLoginButton />
+          <ReceiverLoginButton />
+          <HospitalLoginButton />
+        </motion.div>
       </motion.div>
     </section>
   );
