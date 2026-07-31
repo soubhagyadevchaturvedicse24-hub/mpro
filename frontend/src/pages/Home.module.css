@@ -53,6 +53,7 @@
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
+  scroll-behavior: auto;
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
   background-color: var(--neo-base);
@@ -513,26 +514,12 @@
   border-bottom: 2px solid var(--primary-accent);
 }
 
-.heroSection {
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  z-index: 10;
-}
-
-.segment {
-  /* removed scroll-snap-align */
-}
-
 .navRight {
   position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
 }
-
-
 
 .themeToggleBtn {
   background: transparent;
@@ -607,21 +594,6 @@
   opacity: 0;
   animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 1.4s;
-  position: relative;
-}
-
-/* Cast a soft, deep ambient shadow behind the text to separate it from the 3D background */
-.textContent::before {
-  content: '';
-  position: absolute;
-  top: -50px;
-  bottom: -50px;
-  left: -80px;
-  right: -50px;
-  background: radial-gradient(ellipse at 30% 50%, rgba(4, 8, 15, 0.9) 0%, rgba(4, 8, 15, 0.6) 45%, transparent 80%);
-  z-index: -1;
-  pointer-events: none;
-  filter: blur(20px);
 }
 
 .headline {
@@ -654,7 +626,6 @@
   line-height: 1.6;
   margin-bottom: 32px;
   max-width: 520px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
 }
 
 .ctaGroup {
@@ -1258,8 +1229,8 @@
 .cinematicTextContainer {
   position: absolute;
   top: 45%; 
-  left: 50%;
-  transform: translate(-50%, -50%) rotateX(8deg) rotateY(-12deg);
+  left: 55%;
+  transform: translate(-50%, -50%) rotateX(15deg) rotateY(-18deg);
   width: 100%;
   height: 100%;
   display: flex;
@@ -1267,7 +1238,7 @@
   justify-content: center;
   pointer-events: none;
   z-index: 0;
-  perspective: 1200px;
+  perspective: 1500px;
   transform-style: preserve-3d;
 }
 
@@ -1275,10 +1246,9 @@
   position: absolute;
   font-family: 'Inter', sans-serif;
   font-weight: 900;
-  font-size: 22rem;
-  letter-spacing: -0.02em;
+  font-size: 32rem;
+  letter-spacing: -0.05em;
   line-height: 1;
   text-transform: uppercase;
   color: transparent;
-  will-change: transform, opacity, filter;
 }

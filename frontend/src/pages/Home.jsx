@@ -27,6 +27,33 @@ const Home = () => {
   const dropdownRef = useRef(null);
   const isSnappingRef = useRef(false);
 
+  const cinematicText = React.useMemo(() => (
+    <div className={styles.cinematicTextContainer}>
+      {[...Array(25)].map((_, i) => {
+        const isFront = i === 0;
+        const zOffset = -(i * 4); // tighter packing for solid block
+        const blur = i > 15 ? (i - 15) * 0.3 : 0; // blur only the deepest back end
+
+        return (
+          <span 
+            key={i} 
+            className={styles.cinematicTextLayer}
+            style={{
+              transform: `translateZ(${zOffset}px)`,
+              filter: `blur(${blur}px)`,
+              color: isFront ? '#0d1526' : '#040914', // Solid dark charcoal front, pitch black extrusion
+              textShadow: isFront 
+                ? '-1px -1px 2px rgba(0, 210, 255, 0.3), 0px 10px 30px rgba(0, 0, 0, 0.8)' 
+                : 'none',
+            }}
+          >
+            TRUST
+          </span>
+        );
+      })}
+    </div>
+  ), []);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -35,16 +62,22 @@ const Home = () => {
     };
     document.addEventListener('mousedown', handleClickOutside);
     
+    let frameId;
     const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      setMousePos({ x, y });
+      if (frameId) return;
+      frameId = requestAnimationFrame(() => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 2;
+        const y = (e.clientY / window.innerHeight - 0.5) * 2;
+        setMousePos({ x, y });
+        frameId = null;
+      });
     };
     window.addEventListener('mousemove', handleMouseMove);
     
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('mousemove', handleMouseMove);
+      if (frameId) cancelAnimationFrame(frameId);
     };
   }, []);
 
@@ -54,50 +87,47 @@ const Home = () => {
     const container = containerRef.current;
     if (!container) return;
 
+    let scrollFrameId;
     const handleScroll = () => {
-      const vh = window.innerHeight;
-      const scrollY = container.scrollTop;
-      
-      // Phase 1: Scroll from 0 to Ecosystem Segment
-      // Dynamically calculate the section offset so the heart docks exactly when the section is perfectly framed.
-      const ecoSection = document.getElementById('ecosystem-segment');
-      const ecoTop = ecoSection ? ecoSection.offsetTop : vh;
-      
-      const p1 = Math.min(1, Math.max(0, scrollY / ecoTop));
-      const newLeft = 75 - (25 * p1); // 75 -> 50
-      const newScale = 1 - (0.72 * p1); // 1.0 -> 0.28
-      const newOffsetX = 15 * p1; // 0px -> 15px
-      
-      // Dynamically find the exact vertical center of the node ring
-      let targetOffsetY = -67; // Fallback
-      const stageCenter = document.getElementById('network-stage-center');
-      if (stageCenter && ecoSection) {
-        const ecoRect = ecoSection.getBoundingClientRect();
-        const stageRect = stageCenter.getBoundingClientRect();
-        // Calculate the center of the nodes relative to the top of the Ecosystem section
-        const centerRelToEco = (stageRect.top - ecoRect.top) + (stageRect.height / 2);
-        // The Y offset needed from 50vh to hit this exact center
-        targetOffsetY = centerRelToEco - (vh / 2);
-      }
-      
-      // Interpolate the vertical offset.
-      // At scrollY = 0, newOffsetY = 0 (centered in Hero).
-      // At scrollY >= ecoTop, p1 = 1, and newOffsetY perfectly locks the heart to the node center 
-      // even if the user scrolls past it (ecoTop - scrollY = -excessScroll).
-      const newOffsetY = p1 * (ecoTop - scrollY + targetOffsetY);
-      
-      // No abrupt fade out; it stays stable in the segment.
-      const newOpacity = 1;
+      if (scrollFrameId) return;
+      scrollFrameId = requestAnimationFrame(() => {
+        const vh = window.innerHeight;
+        const scrollY = container.scrollTop;
+        
+        const ecoSection = document.getElementById('ecosystem-segment');
+        const ecoTop = ecoSection ? ecoSection.offsetTop : vh;
+        
+        const p1 = Math.min(1, Math.max(0, scrollY / ecoTop));
+        const newLeft = 75 - (25 * p1);
+        const newScale = 1 - (0.72 * p1);
+        const newOffsetX = 15 * p1;
+        
+        let targetOffsetY = -67;
+        const stageCenter = document.getElementById('network-stage-center');
+        if (stageCenter && ecoSection) {
+          const ecoRect = ecoSection.getBoundingClientRect();
+          const stageRect = stageCenter.getBoundingClientRect();
+          const centerRelToEco = (stageRect.top - ecoRect.top) + (stageRect.height / 2);
+          targetOffsetY = centerRelToEco - (vh / 2);
+        }
+        
+        const newOffsetY = p1 * (ecoTop - scrollY + targetOffsetY);
+        const newOpacity = 1;
 
-      setHeartScrollLeft(newLeft);
-      setHeartScrollScale(newScale);
-      setHeartScrollOffsetX(newOffsetX);
-      setHeartScrollOffsetY(newOffsetY);
-      setHeartScrollOpacity(newOpacity);
+        setHeartScrollLeft(newLeft);
+        setHeartScrollScale(newScale);
+        setHeartScrollOffsetX(newOffsetX);
+        setHeartScrollOffsetY(newOffsetY);
+        setHeartScrollOpacity(newOpacity);
+        scrollFrameId = null;
+      });
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollFrameId) cancelAnimationFrame(scrollFrameId);
+    };
   }, [isHeroActive]);
 
   // ── JS-based smooth scroll snapping (controlled speed) ──────────────────
@@ -110,7 +140,7 @@ const Home = () => {
     const easeInOutCubic = (t) =>
       t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-    const smoothScrollTo = (targetY, duration = 750) => {
+    const smoothScrollTo = (targetY, duration = 900) => {
       const startY = container.scrollTop;
       const distance = targetY - startY;
       const startTime = performance.now();
@@ -158,7 +188,7 @@ const Home = () => {
       // 1. SCROLLING UP (e.deltaY < 0) from Ecosystem segment: 1 unit scroll automatically goes to top (Hero, y = 0)
       if (e.deltaY < 0 && currentY <= ecoPoint + 200) {
         e.preventDefault();
-        smoothScrollTo(0, 750);
+        smoothScrollTo(0, 800);
         return;
       }
 
@@ -188,9 +218,9 @@ const Home = () => {
         }
 
         if (target !== undefined && target !== null) {
-          smoothScrollTo(target, 750);
+          smoothScrollTo(target, 800);
         }
-      }, 20);
+      }, 25);
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
@@ -338,38 +368,8 @@ const Home = () => {
             {/* Ambient EKG Lightning (Night Mode Only) */}
             {theme === 'dark' && <div className={styles.ambientEkgLightning} />}
             
-            {/* Phase 1-3: Layout & Premium 3D Typography (Restored for Performance & Aesthetic) */}
-            <div className={styles.cinematicTextContainer}>
-              {[...Array(15)].map((_, i) => {
-                // Front layer gets a subtle outline, back layers get darker/blurred
-                const isFront = i === 0;
-                const zOffset = -(i * 8); // Push back 8px per layer
-                const opacity = 1 - (i * 0.05); // Fade slightly as it goes back
-                // Performance fix: Limit blur to only the very last few elements to save GPU overhead
-                const blur = i > 10 ? (i - 10) * 0.5 : 0; 
-
-                return (
-                  <span 
-                    key={i} 
-                    className={styles.cinematicTextLayer}
-                    style={{
-                      transform: `translateZ(${zOffset}px)`,
-                      opacity: opacity,
-                      filter: blur > 0 ? `blur(${blur}px)` : 'none',
-                      WebkitTextStroke: isFront ? '1px rgba(255, 255, 255, 0.1)' : 'none',
-                      color: isFront 
-                        ? 'transparent' // Front face is hollow/glassy
-                        : `rgba(15, 23, 42, ${1 - i * 0.02})`, // Deep navy extrusion body
-                      textShadow: isFront 
-                        ? '0 0 20px rgba(0, 191, 255, 0.1)' 
-                        : '0 4px 12px rgba(0,0,0,0.5)',
-                    }}
-                  >
-                    TRUST
-                  </span>
-                );
-              })}
-            </div>
+            {/* Phase 1-3: Layout & Premium 3D Typography */}
+            {cinematicText}
 
             {/* MAIN CONTENT (Left Side) */}
             <main className={styles.mainContent}>
@@ -458,7 +458,7 @@ const Home = () => {
           left: `calc(${heartScrollLeft}% + ${heartScrollOffsetX}px)`,
           top: `calc(50% + ${heartScrollOffsetY}px)`,
           transform: `translate(-50%, -50%) scale(${heartScrollScale})`,
-          transition: 'none', // Disable CSS transition permanently during scroll phase to prevent jitter
+          transition: heartScrollLeft < 75 ? 'none' : undefined, // Disable CSS lag when scrolling
           pointerEvents: 'none'
         } : {}}
       >
