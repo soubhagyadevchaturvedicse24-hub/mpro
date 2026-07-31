@@ -116,13 +116,14 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
       id="life-saved-segment"
       className="relative w-full font-sans h-screen min-h-screen overflow-hidden flex flex-col justify-center items-center pt-[70px] pb-4"
       style={{
-        /* Semi-transparent overlay — lets ambient canvas bleed through */
-        background: isLight 
-          ? 'linear-gradient(180deg, rgba(237, 247, 242, 0.58) 0%, rgba(237, 247, 242, 0.84) 100%)'
-          : 'linear-gradient(180deg, rgba(11, 26, 46, 0.60) 0%, rgba(11, 26, 46, 0.88) 100%)',
+        /* Aurora-aware glassmorphic overlay — the fixed ambient canvas
+           and floating orbs are visible through this section */
+        background: isLight
+          ? 'linear-gradient(180deg, rgba(248, 250, 255, 0.38) 0%, rgba(248, 250, 255, 0.65) 100%)'
+          : 'linear-gradient(180deg, rgba(4, 8, 15, 0.40) 0%, rgba(4, 8, 15, 0.70) 100%)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
-        transition: 'background 0.4s ease',
+        transition: 'background 0.5s ease',
       }}
     >
       {/* Muted ambient glowing background blobs for dark mode */}

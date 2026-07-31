@@ -24,15 +24,19 @@ const HomeFooter = ({ theme = 'dark' }) => {
   return (
     <footer
       style={{
-        /* Semi-transparent overlay — ambient canvas shows through */
-        background: isLight 
-          ? 'linear-gradient(180deg, rgba(232, 245, 238, 0.72) 0%, rgba(232, 245, 238, 0.96) 100%)' 
-          : 'linear-gradient(180deg, rgba(6, 18, 15, 0.72) 0%, rgba(6, 18, 15, 0.97) 100%)',
-        borderTop: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(255,255,255,0.08)',
+        /* Aurora-aware glassmorphic footer \u2014 the ambient canvas is
+           visible through the glass. Night uses a deep near-black tint,
+           day uses a pearl-mint whisper. Both complement the orbs above. */
+        background: isLight
+          ? 'linear-gradient(180deg, rgba(248, 250, 255, 0.55) 0%, rgba(248, 250, 255, 0.88) 100%)'
+          : 'linear-gradient(180deg, rgba(4, 8, 15, 0.60) 0%, rgba(4, 8, 15, 0.92) 100%)',
+        borderTop: isLight
+          ? '1px solid rgba(99, 102, 241, 0.12)'
+          : '1px solid rgba(0, 194, 255, 0.12)',
         fontFamily: 'Inter, sans-serif',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        transition: 'background 0.4s ease',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        transition: 'background 0.5s ease',
       }}
     >
       {/* Main Footer Content */}

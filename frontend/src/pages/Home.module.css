@@ -1,55 +1,51 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 .container {
-  /* ── NIGHT MODE (default) ─────────────────────────────── */
-  /* Base & section tones */
-  --neo-base:           #0A0F1E;
-  --neo-hero-bg:        #0A0F1E;
-  --neo-eco-bg:         #080D18;
-  --neo-life-bg:        #0B1A2E;
-  --neo-cta-bg:         #06120F;
-  /* Glow layers */
-  --neo-glow1-from:     #0D2137;
-  --neo-glow1-to:       #0A0F1E;
-  --neo-glow2-from:     rgba(11, 61, 46, 0.72);
-  --neo-glow2-to:       transparent;
-  /* Dot grid */
-  --neo-dot-color:      rgba(255, 255, 255, 0.03);
-  --neo-dot-size:       24px;
+  /* ── NIGHT MODE — Deep Space Aurora ──────────────────────
+     Base: Near-black with a deep blue tint. Not pure black — avoids
+     harsh contrast and feels more immersive and human.
+     Accent family: Medical Cyan (#00C2FF), Blockchain Indigo (#6366F1),
+                    Life Emerald (#10B981), Deep Teal (#0EA5E9)
+  ────────────────────────────────────────────────────────── */
+  --neo-base:           #04080F;  /* Near-black, slight blue undertone */
+  --neo-hero-bg:        transparent;
+  --neo-eco-bg:         transparent;
+  --neo-life-bg:        transparent;
+  --neo-cta-bg:         transparent;
   /* Section dividers */
-  --neo-divider-peak:   #1A4A6B;
+  --neo-divider-peak:   rgba(0, 194, 255, 0.35);
   /* Card tokens */
   --neo-card-bg:        rgba(255, 255, 255, 0.04);
-  --neo-card-border:    rgba(255, 255, 255, 0.08);
+  --neo-card-border:    rgba(255, 255, 255, 0.09);
 
   /* ── Legacy UI tokens (dark) ─────────────────────── */
-  --bg-color: #0A0F1E;
+  --bg-color: #04080F;
   --text-main: #ffffff;
   --text-muted: #8892b0;
   --card-bg: rgba(255, 255, 255, 0.04);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --card-hover-bg: rgba(30, 40, 55, 0.6);
-  --card-hover-border: rgba(0, 210, 255, 0.3);
-  --ambient-bg: #0A0F1E;
-  --nav-link: #a0a0a0;
+  --card-border: rgba(255, 255, 255, 0.09);
+  --card-hover-bg: rgba(0, 194, 255, 0.06);
+  --card-hover-border: rgba(0, 194, 255, 0.35);
+  --ambient-bg: #04080F;
+  --nav-link: #8892b0;
   --nav-link-hover: #ffffff;
-  --dropdown-bg: rgba(10, 15, 25, 0.9);
+  --dropdown-bg: rgba(8, 14, 28, 0.92);
   --dropdown-text: #cccccc;
-  --dropdown-hover: rgba(0, 210, 255, 0.1);
-  --icon-box-bg: rgba(0, 210, 255, 0.1);
-  --icon-box-border: rgba(0, 210, 255, 0.2);
+  --dropdown-hover: rgba(0, 194, 255, 0.1);
+  --icon-box-bg: rgba(0, 194, 255, 0.1);
+  --icon-box-border: rgba(0, 194, 255, 0.22);
   --heart-mix-blend: screen;
-  --primary-accent: #00d2ff;
-  --highlight-gradient: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
-  --btn-login-border: rgba(255, 255, 255, 0.2);
-  --btn-login-hover-border: rgba(255, 255, 255, 0.5);
-  --btn-login-hover-bg: rgba(255, 255, 255, 0.05);
-  --btn-sec-color: #00d2ff;
-  --btn-sec-border: rgba(0, 210, 255, 0.3);
-  --btn-sec-bg-hover: rgba(0, 210, 255, 0.08);
-  --btn-sec-border-hover: rgba(0, 210, 255, 0.5);
+  --primary-accent: #00c2ff;
+  --highlight-gradient: linear-gradient(90deg, #00c2ff 0%, #6366f1 100%);
+  --btn-login-border: rgba(255, 255, 255, 0.18);
+  --btn-login-hover-border: rgba(0, 194, 255, 0.5);
+  --btn-login-hover-bg: rgba(0, 194, 255, 0.07);
+  --btn-sec-color: #00c2ff;
+  --btn-sec-border: rgba(0, 194, 255, 0.3);
+  --btn-sec-bg-hover: rgba(0, 194, 255, 0.08);
+  --btn-sec-border-hover: rgba(0, 194, 255, 0.5);
   --btn-ghost-color: #8892b0;
-  --btn-ghost-hover: #00d2ff;
+  --btn-ghost-hover: #00c2ff;
 
   position: relative;
   width: 100vw;
@@ -66,70 +62,80 @@
 }
 
 .container[data-theme='light'] {
-  /* ── DAY MODE ─────────────────────────────────────────── */
-  /* Base & section tones */
-  --neo-base:           #F0F4F8;
-  --neo-hero-bg:        #EAF2FB;
-  --neo-eco-bg:         #F5F9FC;
-  --neo-life-bg:        #EDF7F2;
-  --neo-cta-bg:         #E8F5EE;
-  /* Glow layers */
-  --neo-glow1-from:     #E8F4FF;
-  --neo-glow1-to:       #F0F4F8;
-  --neo-glow2-from:     rgba(200, 234, 224, 0.65);
-  --neo-glow2-to:       transparent;
-  /* Dot grid */
-  --neo-dot-color:      rgba(176, 196, 216, 0.028);
-  --neo-dot-size:       24px;
+  /* ── DAY MODE — Pearl Prismatic Aurora ────────────────────
+     Base: Pure pearl white #F8FAFF. Not clinical white — has a
+     barely-there blue warmth that feels premium and airy.
+     Aurora family: Icy Blue, Soft Lavender, Mint Mist, Warm Blush
+     Inspired by: Apple Vision Pro light mode, Figma premium
+  ────────────────────────────────────────────────────────── */
+  --neo-base:           #F8FAFF;  /* Pearl white base */
+  --neo-hero-bg:        transparent;
+  --neo-eco-bg:         transparent;
+  --neo-life-bg:        transparent;
+  --neo-cta-bg:         transparent;
   /* Section dividers */
-  --neo-divider-peak:   #CBD9E8;
+  --neo-divider-peak:   rgba(99, 102, 241, 0.2);
   /* Card tokens */
-  --neo-card-bg:        rgba(255, 255, 255, 0.85);
-  --neo-card-border:    rgba(0, 0, 0, 0.07);
-  --neo-card-shadow:    0 2px 12px rgba(0, 0, 0, 0.06);
+  --neo-card-bg:        rgba(255, 255, 255, 0.75);
+  --neo-card-border:    rgba(255, 255, 255, 0.9);
+  --neo-card-shadow:    0 4px 24px rgba(99, 102, 241, 0.06);
 
   /* ── Legacy UI tokens (light) ─────────────────────── */
-  --bg-color: #F0F4F8;
+  --bg-color: #F8FAFF;
   --text-main: #0F172A;
   --text-muted: #64748B;
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --card-border: rgba(0, 0, 0, 0.07);
-  --card-hover-bg: rgba(255, 255, 255, 0.95);
-  --card-hover-border: rgba(0, 210, 255, 0.2);
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(255, 255, 255, 0.9);
+  --card-hover-bg: rgba(255, 255, 255, 0.92);
+  --card-hover-border: rgba(99, 102, 241, 0.25);
   --ambient-bg: transparent;
   --nav-link: #64748B;
   --nav-link-hover: #0F172A;
   --dropdown-bg: rgba(255, 255, 255, 0.95);
   --dropdown-text: #475569;
-  --dropdown-hover: rgba(0, 210, 255, 0.08);
-  --icon-box-bg: rgba(0, 180, 255, 0.05);
-  --icon-box-border: rgba(0, 180, 255, 0.1);
+  --dropdown-hover: rgba(99, 102, 241, 0.06);
+  --icon-box-bg: rgba(99, 102, 241, 0.06);
+  --icon-box-border: rgba(99, 102, 241, 0.14);
   --heart-mix-blend: normal;
   --primary-accent: #1976FF;
-  --highlight-gradient: linear-gradient(90deg, #1976FF 0%, #0284c7 100%);
-  --btn-login-border: rgba(0, 0, 0, 0.1);
-  --btn-login-hover-border: rgba(0, 0, 0, 0.2);
-  --btn-login-hover-bg: rgba(0, 0, 0, 0.05);
+  --highlight-gradient: linear-gradient(90deg, #1976FF 0%, #6366F1 100%);
+  --btn-login-border: rgba(99, 102, 241, 0.18);
+  --btn-login-hover-border: rgba(99, 102, 241, 0.4);
+  --btn-login-hover-bg: rgba(99, 102, 241, 0.05);
   --btn-sec-color: #0F172A;
-  --btn-sec-border: rgba(0, 0, 0, 0.2);
-  --btn-sec-bg-hover: rgba(0, 0, 0, 0.05);
-  --btn-sec-border-hover: rgba(0, 0, 0, 0.3);
+  --btn-sec-border: rgba(0, 0, 0, 0.16);
+  --btn-sec-bg-hover: rgba(99, 102, 241, 0.05);
+  --btn-sec-border-hover: rgba(99, 102, 241, 0.3);
   --btn-ghost-color: #475569;
-  --btn-ghost-hover: #0ea5e9;
+  --btn-ghost-hover: #6366F1;
 
-  background-color: var(--neo-hero-bg);
+  background-color: var(--neo-base);
   color: var(--text-main);
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* ─── PREMIUM AMBIENT BACKGROUND ───────────────────────────
-   Pure CSS: 3 gradient layers + dot grid. No images. GPU-safe.
-   Layer order (back → front):
-     [0] Solid base fill          (background-color)
-     [1] Primary top-center glow  (radial, large ellipse)
-     [2] Secondary corner accent  (radial, ellipse)
-     [3] Dot grid                 (repeating radial, 24px)
-──────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   PREMIUM AURORA MESH BACKGROUND SYSTEM
+   ════════════════════════════════════════════════════════════
+
+   NIGHT MODE — Deep Space Aurora:
+   Technique: 5-layer radial mesh gradient + animated orb floats
+   Colors: Medical Cyan (#00C2FF), Blockchain Indigo (#6366F1),
+           Life Emerald (#10B981), Deep Teal (#0EA5E9), Violet (#8B5CF6)
+   Effect: Alive, immersive, professional dark ambiance
+
+   DAY MODE — Pearl Prismatic Aurora:
+   Technique: 4-layer soft prismatic aurora + gentle breathing orbs
+   Colors: Icy Blue, Soft Lavender, Mint Mist, Warm Pearl
+   Effect: Apple-premium, airy, clinical-modern, welcoming
+
+   Architecture:
+     .ambientBackground  = fixed canvas, 3 static gradient mesh layers
+     .orbPrimary/etc     = animated floating color blobs (slow drift)
+     Sections            = transparent overlays — aurora visible throughout
+   ════════════════════════════════════════════════════════════ */
+
+/* ─── FIXED AMBIENT CANVAS — NIGHT MODE ──────────────────── */
 .ambientBackground {
   position: fixed;
   top: 0;
@@ -138,90 +144,96 @@
   height: 100vh;
   z-index: 0;
   pointer-events: none;
-  will-change: opacity;
+  overflow: hidden;
 
-  /* Base fill — pulled from current theme token */
-  background-color: var(--neo-base, #0A0F1E);
+  /* Deep space near-black base */
+  background-color: #04080F;
 
-  /* 3 gradient layers stacked */
+  /*
+   * Static mesh gradient: 3 large zones establish the base aurora.
+   * Orbs (below) animate on top for the "alive" feeling.
+   *
+   * Zone 1 (top-left)  — Medical Cyan primary glow
+   * Zone 2 (right)     — Blockchain Indigo accent
+   * Zone 3 (bottom)    — Life Emerald warmth
+   */
   background-image:
-    /* [3] Dot grid — 1px white/blue dots, 24px spacing */
     radial-gradient(
-      circle,
-      var(--neo-dot-color, rgba(255,255,255,0.03)) 1px,
-      transparent 1px
+      ellipse 70% 60% at 15% 10%,
+      rgba(0, 194, 255, 0.16) 0%,
+      rgba(14, 165, 233, 0.08) 45%,
+      transparent 75%
     ),
-    /* [2] Bottom-right accent glow */
     radial-gradient(
-      ellipse 55% 55% at 95% 95%,
-      var(--neo-glow2-from, rgba(11,61,46,0.72)) 0%,
-      var(--neo-glow2-to, transparent) 70%
+      ellipse 55% 65% at 90% 20%,
+      rgba(99, 102, 241, 0.18) 0%,
+      rgba(139, 92, 246, 0.08) 50%,
+      transparent 75%
     ),
-    /* [1] Top-center primary radial glow */
     radial-gradient(
-      ellipse 80% 60% at 50% 0%,
-      var(--neo-glow1-from, #0D2137) 0%,
-      var(--neo-glow1-to, #0A0F1E) 100%
+      ellipse 60% 50% at 50% 100%,
+      rgba(16, 185, 129, 0.14) 0%,
+      rgba(5, 150, 105, 0.06) 55%,
+      transparent 80%
     );
 
-  background-size:
-    var(--neo-dot-size, 24px) var(--neo-dot-size, 24px),
-    100% 100%,
-    100% 100%;
-
-  background-position: 0 0, right bottom, center top;
-  background-repeat: repeat, no-repeat, no-repeat;
-
-  transition:
-    background-color 0.4s ease,
-    background-image 0.4s ease;
+  transition: background-color 0.6s ease;
 }
 
-/* Day mode: layer 2 moves to top-right (mint teal mist) */
+/* ─── FIXED AMBIENT CANVAS — DAY MODE ────────────────────── */
 .container[data-theme='light'] .ambientBackground {
+  /* Pearl white base — barely-there blue undertone, never clinical */
+  background-color: #F8FAFF;
+
+  /*
+   * Prismatic aurora: 4 soft diffuse color zones
+   * Zone 1 (top-left)   — Icy Blue   (trust, sky, clean)
+   * Zone 2 (top-right)  — Soft Mint  (life, health, fresh)
+   * Zone 3 (bottom-left)— Whisper Lavender (innovation, blockchain)
+   * Zone 4 (center)     — Neutral pearl fill (balance)
+   */
   background-image:
     radial-gradient(
-      circle,
-      var(--neo-dot-color, rgba(176,196,216,0.028)) 1px,
-      transparent 1px
+      ellipse 65% 55% at 0% 0%,
+      rgba(186, 230, 253, 0.75) 0%,
+      rgba(224, 242, 254, 0.45) 40%,
+      transparent 72%
     ),
     radial-gradient(
-      ellipse 50% 50% at 95% 5%,
-      var(--neo-glow2-from, rgba(200,234,224,0.65)) 0%,
-      var(--neo-glow2-to, transparent) 70%
+      ellipse 55% 60% at 100% 0%,
+      rgba(187, 247, 208, 0.60) 0%,
+      rgba(220, 252, 231, 0.35) 45%,
+      transparent 72%
     ),
     radial-gradient(
-      ellipse 75% 55% at 50% 0%,
-      var(--neo-glow1-from, #E8F4FF) 0%,
-      var(--neo-glow1-to, #F0F4F8) 100%
+      ellipse 60% 50% at 10% 100%,
+      rgba(221, 214, 254, 0.55) 0%,
+      rgba(237, 233, 254, 0.30) 48%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 45% 45% at 85% 85%,
+      rgba(254, 226, 226, 0.25) 0%,
+      transparent 65%
     );
 }
 
-/* ─── SECTION-LEVEL TONE BACKGROUNDS ──────────────────────
-   Applied as semi-transparent overlays on each section
-   so the ambient canvas shows through but each zone
-   reads with its own distinct temperature.
-──────────────────────────────────────────────────────────── */
+/* ─── SECTION BACKGROUNDS — TRANSPARENT (aurora shows through) */
 .sectionHero {
-  background-color: var(--neo-hero-bg, #0A0F1E);
-  transition: background-color 0.4s ease;
+  background: transparent;
 }
 .sectionEco {
-  background-color: var(--neo-eco-bg, #080D18);
-  transition: background-color 0.4s ease;
+  /* Ultra-thin tinted overlay for the ecosystem dark depth */
+  background: transparent;
 }
 .sectionLife {
-  background-color: var(--neo-life-bg, #0B1A2E);
-  transition: background-color 0.4s ease;
+  background: transparent;
 }
 .sectionCta {
-  background-color: var(--neo-cta-bg, #06120F);
-  transition: background-color 0.4s ease;
+  background: transparent;
 }
 
-/* ─── SECTION DIVIDER LINE ─────────────────────────────────
-   Thin horizontal gradient fade-in/out line between sections.
-──────────────────────────────────────────────────────────── */
+/* ─── SECTION DIVIDER LINE ──────────────────────────────── */
 .sectionDivider {
   width: 100%;
   height: 1px;
@@ -229,17 +241,19 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--neo-divider-peak, #1A4A6B) 50%,
+    var(--neo-divider-peak, rgba(0,194,255,0.35)) 50%,
     transparent 100%
   );
-  opacity: 0.65;
+  opacity: 0.8;
   pointer-events: none;
-  transition: background 0.4s ease, opacity 0.4s ease;
+  transition: background 0.5s ease;
 }
 
-/* ─── REDUCED MOTION — disable all bg transitions ─────── */
+/* ─── REDUCED MOTION — kill all bg transitions/animations ── */
 @media (prefers-reduced-motion: reduce) {
   .ambientBackground,
+  .orbPrimary, .orbSecondary, .orbTertiary,
+  .orbDay1, .orbDay2, .orbDay3,
   .sectionHero, .sectionEco, .sectionLife, .sectionCta,
   .sectionDivider {
     transition: none !important;
@@ -247,48 +261,166 @@
   }
 }
 
+/* ════════════════════════════════════════════════════════════
+   ANIMATED AURORA ORBS — NIGHT MODE
+   5 layered blurred spheres that slowly drift and breathe.
+   Each orb is a single accent color from the component palette.
+   Animation speeds are staggered (11s–22s) to prevent sync.
+   ════════════════════════════════════════════════════════════ */
+
+/* Orb 1: Medical Cyan — top-right quadrant (hero primary glow) */
 .orbPrimary {
   position: absolute;
-  top: 10%;
-  right: 12%;
+  top: -5%;
+  right: 5%;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 194, 255, 0.28) 0%,
+    rgba(14, 165, 233, 0.14) 40%,
+    transparent 70%
+  );
+  filter: blur(80px);
+  animation: auroraFloat1 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Orb 2: Blockchain Indigo — left side (depth and mystery) */
+.orbSecondary {
+  position: absolute;
+  top: 35%;
+  left: -8%;
   width: 650px;
   height: 650px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 102, 204, 0.22) 0%, rgba(56, 189, 248, 0.10) 45%, transparent 70%);
-  filter: blur(70px);
-  animation: floatOrb1 12s ease-in-out infinite alternate;
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.25) 0%,
+    rgba(139, 92, 246, 0.12) 45%,
+    transparent 70%
+  );
+  filter: blur(90px);
+  animation: auroraFloat2 22s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
-.orbSecondary {
-  position: absolute;
-  top: 40%;
-  left: 3%;
-  width: 550px;
-  height: 550px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, rgba(96, 165, 250, 0.08) 50%, transparent 70%);
-  filter: blur(80px);
-  animation: floatOrb2 16s ease-in-out infinite alternate;
-}
-
+/* Orb 3: Life Emerald — bottom-right (organ life signal) */
 .orbTertiary {
   position: absolute;
-  bottom: 8%;
-  right: 20%;
-  width: 600px;
-  height: 600px;
+  bottom: -5%;
+  right: 15%;
+  width: 680px;
+  height: 680px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(34, 211, 160, 0.16) 0%, rgba(56, 189, 248, 0.08) 50%, transparent 70%);
-  filter: blur(75px);
-  animation: floatOrb1 14s ease-in-out infinite alternate-reverse;
+  background: radial-gradient(
+    circle,
+    rgba(16, 185, 129, 0.22) 0%,
+    rgba(5, 150, 105, 0.10) 45%,
+    transparent 70%
+  );
+  filter: blur(85px);
+  animation: auroraFloat1 15s ease-in-out infinite alternate-reverse;
+  will-change: transform;
 }
 
+/* ════════════════════════════════════════════════════════════
+   ANIMATED AURORA ORBS — DAY MODE
+   Soft, pastel prismatic glows. Lower opacity, warmer palette.
+   The "breathing" animation is subtler — medical professionalism.
+   ════════════════════════════════════════════════════════════ */
+
+.orbDay1 {
+  display: none; /* hidden in night mode */
+}
+.orbDay2 { display: none; }
+.orbDay3 { display: none; }
+
+/* Reveal day orbs only in light theme */
+.container[data-theme='light'] .orbPrimary {
+  top: -10%;
+  right: -5%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(
+    circle,
+    rgba(147, 197, 253, 0.55) 0%,
+    rgba(186, 230, 253, 0.30) 40%,
+    transparent 68%
+  );
+  filter: blur(100px);
+  animation: auroraBreath1 20s ease-in-out infinite alternate;
+}
+
+.container[data-theme='light'] .orbSecondary {
+  top: 55%;
+  left: -10%;
+  width: 750px;
+  height: 750px;
+  background: radial-gradient(
+    circle,
+    rgba(196, 181, 253, 0.50) 0%,
+    rgba(221, 214, 254, 0.28) 42%,
+    transparent 68%
+  );
+  filter: blur(110px);
+  animation: auroraBreath2 25s ease-in-out infinite alternate;
+}
+
+.container[data-theme='light'] .orbTertiary {
+  bottom: -8%;
+  right: 25%;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(
+    circle,
+    rgba(134, 239, 172, 0.45) 0%,
+    rgba(187, 247, 208, 0.25) 45%,
+    transparent 68%
+  );
+  filter: blur(95px);
+  animation: auroraBreath1 17s ease-in-out infinite alternate-reverse;
+}
+
+/* ════════════════════════════════════════════════════════════
+   AURORA ANIMATION KEYFRAMES
+   Night: stronger, more dramatic movement (space feel)
+   Day:   subtler, breathing feel (medical calm)
+   ════════════════════════════════════════════════════════════ */
+
+@keyframes auroraFloat1 {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  30%  { transform: translate(55px, -40px) scale(1.06); }
+  65%  { transform: translate(-30px, 55px) scale(0.97); }
+  100% { transform: translate(40px, -20px) scale(1.04); }
+}
+
+@keyframes auroraFloat2 {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  35%  { transform: translate(-60px, 40px) scale(1.08); }
+  70%  { transform: translate(45px, -50px) scale(0.95); }
+  100% { transform: translate(-25px, 30px) scale(1.03); }
+}
+
+@keyframes auroraBreath1 {
+  0%   { transform: translate(0px, 0px) scale(1);    opacity: 1; }
+  50%  { transform: translate(30px, -25px) scale(1.04); opacity: 0.88; }
+  100% { transform: translate(-20px, 18px) scale(0.97); opacity: 0.95; }
+}
+
+@keyframes auroraBreath2 {
+  0%   { transform: translate(0px, 0px) scale(1);    opacity: 1; }
+  50%  { transform: translate(-35px, 30px) scale(1.05); opacity: 0.85; }
+  100% { transform: translate(25px, -20px) scale(0.96); opacity: 0.92; }
+}
+
+/* Legacy compat aliases — keep old keyframe names working */
 @keyframes floatOrb1 {
   0% { transform: translate(0px, 0px) scale(1); }
   50% { transform: translate(40px, -30px) scale(1.08); }
   100% { transform: translate(-20px, 25px) scale(0.95); }
 }
-
 @keyframes floatOrb2 {
   0% { transform: translate(0px, 0px) scale(1); }
   50% { transform: translate(-35px, 35px) scale(1.1); }
