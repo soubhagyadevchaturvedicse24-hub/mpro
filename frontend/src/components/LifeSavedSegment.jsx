@@ -1,111 +1,29 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { 
+  HeartPulse, 
+  ShieldCheck, 
+  MapPin, 
+  Activity, 
+  Users, 
+  Check, 
+  UserPlus, 
+  Building2, 
+  ArrowRight,
+  Lock
+} from 'lucide-react';
+import styles from './LifeSavedSegment.module.css';
 
 /* ─── Animation Variants ─────────────────────────────────────── */
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 30 },
   show:   { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 20 } }
 };
 const stagger = {
   hidden: {},
   show:   { transition: { staggerChildren: 0.1 } }
 };
-
-/* ─── Tactile 3D Physical Push-Button Component Wrapper ──────── */
-const TactilePushButton = ({ to, imageSrc, altText, shadowColor, hoverGlow }) => (
-  <Link to={to} className="inline-block flex-1 w-full max-w-[360px] no-underline">
-    <motion.div
-      variants={fadeUp}
-      initial={{ 
-        y: 0, 
-        scale: 1,
-        filter: `drop-shadow(0 10px 22px ${shadowColor}) drop-shadow(0 0 12px ${shadowColor}) brightness(1)` 
-      }}
-      whileHover={{ 
-        scale: 1.045, 
-        y: -5, 
-        filter: `drop-shadow(0 20px 42px ${hoverGlow}) drop-shadow(0 0 35px ${hoverGlow}) brightness(1.1) contrast(1.03)`,
-        transition: { type: 'spring', stiffness: 350, damping: 18 } 
-      }}
-      whileTap={{ 
-        scale: 0.935, 
-        y: 4, 
-        filter: `drop-shadow(0 4px 10px ${shadowColor}) brightness(0.92)`,
-        transition: { type: 'spring', stiffness: 500, damping: 14 } 
-      }}
-      style={{ 
-        cursor: 'pointer', 
-        width: '100%', 
-        position: 'relative',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        borderRadius: '24px',
-      }}
-    >
-      {/* 3D Tactile Edge Bevel Rim */}
-      <div 
-        className="w-full relative overflow-hidden rounded-[24px] p-1 transition-all duration-300"
-        style={{
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.3) 100%)',
-          boxShadow: 'inset 0 1.5px 0.5px rgba(255,255,255,0.7), inset 0 -3px 0.5px rgba(0,0,0,0.4)',
-        }}
-      >
-        {/* Subtle Glass Light Glare Line */}
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-40"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.05) 40%, transparent 80%)',
-            borderRadius: '24px',
-          }}
-        />
-
-        <img 
-          src={imageSrc} 
-          alt={altText} 
-          style={{ 
-            width: '100%', 
-            height: 'auto', 
-            maxHeight: '105px', 
-            display: 'block', 
-            objectFit: 'contain',
-            borderRadius: '20px',
-          }} 
-        />
-      </div>
-    </motion.div>
-  </Link>
-);
-
-const DonorLoginButton = () => (
-  <TactilePushButton 
-    to="/dashboard/donor-consent" 
-    imageSrc="/donor_button_3d.png" 
-    altText="Enter as Donor" 
-    shadowColor="rgba(59,130,246,0.35)" 
-    hoverGlow="rgba(59,130,246,0.75)" 
-  />
-);
-
-const ReceiverLoginButton = () => (
-  <TactilePushButton 
-    to="/login" 
-    imageSrc="/receiver_button_3d.png" 
-    altText="Enter as Receiver" 
-    shadowColor="rgba(167,139,250,0.32)" 
-    hoverGlow="rgba(167,139,250,0.75)" 
-  />
-);
-
-const HospitalLoginButton = () => (
-  <TactilePushButton 
-    to="/dashboard/hospital-registry" 
-    imageSrc="/hospital.png" 
-    altText="Enter as Hospital" 
-    shadowColor="rgba(34,197,94,0.35)" 
-    hoverGlow="rgba(34,197,94,0.75)" 
-  />
-);
 
 /* ─── Main Component ─────────────────────────────────────────── */
 const LifeSavedSegment = ({ theme = 'dark' }) => {
@@ -114,7 +32,7 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
   return (
     <section
       id="life-saved-segment"
-      className="relative w-full font-sans h-screen min-h-screen overflow-hidden flex flex-col justify-center items-center pt-[70px] pb-4"
+      className={styles.segmentContainer}
       style={{
         /* Aurora-aware glassmorphic overlay — the fixed ambient canvas
            and floating orbs are visible through this section */
@@ -126,54 +44,159 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
         transition: 'background 0.5s ease',
       }}
     >
-      {/* Muted ambient glowing background blobs for dark mode */}
-      {!isLight && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-          <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: '450px', height: '450px', borderRadius: '50%', background: 'rgba(147,197,253,0.25)', filter: 'blur(100px)' }} />
-          <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: '450px', height: '450px', borderRadius: '50%', background: 'rgba(187,247,208,0.2)', filter: 'blur(100px)' }} />
-        </div>
-      )}
-
       <motion.div
-        className="relative z-10 max-w-[1240px] mx-auto px-6 py-2 flex flex-col gap-6 w-full items-center justify-center"
+        className={styles.contentWrapper}
         variants={stagger}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: '-60px' }}
       >
-        {/* 1. TOP CENTER: Expanded Prominent 3D "Life Saved — Hope Delivered" Card */}
-        <motion.div
-          variants={fadeUp}
-          whileHover={{ scale: 1.018, y: -5, rotateX: 1.5, rotateY: -1, transition: { type: 'spring', stiffness: 300, damping: 22 } }}
-          className="w-full max-w-[1140px] z-10 cursor-pointer"
-          style={{ perspective: 1200, transformStyle: 'preserve-3d' }}
-        >
-          <div style={{
-            background: isLight ? '#FFFFFF' : 'rgba(10, 20, 35, 0.55)',
-            backdropFilter: isLight ? 'none' : 'blur(16px)',
-            WebkitBackdropFilter: isLight ? 'none' : 'blur(16px)',
-            border: isLight ? '1px solid #E2E8F0' : '1px solid rgba(255, 255, 255, 0.18)',
-            borderRadius: '28px',
-            padding: '12px',
-            boxShadow: isLight ? '0 8px 32px rgba(0,0,0,0.07)' : '0 25px 65px rgba(0, 191, 255, 0.22), inset 0 1.5px 0 rgba(255,255,255,0.4), 0 0 40px rgba(0, 191, 255, 0.18)',
-          }}>
-            <img
-              src="/life_saved_card.png"
-              alt="Life Saved — Hope Delivered"
-              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '20px' }}
+        {/* 1. TOP CENTER: HERO BANNER CARD */}
+        <motion.div variants={fadeUp} className={styles.heroBanner} data-theme={theme}>
+          
+          {/* Left Text Column */}
+          <div className={styles.heroLeft}>
+            
+            {/* Glowing Heart Icon */}
+            <div className={styles.heartIconWrapper}>
+              <div className={styles.heartIconGlow}>
+                <HeartPulse size={44} strokeWidth={2.5} />
+              </div>
+            </div>
+
+            {/* Headline */}
+            <div className={styles.headline}>
+              <div className={styles.headlineMain}>
+                LIFE <span className={styles.headlineGradient}>SAVED</span>
+              </div>
+              <div className={styles.subHeadline}>Hope Delivered</div>
+            </div>
+
+            {/* EKG SVG Divider */}
+            <div className={styles.ekgDivider} />
+
+            {/* Supporting Text */}
+            <p className={styles.heroText}>
+              The organ reached safely.<br/>A life continues.
+            </p>
+
+            {/* 4 Feature Badges */}
+            <div className={styles.featureList}>
+              <div className={styles.featureItem}>
+                <ShieldCheck size={18} className={styles.featureIcon} />
+                <span>Secure<br/>Transport</span>
+              </div>
+              <div className={styles.featureItem}>
+                <MapPin size={18} className={styles.featureIcon} />
+                <span>Verified<br/>Tracking</span>
+              </div>
+              <div className={styles.featureItem}>
+                <Activity size={18} className={styles.featureIcon} />
+                <span>Real-time<br/>Updates</span>
+              </div>
+              <div className={styles.featureItem}>
+                <Users size={18} className={styles.featureIcon} />
+                <span>Trusted<br/>Network</span>
+              </div>
+            </div>
+            
+          </div>
+
+          {/* Right Visual Column */}
+          <div className={styles.heroRight}>
+            <div className={styles.imageOverlay} />
+            <img 
+              src="/hospital_recovery_scene.jpg" 
+              alt="Hospital Recovery Scene" 
+              className={styles.hospitalImage}
+              onError={(e) => {
+                // Fallback if image not available
+                e.target.src = "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=800&q=80";
+              }}
             />
+
+            {/* Floating Mission Accomplished Card */}
+            <motion.div 
+              className={styles.floatingCard}
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5, type: 'spring' }}
+            >
+              <div className={styles.floatingCardTitle}>
+                <div className={styles.checkBadge}>
+                  <Check size={16} strokeWidth={3} />
+                </div>
+                Mission <span>Accomplished</span>
+              </div>
+              <div className={styles.floatingCardText}>
+                Thank you for<br/>being the reason.
+              </div>
+            </motion.div>
           </div>
         </motion.div>
 
-        {/* 2. BOTTOM CENTER: 3 Tactile 3D Portal Entry Buttons (Donor, Receiver, Hospital) */}
-        <motion.div 
-          variants={fadeUp} 
-          className="flex flex-row items-center justify-center gap-4 lg:gap-8 w-full max-w-[1140px] pt-2"
-        >
-          <DonorLoginButton />
-          <ReceiverLoginButton />
-          <HospitalLoginButton />
+        {/* 2. BOTTOM CENTER: 3 PORTAL CARDS */}
+        <motion.div variants={fadeUp} className={styles.portalGrid}>
+          
+          <Link to="/dashboard/donor-consent" className={`${styles.portalCard} ${styles.cardDonor}`} data-theme={theme}>
+            <div className={styles.portalLeft}>
+              <div className={styles.portalIconRing}>
+                <UserPlus size={28} />
+              </div>
+              <div className={styles.portalTextGroup}>
+                <div className={styles.portalTitle}>Enter as Donor</div>
+                <div className={styles.portalSub}>Sign in or create<br/>a donor account.</div>
+              </div>
+            </div>
+            <div className={styles.portalArrowBtn}>
+              <ArrowRight size={24} />
+            </div>
+          </Link>
+
+          <Link to="/login" className={`${styles.portalCard} ${styles.cardReceiver}`} data-theme={theme}>
+            <div className={styles.portalLeft}>
+              <div className={styles.portalIconRing}>
+                <Users size={28} />
+              </div>
+              <div className={styles.portalTextGroup}>
+                <div className={styles.portalTitle}>Enter as Receiver</div>
+                <div className={styles.portalSub}>Sign in or create<br/>a receiver account.</div>
+              </div>
+            </div>
+            <div className={styles.portalArrowBtn}>
+              <ArrowRight size={24} />
+            </div>
+          </Link>
+
+          <Link to="/dashboard/hospital-registry" className={`${styles.portalCard} ${styles.cardHospital}`} data-theme={theme}>
+            <div className={styles.portalLeft}>
+              <div className={styles.portalIconRing}>
+                <Building2 size={28} />
+              </div>
+              <div className={styles.portalTextGroup}>
+                <div className={styles.portalTitle}>Enter as Hospital</div>
+                <div className={styles.portalSub}>Sign in or register your<br/>hospital for approval.</div>
+              </div>
+            </div>
+            <div className={styles.portalArrowBtn}>
+              <ArrowRight size={24} />
+            </div>
+          </Link>
+
         </motion.div>
+
+        {/* 3. TRUST FOOTER STRIP */}
+        <motion.div variants={fadeUp} className={styles.trustFooter} data-theme={theme}>
+          <div className={styles.trustItem}>
+            <Lock size={16} className={styles.trustIcon} />
+            Secure. Verified. Transparent. Because <span>every life matters</span>.
+          </div>
+          <div className={styles.trustItem}>
+            <ShieldCheck size={16} className={styles.trustIcon} />
+            Trusted by Hospitals. Powered by Blockchain.
+          </div>
+        </motion.div>
+
       </motion.div>
     </section>
   );

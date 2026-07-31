@@ -1,0 +1,336 @@
+/* ════════════════════════════════════════════════════════════
+   LIFE SAVED SEGMENT: EXACT MOCKUP REPLICATION
+   ════════════════════════════════════════════════════════════ */
+
+.segmentContainer {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  padding: 100px 80px 40px 80px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  font-family: var(--font-sans, 'Inter', sans-serif);
+}
+
+.contentWrapper {
+  width: 100%;
+  max-width: 1240px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  z-index: 10;
+}
+
+/* ─── 1. HERO BANNER CARD ─── */
+.heroBanner {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 480px;
+  background: rgba(10, 16, 28, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 50px rgba(0,0,0,0.4);
+}
+.heroBanner[data-theme='light'] {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+}
+
+.heroLeft {
+  flex: 1;
+  padding: 50px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+/* Big Glowing Heart Icon */
+.heartIconWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.heartIconGlow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.25) 0%, transparent 70%);
+}
+.heartIconGlow svg {
+  color: #4ade80;
+  filter: drop-shadow(0 0 12px rgba(74, 222, 128, 0.6));
+}
+
+.headline {
+  text-align: center;
+  margin: 0;
+}
+.headlineMain {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 4.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+.headlineGradient {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 16px rgba(74, 222, 128, 0.3));
+}
+.heroBanner[data-theme='light'] .headlineMain { color: #020617; }
+
+.subHeadline {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 2.2rem;
+  font-weight: 500;
+  color: #93c5fd;
+  text-align: center;
+  margin-top: 8px;
+  letter-spacing: -0.5px;
+}
+.heroBanner[data-theme='light'] .subHeadline { color: #2563eb; }
+
+/* EKG Divider */
+.ekgDivider {
+  width: 100%;
+  height: 24px;
+  margin: 24px 0;
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 400 24" xmlns="http://www.w3.org/2000/svg"><path d="M0 12 L180 12 L190 2 L195 22 L205 -2 L210 16 L215 12 L400 12" stroke="%234ade80" stroke-width="2" fill="none"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.8;
+}
+
+.heroText {
+  text-align: center;
+  font-size: 1.15rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+.heroBanner[data-theme='light'] .heroText { color: #475569; }
+
+.featureList {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+.heroBanner[data-theme='light'] .featureItem { color: #1e293b; }
+
+.featureIcon {
+  color: #3b82f6;
+}
+
+/* Hero Right: Image & Floating Card */
+.heroRight {
+  flex: 1;
+  position: relative;
+}
+.hospitalImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(10, 16, 28, 0.95) 0%, rgba(10, 16, 28, 0) 40%);
+}
+.heroBanner[data-theme='light'] .imageOverlay {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 40%);
+}
+
+.floatingCard {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 16px;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(56, 189, 248, 0.1);
+}
+.floatingCardTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+.floatingCardTitle span {
+  color: #4ade80;
+}
+.checkBadge {
+  background: #3b82f6;
+  border-radius: 50%;
+  padding: 4px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.floatingCardText {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-left: 36px;
+  line-height: 1.4;
+}
+
+/* ─── 2. ENTRY PORTAL CARDS ─── */
+.portalGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.portalCard {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.portalCard:hover {
+  transform: translateY(-4px);
+}
+.portalCard[data-theme='light'] {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0,0,0,0.08);
+}
+
+/* Unique card glows */
+.cardDonor { border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
+.cardDonor:hover { border-color: rgba(59, 130, 246, 0.8); box-shadow: 0 0 40px rgba(59, 130, 246, 0.3); }
+.cardReceiver { border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); }
+.cardReceiver:hover { border-color: rgba(168, 85, 247, 0.8); box-shadow: 0 0 40px rgba(168, 85, 247, 0.3); }
+.cardHospital { border-color: rgba(34, 197, 94, 0.4); box-shadow: 0 0 20px rgba(34, 197, 94, 0.15); }
+.cardHospital:hover { border-color: rgba(34, 197, 94, 0.8); box-shadow: 0 0 40px rgba(34, 197, 94, 0.3); }
+
+/* Left content */
+.portalLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.portalIconRing {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid;
+}
+.cardDonor .portalIconRing { border-color: #3b82f6; color: #3b82f6; background: rgba(59,130,246,0.1); }
+.cardReceiver .portalIconRing { border-color: #a855f7; color: #a855f7; background: rgba(168,85,247,0.1); }
+.cardHospital .portalIconRing { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,0.1); }
+
+.portalTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.portalTitle {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+.portalCard[data-theme='light'] .portalTitle { color: #020617; }
+.portalSub {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+.portalCard[data-theme='light'] .portalSub { color: #475569; }
+
+/* Right Arrow Button */
+.portalArrowBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.portalCard:hover .portalArrowBtn {
+  transform: translateX(4px);
+}
+
+/* ─── 3. TRUST FOOTER STRIP ─── */
+.trustFooter {
+  width: 100%;
+  background: rgba(10, 16, 28, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+.trustFooter[data-theme='light'] {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0,0,0,0.08);
+}
+.trustItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+.trustFooter[data-theme='light'] .trustItem { color: #475569; }
+.trustItem span {
+  color: #4ade80;
+  font-weight: 600;
+}
+.trustIcon {
+  color: #94a3b8;
+}
