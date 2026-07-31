@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap');
 @import 'leaflet/dist/leaflet.css';
 
 @tailwind components;
@@ -28,10 +28,10 @@
   --glass-blur-sm:    blur(8px);
 
   /* ── Text ──────────────────────────────────────── */
-  --text-primary:     #f0f0f8;
-  --text-secondary:   #9090b0;
-  --text-tertiary:    #5a5a78;
-  --text-muted:       #3a3a52;
+  --text-primary:     #f8fafc;
+  --text-secondary:   #94a3b8;
+  --text-tertiary:    #64748b;
+  --text-muted:       #475569;
 
   /* ── Semantic Status ──────────────────────────── */
   --status-online:    #22d3a0;
@@ -71,6 +71,7 @@
 
   /* ── Typography ───────────────────────────────── */
   --font-sans: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Outfit', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 

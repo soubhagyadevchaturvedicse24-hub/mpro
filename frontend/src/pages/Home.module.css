@@ -20,8 +20,8 @@
 
   /* ── Legacy UI tokens (dark) ─────────────────────── */
   --bg-color: #04080F;
-  --text-main: #ffffff;
-  --text-muted: #8892b0;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
   --card-bg: rgba(255, 255, 255, 0.04);
   --card-border: rgba(255, 255, 255, 0.09);
   --card-hover-bg: rgba(0, 194, 255, 0.06);
@@ -36,7 +36,7 @@
   --icon-box-border: rgba(0, 194, 255, 0.22);
   --heart-mix-blend: screen;
   --primary-accent: #00c2ff;
-  --highlight-gradient: linear-gradient(90deg, #00c2ff 0%, #6366f1 100%);
+  --highlight-gradient: linear-gradient(90deg, #38bdf8 0%, #a78bfa 100%);
   --btn-login-border: rgba(255, 255, 255, 0.18);
   --btn-login-hover-border: rgba(0, 194, 255, 0.5);
   --btn-login-hover-bg: rgba(0, 194, 255, 0.07);
@@ -82,8 +82,8 @@
 
   /* ── Legacy UI tokens (light) ─────────────────────── */
   --bg-color: #F8FAFF;
-  --text-main: #0F172A;
-  --text-muted: #64748B;
+  --text-main: #020617;
+  --text-muted: #475569;
   --card-bg: rgba(255, 255, 255, 0.75);
   --card-border: rgba(255, 255, 255, 0.9);
   --card-hover-bg: rgba(255, 255, 255, 0.92);
@@ -98,7 +98,7 @@
   --icon-box-border: rgba(99, 102, 241, 0.14);
   --heart-mix-blend: normal;
   --primary-accent: #1976FF;
-  --highlight-gradient: linear-gradient(90deg, #1976FF 0%, #6366F1 100%);
+  --highlight-gradient: linear-gradient(90deg, #4f46e5 0%, #0284c7 100%);
   --btn-login-border: rgba(99, 102, 241, 0.18);
   --btn-login-hover-border: rgba(99, 102, 241, 0.4);
   --btn-login-hover-bg: rgba(99, 102, 241, 0.05);
@@ -478,9 +478,10 @@
   flex-direction: column;
 }
 .navBrandText {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: 1.6rem;
   font-weight: 600;
-  letter-spacing: -0.5px;
+  letter-spacing: -1px;
 }
 .accentText {
   color: var(--primary-accent);
@@ -596,11 +597,13 @@
 }
 
 .headline {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: 4rem;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.1;
   margin-bottom: 24px;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 .highlightText {
   font-weight: 500;
@@ -610,11 +613,12 @@
 }
 
 .paragraph {
-  font-size: 1.1rem;
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 1.15rem;
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.7;
   margin-bottom: 40px;
-  max-width: 500px;
+  max-width: 520px;
 }
 
 /* Feature Grid */
@@ -660,12 +664,15 @@
   flex-direction: column;
 }
 .featureTitle {
-  font-size: 0.95rem;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-main);
+  letter-spacing: 1px;
 }
 .featureSub {
-  font-size: 0.8rem;
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 0.85rem;
   color: var(--text-muted);
 }
 

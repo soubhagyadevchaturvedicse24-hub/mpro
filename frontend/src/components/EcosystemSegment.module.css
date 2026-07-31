@@ -20,9 +20,9 @@
   gap: 0;
   position: relative;
   overflow: hidden;
-  color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  transition: background 0.5s ease;
+  color: var(--text-main);
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  transition: background 0.5s ease, color 0.5s ease;
 }
 
 /* ─── THREE-COLUMN DASHBOARD GRID (PROPORTION BALANCED) ─── */
@@ -103,10 +103,11 @@
 }
 
 .mainHeading {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: 3.2rem;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.1;
-  letter-spacing: -0.8px;
+  letter-spacing: -1px;
   margin: 0;
 }
 .textSilver {
@@ -118,10 +119,11 @@
 
 /* MAIN HIGHLIGHT: BLOCKCHAIN TEXT (SLEEK & AESTHETIC) */
 .textBlockchain {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
   background: linear-gradient(180deg, #00BFFF 0%, #0284c7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 3.4rem;
   letter-spacing: -0.5px;
   display: inline-block;
@@ -589,7 +591,7 @@
   );
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: #1a202c;
+  color: var(--text-main);
 }
 
 .segmentContainer[data-theme='light'] .textSilver {
