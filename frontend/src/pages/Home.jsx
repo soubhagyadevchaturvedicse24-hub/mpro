@@ -100,7 +100,105 @@ const Home = () => {
     return () => container.removeEventListener('scroll', handleScroll);
   }, [isHeroActive]);
 
-  // JS-based manual scrolling removed in favor of native CSS scroll-snapping for butter-smooth performance.
+  // ── JS-based smooth scroll snapping (controlled speed) ──────────────────
+  useEffect(() => {
+    if (!isHeroActive) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Easing function: ease-in-out cubic
+    const easeInOutCubic = (t) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const smoothScrollTo = (targetY, duration = 750) => {
+      const startY = container.scrollTop;
+      const distance = targetY - startY;
+      const startTime = performance.now();
+
+      const step = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        container.scrollTop = startY + distance * easeInOutCubic(progress);
+        if (progress < 1) requestAnimationFrame(step);
+        else isSnappingRef.current = false;
+      };
+
+      isSnappingRef.current = true;
+      requestAnimationFrame(step);
+    };
+
+    const getSnapPoints = () => {
+      const points = [];
+      // Section 1: Hero (always starts at 0)
+      points.push(0);
+      // Section 2: Ecosystem
+      const eco = document.getElementById('ecosystem-segment');
+      if (eco) points.push(eco.offsetTop);
+      // Section 3: LifeSaved — sits after dividers
+      const lifeSaved = document.getElementById('life-saved-segment');
+      if (lifeSaved) points.push(lifeSaved.offsetTop);
+      return points;
+    };
+
+    let wheelAccumulator = 0;
+    let wheelTimeout = null;
+
+    const handleWheel = (e) => {
+      if (isSnappingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      const snapPoints = getSnapPoints();
+      if (snapPoints.length === 0) return;
+      const ecoPoint = snapPoints[1] || 0; // Ecosystem / Blockchain segment offsetTop
+      const lastSnapPoint = snapPoints[snapPoints.length - 1];
+      const currentY = container.scrollTop;
+
+      // 1. SCROLLING UP (e.deltaY < 0) from Ecosystem segment: 1 unit scroll automatically goes to top (Hero, y = 0)
+      if (e.deltaY < 0 && currentY <= ecoPoint + 200) {
+        e.preventDefault();
+        smoothScrollTo(0, 750);
+        return;
+      }
+
+      // 2. SCROLLING DOWN (e.deltaY > 0) past LifeSaved into footer: allow free scrolling
+      if (currentY >= lastSnapPoint - 10 && e.deltaY > 0) {
+        return;
+      }
+
+      // 3. Otherwise, snap to target section in direction of scroll
+      e.preventDefault();
+
+      wheelAccumulator += e.deltaY;
+
+      clearTimeout(wheelTimeout);
+      wheelTimeout = setTimeout(() => {
+        const currentY = container.scrollTop;
+        const snapPoints = getSnapPoints();
+        const direction = wheelAccumulator > 0 ? 1 : -1;
+        wheelAccumulator = 0;
+
+        let target = null;
+        if (direction > 0) {
+          target = snapPoints.find((p) => p > currentY + 50);
+        } else {
+          const reversed = [...snapPoints].reverse();
+          target = reversed.find((p) => p < currentY - 50);
+        }
+
+        if (target !== undefined && target !== null) {
+          smoothScrollTo(target, 750);
+        }
+      }, 20);
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      clearTimeout(wheelTimeout);
+    };
+  }, [isHeroActive]);
 
   useEffect(() => {
     let mounted = true;

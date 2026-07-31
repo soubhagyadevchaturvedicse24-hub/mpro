@@ -53,8 +53,6 @@
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
   background-color: var(--neo-base);
@@ -521,11 +519,10 @@
   display: flex;
   flex-direction: column;
   z-index: 10;
-  scroll-snap-align: start;
 }
 
 .segment {
-  scroll-snap-align: start;
+  /* removed scroll-snap-align */
 }
 
 .navRight {
