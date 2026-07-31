@@ -18,14 +18,10 @@ const Home = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [theme, setTheme] = useState('dark');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [heartScrollOpacity, setHeartScrollOpacity] = useState(1);
-  const [heartScrollScale, setHeartScrollScale] = useState(1);
-  const [heartScrollLeft, setHeartScrollLeft] = useState(75);
-  const [heartScrollOffsetX, setHeartScrollOffsetX] = useState(0);
-  const [heartScrollOffsetY, setHeartScrollOffsetY] = useState(0);
   const containerRef = useRef(null);
   const dropdownRef = useRef(null);
   const isSnappingRef = useRef(false);
+  const heartWrapperRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -89,11 +85,14 @@ const Home = () => {
       // No abrupt fade out; it stays stable in the segment.
       const newOpacity = 1;
 
-      setHeartScrollLeft(newLeft);
-      setHeartScrollScale(newScale);
-      setHeartScrollOffsetX(newOffsetX);
-      setHeartScrollOffsetY(newOffsetY);
-      setHeartScrollOpacity(newOpacity);
+      if (heartWrapperRef.current) {
+        const style = heartWrapperRef.current.style;
+        style.opacity = newOpacity;
+        style.left = `calc(${newLeft}% + ${newOffsetX}px)`;
+        style.top = `calc(50% + ${newOffsetY}px)`;
+        style.transform = `translate(-50%, -50%) scale(${newScale})`;
+        style.transition = newLeft < 75 ? 'none' : '';
+      }
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
@@ -123,10 +122,10 @@ const Home = () => {
       ];
     };
 
-    // Very slow, luxurious easing (quart ease in out)
-    const easeInOutQuart = (t) => t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+    // easeOutQuart: starts fast immediately (0 latency), slows down at the end
+    const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
 
-    const smoothScrollTo = (targetY, duration = 1500) => {
+    const smoothScrollTo = (targetY, duration = 1000) => {
       const startY = container.scrollTop;
       const distance = targetY - startY;
       const startTime = performance.now();
@@ -136,12 +135,15 @@ const Home = () => {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        container.scrollTop = startY + distance * easeInOutQuart(progress);
+        container.scrollTop = startY + distance * easeOutQuart(progress);
         
         if (progress < 1) {
           requestAnimationFrame(step);
         } else {
-          isSnapping = false;
+          // Cooldown to absorb trackpad inertia and prevent double-jumping
+          setTimeout(() => {
+            isSnapping = false;
+          }, 200);
         }
       };
 
@@ -149,35 +151,27 @@ const Home = () => {
     };
 
     const handleWheel = (e) => {
-      e.preventDefault(); // Take over all scrolling
+      e.preventDefault(); 
       
       if (isSnapping) return;
 
-      wheelAccumulator += e.deltaY;
-      clearTimeout(wheelTimeout);
+      // Trigger instantly on ANY scroll direction
+      const targets = getTargets();
+      const maxIndex = targets.length - 1;
 
-      wheelTimeout = setTimeout(() => {
-        const targets = getTargets();
-        const maxIndex = targets.length - 1;
-
-        if (wheelAccumulator > 50 && currentSegmentIndex < maxIndex) {
-          // Scroll Down
-          currentSegmentIndex++;
-          smoothScrollTo(targets[currentSegmentIndex]);
-        } else if (wheelAccumulator < -50 && currentSegmentIndex > 0) {
-          // Scroll Up
-          currentSegmentIndex--;
-          smoothScrollTo(targets[currentSegmentIndex]);
-        }
-        
-        wheelAccumulator = 0;
-      }, 50); // Small debounce to catch trackpad flick as one event
+      if (e.deltaY > 0 && currentSegmentIndex < maxIndex) {
+        currentSegmentIndex++;
+        smoothScrollTo(targets[currentSegmentIndex]);
+      } else if (e.deltaY < 0 && currentSegmentIndex > 0) {
+        currentSegmentIndex--;
+        smoothScrollTo(targets[currentSegmentIndex]);
+      }
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
     return () => {
       container.removeEventListener('wheel', handleWheel);
-      clearTimeout(wheelTimeout);
+
     };
   }, [isHeroActive]);
 
@@ -426,15 +420,9 @@ const Home = () => {
       {/* ─── SINGLE CONTINUOUS 3D HEART INSTANCE ─── */}
       {/* Stays fixed during loader, transitions to hero-right, docks into Ecosystem on scroll, fades out for LifeSaved */}
       <div 
+        ref={heartWrapperRef}
         className={`${styles.heartWrapper} ${(isHeroActive || isLoaderFading) ? styles.heartShiftRight : styles.heartLoading}`}
-        style={isHeroActive ? {
-          opacity: heartScrollOpacity,
-          left: `calc(${heartScrollLeft}% + ${heartScrollOffsetX}px)`,
-          top: `calc(50% + ${heartScrollOffsetY}px)`,
-          transform: `translate(-50%, -50%) scale(${heartScrollScale})`,
-          transition: heartScrollLeft < 75 ? 'none' : undefined, // Disable CSS lag when scrolling
-          pointerEvents: 'none'
-        } : {}}
+        style={isHeroActive ? { pointerEvents: 'none' } : {}}
       >
         <div className={styles.ringOuter} />
         <div className={styles.ringMiddle} />
