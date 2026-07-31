@@ -53,7 +53,8 @@
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
   background-color: var(--neo-base);
@@ -514,11 +515,29 @@
   border-bottom: 2px solid var(--primary-accent);
 }
 
+.heroSection {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  scroll-snap-align: start;
+}
+
+.segment {
+  scroll-snap-align: start;
+}
+
 .navRight {
   position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.cinematicTextContainer {
+  margin-left: 50px;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .themeToggleBtn {
@@ -1228,8 +1247,8 @@
 /* ─── CINEMATIC 3D TYPOGRAPHY (PHASE 1 & 2) ─── */
 .cinematicTextContainer {
   position: absolute;
-  top: 45%; /* Slightly above center to sit nicely behind text */
-  left: 50%;
+  top: 45%; 
+  left: 62%; /* Shifted further right to avoid foreground text */
   transform: translate(-50%, -50%) rotateX(8deg) rotateY(-12deg);
   width: 100%;
   height: 100%;
@@ -1240,6 +1259,9 @@
   z-index: 0;
   perspective: 1200px;
   transform-style: preserve-3d;
+  /* Fade out the left side where the text overlaps */
+  mask-image: linear-gradient(90deg, transparent 5%, black 40%, black 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 5%, black 40%, black 100%);
 }
 
 .cinematicTextLayer {
