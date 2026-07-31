@@ -148,8 +148,10 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
                 <div className={styles.portalSub}>Sign in or create<br/>a donor account.</div>
               </div>
             </div>
-            <div className={styles.portalArrowBtn}>
-              <ArrowRight size={24} />
+            <div className={styles.portalArrowOuter}>
+              <div className={styles.portalArrowInner}>
+                <ArrowRight size={20} strokeWidth={2.5} />
+              </div>
             </div>
           </Link>
 
@@ -163,8 +165,10 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
                 <div className={styles.portalSub}>Sign in or create<br/>a receiver account.</div>
               </div>
             </div>
-            <div className={styles.portalArrowBtn}>
-              <ArrowRight size={24} />
+            <div className={styles.portalArrowOuter}>
+              <div className={styles.portalArrowInner}>
+                <ArrowRight size={20} strokeWidth={2.5} />
+              </div>
             </div>
           </Link>
 
@@ -178,8 +182,10 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
                 <div className={styles.portalSub}>Sign in or register your<br/>hospital for approval.</div>
               </div>
             </div>
-            <div className={styles.portalArrowBtn}>
-              <ArrowRight size={24} />
+            <div className={styles.portalArrowOuter}>
+              <div className={styles.portalArrowInner}>
+                <ArrowRight size={20} strokeWidth={2.5} />
+              </div>
             </div>
           </Link>
 

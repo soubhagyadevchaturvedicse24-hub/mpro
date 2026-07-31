@@ -221,86 +221,158 @@
 .portalCard {
   background: rgba(15, 23, 42, 0.6);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-radius: 20px;
   padding: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid rgba(255, 255, 255, 0.1);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 .portalCard:hover {
   transform: translateY(-4px);
 }
 .portalCard[data-theme='light'] {
   background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.08);
 }
 
-/* Unique card glows */
-.cardDonor { border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
-.cardDonor:hover { border-color: rgba(59, 130, 246, 0.8); box-shadow: 0 0 40px rgba(59, 130, 246, 0.3); }
-.cardReceiver { border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); }
-.cardReceiver:hover { border-color: rgba(168, 85, 247, 0.8); box-shadow: 0 0 40px rgba(168, 85, 247, 0.3); }
-.cardHospital { border-color: rgba(34, 197, 94, 0.4); box-shadow: 0 0 20px rgba(34, 197, 94, 0.15); }
-.cardHospital:hover { border-color: rgba(34, 197, 94, 0.8); box-shadow: 0 0 40px rgba(34, 197, 94, 0.3); }
+/* Unique card glows & textures (CSS waves & stars) */
+.cardDonor {
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  background:
+    radial-gradient(circle at 80% 150%, transparent 48%, rgba(59, 130, 246, 0.2) 48.5%, transparent 49%),
+    radial-gradient(circle at 80% 150%, transparent 52%, rgba(59, 130, 246, 0.15) 52.5%, transparent 53%),
+    radial-gradient(circle at 80% 150%, transparent 56%, rgba(59, 130, 246, 0.1) 56.5%, transparent 57%),
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.4) 1px, transparent 1px),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3) 1px, transparent 1px),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.2) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.25) 0%, transparent 60%),
+    radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(8, 14, 28, 0.95) 0%, rgba(15, 23, 42, 0.85) 100%);
+}
+.cardDonor:hover { border-color: rgba(59, 130, 246, 0.8); box-shadow: 0 15px 40px rgba(59, 130, 246, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2); }
+
+.cardReceiver {
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  background:
+    radial-gradient(circle at 80% 150%, transparent 48%, rgba(168, 85, 247, 0.2) 48.5%, transparent 49%),
+    radial-gradient(circle at 80% 150%, transparent 52%, rgba(168, 85, 247, 0.15) 52.5%, transparent 53%),
+    radial-gradient(circle at 80% 150%, transparent 56%, rgba(168, 85, 247, 0.1) 56.5%, transparent 57%),
+    radial-gradient(circle at 10% 40%, rgba(255,255,255,0.4) 1px, transparent 1px),
+    radial-gradient(circle at 75% 15%, rgba(255,255,255,0.3) 1px, transparent 1px),
+    radial-gradient(circle at 60% 70%, rgba(255,255,255,0.2) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 100% 100%, rgba(168, 85, 247, 0.25) 0%, transparent 60%),
+    radial-gradient(circle at 0% 0%, rgba(126, 34, 206, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(12, 10, 28, 0.95) 0%, rgba(23, 15, 42, 0.85) 100%);
+}
+.cardReceiver:hover { border-color: rgba(168, 85, 247, 0.8); box-shadow: 0 15px 40px rgba(168, 85, 247, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2); }
+
+.cardHospital {
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  background:
+    radial-gradient(circle at 80% 150%, transparent 48%, rgba(34, 197, 94, 0.2) 48.5%, transparent 49%),
+    radial-gradient(circle at 80% 150%, transparent 52%, rgba(34, 197, 94, 0.15) 52.5%, transparent 53%),
+    radial-gradient(circle at 80% 150%, transparent 56%, rgba(34, 197, 94, 0.1) 56.5%, transparent 57%),
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.4) 1px, transparent 1px),
+    radial-gradient(circle at 85% 30%, rgba(255,255,255,0.3) 1px, transparent 1px),
+    radial-gradient(circle at 40% 85%, rgba(255,255,255,0.2) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 100% 100%, rgba(34, 197, 94, 0.25) 0%, transparent 60%),
+    radial-gradient(circle at 0% 0%, rgba(21, 128, 61, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(8, 20, 15, 0.95) 0%, rgba(15, 30, 22, 0.85) 100%);
+}
+.cardHospital:hover { border-color: rgba(34, 197, 94, 0.8); box-shadow: 0 15px 40px rgba(34, 197, 94, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2); }
 
 /* Left content */
 .portalLeft {
   display: flex;
   align-items: center;
   gap: 16px;
+  z-index: 2;
 }
+
+/* 3D Glass Embossed Icon Ring */
 .portalIconRing {
-  width: 60px;
-  height: 60px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    inset 0 4px 6px rgba(255, 255, 255, 0.15),
+    inset 0 -4px 6px rgba(0, 0, 0, 0.4),
+    0 8px 16px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
 }
-.cardDonor .portalIconRing { border-color: #3b82f6; color: #3b82f6; background: rgba(59,130,246,0.1); }
-.cardReceiver .portalIconRing { border-color: #a855f7; color: #a855f7; background: rgba(168,85,247,0.1); }
-.cardHospital .portalIconRing { border-color: #22c55e; color: #22c55e; background: rgba(34,197,94,0.1); }
+.cardDonor .portalIconRing { background: linear-gradient(135deg, rgba(59, 130, 246, 0.5) 0%, rgba(30, 58, 138, 0.2) 100%); }
+.cardReceiver .portalIconRing { background: linear-gradient(135deg, rgba(168, 85, 247, 0.5) 0%, rgba(88, 28, 135, 0.2) 100%); }
+.cardHospital .portalIconRing { background: linear-gradient(135deg, rgba(34, 197, 94, 0.5) 0%, rgba(20, 83, 45, 0.2) 100%); }
 
 .portalTextGroup {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  z-index: 2;
 }
 .portalTitle {
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: #ffffff;
+  letter-spacing: -0.3px;
 }
 .portalCard[data-theme='light'] .portalTitle { color: #020617; }
 .portalSub {
   font-size: 0.85rem;
   color: #94a3b8;
+  line-height: 1.4;
 }
 .portalCard[data-theme='light'] .portalSub { color: #475569; }
 
-/* Right Arrow Button */
-.portalArrowBtn {
-  width: 44px;
-  height: 44px;
+/* Right Arrow Button (Nested 3D) */
+.portalArrowOuter {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+.cardDonor .portalArrowOuter { background: rgba(59, 130, 246, 0.25); }
+.cardReceiver .portalArrowOuter { background: rgba(168, 85, 247, 0.25); }
+.cardHospital .portalArrowOuter { background: rgba(34, 197, 94, 0.25); }
+
+.portalArrowInner {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0f172a;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.1);
 }
-.portalCard:hover .portalArrowBtn {
-  transform: translateX(4px);
+.cardDonor .portalArrowInner { color: #1e3a8a; }
+.cardReceiver .portalArrowInner { color: #4c1d95; }
+.cardHospital .portalArrowInner { color: #14532d; }
+
+.portalCard:hover .portalArrowOuter {
+  transform: translateX(6px) scale(1.05);
+  border-color: rgba(255,255,255,0.4);
 }
+.cardDonor:hover .portalArrowOuter { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
+.cardReceiver:hover .portalArrowOuter { box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+.cardHospital:hover .portalArrowOuter { box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
 
 /* ─── 3. TRUST FOOTER STRIP ─── */
 .trustFooter {
