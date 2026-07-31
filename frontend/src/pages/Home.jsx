@@ -28,10 +28,11 @@ const Home = () => {
 
   const cinematicText = React.useMemo(() => (
     <div className={styles.cinematicTextContainer}>
-      {[...Array(10)].map((_, i) => {
+      {[...Array(8)].map((_, i) => {
         const isFront = i === 0;
-        const zOffset = -(i * 4); // tighter packing for solid block
-        const blur = i > 7 ? (i - 7) * 0.5 : 0; // blur only the deepest back end
+        const zOffset = -(i * 15); // Spread out slightly for depth
+        const blur = i * 0.5; // Progressive blur for atmospheric depth
+        const opacity = Math.max(0.02, 0.1 - (i * 0.01)); // 10% fading down to 2%
 
         return (
           <span 
@@ -40,10 +41,11 @@ const Home = () => {
             style={{
               transform: `translateZ(${zOffset}px)`,
               filter: `blur(${blur}px)`,
-              color: isFront ? '#0d1526' : '#040914', // Solid dark charcoal front, pitch black extrusion
+              color: `rgba(255, 255, 255, ${opacity})`,
+              WebkitTextStroke: isFront ? '1px rgba(255, 255, 255, 0.15)' : 'none',
               textShadow: isFront 
-                ? '-1px -1px 2px rgba(0, 210, 255, 0.3), 0px 10px 30px rgba(0, 0, 0, 0.8)' 
-                : '-1px 1px 0px #040914, -2px 2px 0px #040914, -3px 3px 0px #040914', // Heavy shadow makes up for fewer layers
+                ? '0 0 40px rgba(0, 210, 255, 0.15)' // Subtle glow on front face
+                : 'none',
             }}
           >
             TRUST
@@ -255,15 +257,18 @@ const Home = () => {
             
             {/* Phase 1-3: Layout & Premium 3D Typography */}
             {cinematicText}
+            
+            {/* Accessibility Scrim for Text Contrast */}
+            <div className={styles.textScrim} />
 
             {/* MAIN CONTENT (Left Side) */}
             <main className={styles.mainContent}>
-            <div className={styles.textContent}>
-              <h1 className={styles.headline}>
-                Every donation <br />
-                deserves <br />
-                <span className={styles.highlightText}>absolute trust.</span>
-              </h1>
+              <div className={styles.textContent}>
+                
+                <h1 className={styles.headline}>
+                  Every donation deserves <br />
+                  <span className={styles.highlightText}>absolute trust.</span>
+                </h1>
               
               <div className={styles.heroEkgLine}>
                 <svg viewBox="0 0 350 24" xmlns="http://www.w3.org/2000/svg">
@@ -347,6 +352,7 @@ const Home = () => {
           pointerEvents: 'none'
         } : {}}
       >
+        <div className={styles.heartSpotlight} style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
         <div className={styles.ringOuter} />
         <div className={styles.ringMiddle} />
         <div className={styles.ringInner} />
@@ -364,7 +370,7 @@ const Home = () => {
 
       {/* ─── NEXT SCROLL SEGMENT: BLOCKCHAIN ECOSYSTEM & TELEMETRY (Section 2) ─── */}
       {isHeroActive && (
-        <EcosystemSegment id="ecosystem-segment" theme={theme} mousePos={mousePos} />
+        <EcosystemSegment id="ecosystem-segment" theme={theme} />
       )}
 
       {/* ─── SECTION DIVIDER: Ecosystem → Life Saved ─── */}
