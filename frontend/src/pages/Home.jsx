@@ -17,6 +17,7 @@ const Home = () => {
   const [isHeroActive, setIsHeroActive] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [theme, setTheme] = useState('dark');
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [heartScrollOpacity, setHeartScrollOpacity] = useState(1);
   const [heartScrollScale, setHeartScrollScale] = useState(1);
   const [heartScrollLeft, setHeartScrollLeft] = useState(75);
@@ -26,35 +27,6 @@ const Home = () => {
   const dropdownRef = useRef(null);
   const isSnappingRef = useRef(false);
 
-  const cinematicText = React.useMemo(() => (
-    <div className={styles.cinematicTextContainer}>
-      {[...Array(8)].map((_, i) => {
-        const isFront = i === 0;
-        const zOffset = -(i * 15); // Spread out slightly for depth
-        const blur = i * 0.5; // Progressive blur for atmospheric depth
-        const opacity = Math.max(0.02, 0.1 - (i * 0.01)); // 10% fading down to 2%
-
-        return (
-          <span 
-            key={i} 
-            className={styles.cinematicTextLayer}
-            style={{
-              transform: `translateZ(${zOffset}px)`,
-              filter: `blur(${blur}px)`,
-              color: `rgba(255, 255, 255, ${opacity})`,
-              WebkitTextStroke: isFront ? '1px rgba(255, 255, 255, 0.15)' : 'none',
-              textShadow: isFront 
-                ? '0 0 40px rgba(0, 210, 255, 0.15)' // Subtle glow on front face
-                : 'none',
-            }}
-          >
-            TRUST
-          </span>
-        );
-      })}
-    </div>
-  ), []);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -63,8 +35,16 @@ const Home = () => {
     };
     document.addEventListener('mousedown', handleClickOutside);
     
+    const handleMouseMove = (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      setMousePos({ x, y });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
@@ -74,48 +54,52 @@ const Home = () => {
     const container = containerRef.current;
     if (!container) return;
 
-    let scrollFrameId;
     const handleScroll = () => {
-      if (scrollFrameId) return;
-      scrollFrameId = requestAnimationFrame(() => {
-        const vh = window.innerHeight;
-        const scrollY = container.scrollTop;
-        
-        const ecoSection = document.getElementById('ecosystem-segment');
-        const ecoTop = ecoSection ? ecoSection.offsetTop : vh;
-        
-        const p1 = Math.min(1, Math.max(0, scrollY / ecoTop));
-        const newLeft = 75 - (25 * p1);
-        const newScale = 1 - (0.72 * p1);
-        const newOffsetX = 15 * p1;
-        
-        let targetOffsetY = -67;
-        const stageCenter = document.getElementById('network-stage-center');
-        if (stageCenter && ecoSection) {
-          const ecoRect = ecoSection.getBoundingClientRect();
-          const stageRect = stageCenter.getBoundingClientRect();
-          const centerRelToEco = (stageRect.top - ecoRect.top) + (stageRect.height / 2);
-          targetOffsetY = centerRelToEco - (vh / 2);
-        }
-        
-        const newOffsetY = p1 * (ecoTop - scrollY + targetOffsetY);
-        const newOpacity = 1;
+      const vh = window.innerHeight;
+      const scrollY = container.scrollTop;
+      
+      // Phase 1: Scroll from 0 to Ecosystem Segment
+      // Dynamically calculate the section offset so the heart docks exactly when the section is perfectly framed.
+      const ecoSection = document.getElementById('ecosystem-segment');
+      const ecoTop = ecoSection ? ecoSection.offsetTop : vh;
+      
+      const p1 = Math.min(1, Math.max(0, scrollY / ecoTop));
+      const newLeft = 75 - (25 * p1); // 75 -> 50
+      const newScale = 1 - (0.72 * p1); // 1.0 -> 0.28
+      const newOffsetX = 15 * p1; // 0px -> 15px
+      
+      // Dynamically find the exact vertical center of the node ring
+      let targetOffsetY = -67; // Fallback
+      const stageCenter = document.getElementById('network-stage-center');
+      if (stageCenter && ecoSection) {
+        const ecoRect = ecoSection.getBoundingClientRect();
+        const stageRect = stageCenter.getBoundingClientRect();
+        // Calculate the center of the nodes relative to the top of the Ecosystem section
+        const centerRelToEco = (stageRect.top - ecoRect.top) + (stageRect.height / 2);
+        // The Y offset needed from 50vh to hit this exact center
+        targetOffsetY = centerRelToEco - (vh / 2);
+      }
+      
+      // Interpolate the vertical offset.
+      // At scrollY = 0, newOffsetY = 0 (centered in Hero).
+      // At scrollY >= ecoTop, p1 = 1, and newOffsetY perfectly locks the heart to the node center 
+      // even if the user scrolls past it (ecoTop - scrollY = -excessScroll).
+      const newOffsetY = p1 * (ecoTop - scrollY + targetOffsetY);
+      
+      // No abrupt fade out; it stays stable in the segment.
+      const newOpacity = 1;
 
-        setHeartScrollLeft(newLeft);
-        setHeartScrollScale(newScale);
-        setHeartScrollOffsetX(newOffsetX);
-        setHeartScrollOffsetY(newOffsetY);
-        setHeartScrollOpacity(newOpacity);
-        scrollFrameId = null;
-      });
+      setHeartScrollLeft(newLeft);
+      setHeartScrollScale(newScale);
+      setHeartScrollOffsetX(newOffsetX);
+      setHeartScrollOffsetY(newOffsetY);
+      setHeartScrollOpacity(newOpacity);
     };
 
     container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-      if (scrollFrameId) cancelAnimationFrame(scrollFrameId);
-    };
+    return () => container.removeEventListener('scroll', handleScroll);
   }, [isHeroActive]);
+
 
   useEffect(() => {
     let mounted = true;
@@ -256,32 +240,52 @@ const Home = () => {
             {theme === 'dark' && <div className={styles.ambientEkgLightning} />}
             
             {/* Phase 1-3: Layout & Premium 3D Typography */}
-            {cinematicText}
-            
-            {/* Accessibility Scrim for Text Contrast */}
-            <div className={styles.textScrim} />
+            <div className={styles.cinematicTextContainer}>
+              {[...Array(15)].map((_, i) => {
+                // Front layer gets a subtle outline, back layers get darker/blurred
+                const isFront = i === 0;
+                const zOffset = -(i * 8); // Push back 8px per layer
+                const opacity = 1 - (i * 0.05); // Fade slightly as it goes back
+                const blur = i > 5 ? (i - 5) * 0.5 : 0; // Atmospheric depth of field blur
+
+                return (
+                  <span 
+                    key={i} 
+                    className={styles.cinematicTextLayer}
+                    style={{
+                      transform: `translateZ(${zOffset}px)`,
+                      opacity: opacity,
+                      filter: `blur(${blur}px)`,
+                      WebkitTextStroke: isFront ? '1px rgba(255, 255, 255, 0.1)' : 'none',
+                      color: isFront 
+                        ? 'transparent' // Front face is hollow/glassy
+                        : `rgba(15, 23, 42, ${1 - i * 0.02})`, // Deep navy extrusion body
+                      textShadow: isFront 
+                        ? '0 0 20px rgba(0, 191, 255, 0.1)' 
+                        : '0 4px 12px rgba(0,0,0,0.5)',
+                    }}
+                  >
+                    TRUST
+                  </span>
+                );
+              })}
+            </div>
 
             {/* MAIN CONTENT (Left Side) */}
             <main className={styles.mainContent}>
-              <div className={styles.textContent}>
-                
-                <h1 className={styles.headline}>
-                  Every donation deserves <br />
-                  <span className={styles.highlightText}>absolute trust.</span>
-                </h1>
+            <div className={styles.textContent}>
+              <h1 className={styles.headline}>
+                Every donation <br />
+                deserves <br />
+                <span className={styles.highlightText}>absolute trust.</span>
+              </h1>
               
               <div className={styles.heroEkgLine}>
-                <svg viewBox="0 0 350 24" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="ekgFade" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#00d2ff" stopOpacity="1" />
-                      <stop offset="70%" stopColor="#00d2ff" stopOpacity="1" />
-                      <stop offset="100%" stopColor="#00d2ff" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path d="M 0 12 L 80 12 L 90 4 L 105 20 L 120 0 L 135 22 L 145 12 L 350 12" 
-                        fill="none" stroke="url(#ekgFade)" strokeWidth="1.5" />
-                  <circle cx="330" cy="12" r="2.5" fill="#00d2ff" style={{ filter: 'drop-shadow(0px 0px 4px #00d2ff)' }} />
+                <svg viewBox="0 0 400 30" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M 0 15 L 100 15 L 115 5 L 130 25 L 150 -5 L 170 35 L 190 10 L 210 20 L 225 15 L 400 15" 
+                        fill="none" stroke="rgba(0, 191, 255, 0.8)" strokeWidth="2" 
+                        style={{ filter: 'drop-shadow(0px 0px 4px rgba(0,191,255,0.8))' }}/>
+                  <circle cx="400" cy="15" r="3" fill="rgba(0, 191, 255, 1)" style={{ filter: 'drop-shadow(0px 0px 6px rgba(0,191,255,1))' }} />
                 </svg>
               </div>
 
@@ -305,28 +309,28 @@ const Home = () => {
 
               <div className={styles.featureGrid}>
                 <div className={styles.featureItem}>
-                  <ShieldCheck size={18} className={styles.featureIcon} />
+                  <div className={styles.featureIconBox}><ShieldCheck size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
                     <div className={styles.featureTitle}>Blockchain Secured</div>
                     <div className={styles.featureSub}>Immutable &<br/>verifiable</div>
                   </div>
                 </div>
                 <div className={styles.featureItem}>
-                  <BrainCircuit size={18} className={styles.featureIcon} />
+                  <div className={styles.featureIconBox}><BrainCircuit size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
                     <div className={styles.featureTitle}>AI-Powered Matching</div>
                     <div className={styles.featureSub}>Smarter, faster<br/>better matches</div>
                   </div>
                 </div>
                 <div className={styles.featureItem}>
-                  <Building2 size={18} className={styles.featureIcon} />
+                  <div className={styles.featureIconBox}><Building2 size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
                     <div className={styles.featureTitle}>Hospital Network</div>
                     <div className={styles.featureSub}>Trusted hospitals<br/>across India</div>
                   </div>
                 </div>
                 <div className={styles.featureItem}>
-                  <Target size={18} className={styles.featureIcon} />
+                  <div className={styles.featureIconBox}><Target size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
                     <div className={styles.featureTitle}>Live Organ Tracking</div>
                     <div className={styles.featureSub}>Real-time updates<br/>every step</div>
@@ -352,13 +356,13 @@ const Home = () => {
           pointerEvents: 'none'
         } : {}}
       >
-        <div className={styles.heartSpotlight} style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
         <div className={styles.ringOuter} />
         <div className={styles.ringMiddle} />
         <div className={styles.ringInner} />
         <div className={styles.glowBloom} />
 
         <Heart3D 
+          mousePos={mousePos} 
           modelUrl={theme === 'light' ? "/heart3d.glb" : "/heart3d_night.glb"} 
           className={theme === 'light' ? styles.heart3DBeatingDay : styles.heart3DBeating}
         />
@@ -369,7 +373,7 @@ const Home = () => {
 
       {/* ─── NEXT SCROLL SEGMENT: BLOCKCHAIN ECOSYSTEM & TELEMETRY (Section 2) ─── */}
       {isHeroActive && (
-        <EcosystemSegment id="ecosystem-segment" theme={theme} />
+        <EcosystemSegment id="ecosystem-segment" theme={theme} mousePos={mousePos} />
       )}
 
       {/* ─── SECTION DIVIDER: Ecosystem → Life Saved ─── */}

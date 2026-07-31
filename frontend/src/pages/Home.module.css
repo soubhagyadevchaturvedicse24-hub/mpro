@@ -47,11 +47,12 @@
   --btn-ghost-color: #8892b0;
   --btn-ghost-hover: #00c2ff;
 
+  position: relative;
   width: 100vw;
   height: 100vh;
-  overflow-y: auto;
+  min-height: 100vh;
   overflow-x: hidden;
-  position: relative;
+  overflow-y: scroll;
   scroll-behavior: smooth;
   scroll-snap-type: y mandatory;
   font-family: 'Inter', sans-serif;
@@ -59,8 +60,6 @@
   background-color: var(--neo-base);
   user-select: none;
   transition: background-color 0.4s ease, color 0.4s ease;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 210, 255, 0.5) rgba(15, 23, 42, 0.8);
 }
 
 .container[data-theme='light'] {
@@ -223,6 +222,9 @@
 /* ─── SECTION BACKGROUNDS — TRANSPARENT (aurora shows through) */
 .sectionHero {
   background: transparent;
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 .sectionEco {
   /* Ultra-thin tinted overlay for the ecosystem dark depth */
@@ -239,6 +241,9 @@
 .sectionDivider {
   width: 100%;
   height: 1px;
+  margin-top: -1px; /* Pull it up into the previous section so it takes 0 layout space */
+  position: relative;
+  z-index: 50;
   flex-shrink: 0;
   background: linear-gradient(
     90deg,
@@ -353,7 +358,6 @@
   );
   filter: blur(100px);
   animation: auroraBreath1 20s ease-in-out infinite alternate;
-  will-change: transform;
 }
 
 .container[data-theme='light'] .orbSecondary {
@@ -369,7 +373,6 @@
   );
   filter: blur(110px);
   animation: auroraBreath2 25s ease-in-out infinite alternate;
-  will-change: transform;
 }
 
 .container[data-theme='light'] .orbTertiary {
@@ -385,7 +388,6 @@
   );
   filter: blur(95px);
   animation: auroraBreath1 17s ease-in-out infinite alternate-reverse;
-  will-change: transform;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -432,24 +434,17 @@
   100% { transform: translate(25px, -20px) scale(0.92); }
 }
 
-/* ─── ECOSYSTEM SEGMENT WRAPPER ─── */
-.ecosystemSegment {
-  position: relative;
-  width: 100%;
-  z-index: 10;
-  background: #020617;
-  scroll-snap-align: start;
-}
-
 /* ─── HERO UI (Base Section) ─── */
-.hero {
+.heroUI {
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
+  min-height: 100vh;
+  padding-top: 90px;
+  z-index: 20;
   display: flex;
-  overflow: hidden;
-  background: radial-gradient(circle at center, rgba(15, 23, 42, 1) 0%, rgba(2, 6, 23, 1) 100%);
-  scroll-snap-align: start;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
 /* ─── FIXED STICKY NAVBAR ─── */
@@ -592,17 +587,6 @@
 
 
 /* ─── MAIN CONTENT (Left Split) ─── */
-.textScrim {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(90deg, rgba(2, 6, 23, 0.9) 0%, rgba(2, 6, 23, 0.7) 60%, transparent 100%);
-  z-index: 15;
-  pointer-events: none;
-}
-
 .mainContent {
   flex: 1;
   display: flex;
@@ -621,17 +605,17 @@
 
 .headline {
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 5rem;
+  font-size: 5rem; /* Match the large sizing in screenshot */
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.05;
   margin-bottom: 20px;
-  letter-spacing: -1.0px;
+  letter-spacing: -1.5px;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   color: #F8FAFC;
 }
 .highlightText {
   font-weight: 700;
-  background: linear-gradient(90deg, #00d2ff 0%, #6d28d9 100%);
+  background: linear-gradient(90deg, #00d2ff 0%, #8b5cf6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -674,12 +658,12 @@
 }
 
 .btnBecomeDonor {
-  background: linear-gradient(90deg, #1e3a8a 0%, #172554 100%) !important;
+  background: linear-gradient(90deg, #1e3a8a 0%, #4c1d95 100%) !important;
   border: 1px solid rgba(0, 210, 255, 0.3) !important;
   border-top: 1px solid #00d2ff !important; /* Prominent top edge highlight */
   color: #ffffff !important;
   border-radius: 8px !important;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 0 20px rgba(30, 58, 138, 0.6) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4), 0 0 20px rgba(76, 29, 149, 0.4) !important;
 }
 .btnBecomeDonor svg {
   color: #c7d2fe !important;
@@ -748,14 +732,14 @@
 }
 .featureTitle {
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
   color: #E2E8F0;
   letter-spacing: 0px;
 }
 .featureSub {
   font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: #64748B;
   line-height: 1.3;
 }
@@ -790,42 +774,6 @@
   transform: translate(-50%, -50%) scale(0.65);
 }
 
-.heroVisual {
-  flex: 1;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  perspective: 1000px;
-}
-
-.heartSpotlight {
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle at center, rgba(0, 210, 255, 0.15) 0%, rgba(109, 40, 217, 0.1) 40%, transparent 70%);
-  filter: blur(40px);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.heroHeart {
-  width: 600px !important;
-  height: 600px !important;
-  max-width: 100%;
-  max-height: 100%;
-  z-index: 5;
-  mix-blend-mode: var(--heart-mix-blend); 
-  animation: heartbeat 1.2s ease-in-out infinite, slowFloat 6s ease-in-out infinite;
-  will-change: transform;
-}
-
-@keyframes slowFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-}
-
 .heartShiftRight {
   left: 75%;
   top: 50%;
@@ -840,7 +788,6 @@
   z-index: 5;
   mix-blend-mode: var(--heart-mix-blend); 
   animation: heartbeat 1.2s ease-in-out infinite;
-  will-change: transform;
 }
 
 .glowBloom {
@@ -870,7 +817,6 @@
   border-left: 2px solid rgba(0, 210, 255, 0.4);
   border-right: 2px solid rgba(0, 119, 255, 0.4);
   animation: spin 30s linear infinite;
-  will-change: transform;
 }
 
 .ringMiddle {
@@ -879,14 +825,12 @@
   border-top: 2px solid rgba(0, 210, 255, 0.6);
   border-bottom: 2px solid rgba(0, 210, 255, 0.6);
   animation: spin-reverse 20s linear infinite;
-  will-change: transform;
 }
 
 .ringInner {
   width: 460px; height: 460px;
   border: 2px dotted rgba(0, 210, 255, 0.3);
   animation: spin 40s linear infinite;
-  will-change: transform;
 }
 
 
@@ -1281,8 +1225,6 @@
   background-size: 100% auto;
   opacity: 0.5;
   animation: pulseEkg 4s infinite alternate;
-  will-change: transform, opacity; /* Hardware acceleration */
-  transform: translateZ(0); /* Force GPU layer */
 }
 
 @keyframes pulseEkg {
@@ -1293,9 +1235,9 @@
 /* ─── CINEMATIC 3D TYPOGRAPHY (PHASE 1 & 2) ─── */
 .cinematicTextContainer {
   position: absolute;
-  top: 45%; 
-  left: 55%;
-  transform: translate(-50%, -50%) rotateX(15deg) rotateY(-18deg);
+  top: 45%; /* Slightly above center to sit nicely behind text */
+  left: 50%;
+  transform: translate(-50%, -50%) rotateX(8deg) rotateY(-12deg);
   width: 100%;
   height: 100%;
   display: flex;
@@ -1303,24 +1245,18 @@
   justify-content: center;
   pointer-events: none;
   z-index: 0;
-  perspective: 1500px;
+  perspective: 1200px;
   transform-style: preserve-3d;
-  will-change: transform;
-  animation: slowFloat 20s ease-in-out infinite alternate;
-}
-
-@keyframes slowFloat {
-  0% { transform: translate(-50%, -50%) rotateX(15deg) rotateY(-18deg) translateY(0px); }
-  100% { transform: translate(-50%, -50%) rotateX(12deg) rotateY(-20deg) translateY(-20px); }
 }
 
 .cinematicTextLayer {
   position: absolute;
   font-family: 'Inter', sans-serif;
   font-weight: 900;
-  font-size: 32rem;
-  letter-spacing: -0.05em;
+  font-size: 22rem;
+  letter-spacing: -0.02em;
   line-height: 1;
   text-transform: uppercase;
   color: transparent;
+  /* Basic styling will be layered on top via inline style mapping */
 }

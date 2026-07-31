@@ -37,6 +37,8 @@ const HomeFooter = ({ theme = 'dark' }) => {
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         transition: 'background 0.5s ease',
+        scrollSnapAlign: 'start',
+        scrollSnapStop: 'always'
       }}
     >
       {/* Main Footer Content */}
