@@ -338,6 +338,38 @@ const Home = () => {
             {/* Ambient EKG Lightning (Night Mode Only) */}
             {theme === 'dark' && <div className={styles.ambientEkgLightning} />}
             
+            {/* Phase 1-3: Layout & Premium 3D Typography */}
+            <div className={styles.cinematicTextContainer}>
+              {[...Array(15)].map((_, i) => {
+                // Front layer gets a subtle outline, back layers get darker/blurred
+                const isFront = i === 0;
+                const zOffset = -(i * 8); // Push back 8px per layer
+                const opacity = 1 - (i * 0.05); // Fade slightly as it goes back
+                const blur = i > 5 ? (i - 5) * 0.5 : 0; // Atmospheric depth of field blur
+
+                return (
+                  <span 
+                    key={i} 
+                    className={styles.cinematicTextLayer}
+                    style={{
+                      transform: `translateZ(${zOffset}px)`,
+                      opacity: opacity,
+                      filter: `blur(${blur}px)`,
+                      WebkitTextStroke: isFront ? '1px rgba(255, 255, 255, 0.1)' : 'none',
+                      color: isFront 
+                        ? 'transparent' // Front face is hollow/glassy
+                        : `rgba(15, 23, 42, ${1 - i * 0.02})`, // Deep navy extrusion body
+                      textShadow: isFront 
+                        ? '0 0 20px rgba(0, 191, 255, 0.1)' 
+                        : '0 4px 12px rgba(0,0,0,0.5)',
+                    }}
+                  >
+                    TRUST
+                  </span>
+                );
+              })}
+            </div>
+
             {/* MAIN CONTENT (Left Side) */}
             <main className={styles.mainContent}>
             <div className={styles.textContent}>
