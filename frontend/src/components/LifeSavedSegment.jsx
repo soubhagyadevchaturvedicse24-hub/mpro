@@ -44,6 +44,14 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
         transition: 'background 0.5s ease',
       }}
     >
+      {/* Localized Ambient Lightning (Night Mode Only) */}
+      {!isLight && (
+        <>
+          <div className={styles.ambientLeftLightning} />
+          <div className={styles.ambientRightLightning} />
+        </>
+      )}
+
       <motion.div
         className={styles.contentWrapper}
         variants={stagger}

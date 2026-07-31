@@ -11,6 +11,9 @@ import styles from './EcosystemSegment.module.css';
 const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
   return (
     <section id={id} className={styles.segmentContainer} data-theme={theme}>
+      {/* Ambient Neural Lightning (Night Mode Only) */}
+      {theme === 'dark' && <div className={styles.ambientNeuralLightning} />}
+
 
       {/* ── TOP BADGE (absorbed from divider) ── */}
       <div className={styles.internalTopBadge}>

@@ -235,14 +235,6 @@ const Home = () => {
         <div className={styles.orbPrimary} />
         <div className={styles.orbSecondary} />
         <div className={styles.orbTertiary} />
-        
-        {/* Global Edge Lightning (Night Mode Only) */}
-        {theme === 'dark' && (
-          <>
-            <div className={styles.globalLeftLightning} />
-            <div className={styles.globalRightLightning} />
-          </>
-        )}
       </div>
 
       {/* ─── PURE APPLE HEALTHCARE LOADER UI ─── */}
@@ -343,6 +335,9 @@ const Home = () => {
           </nav>
 
           <div className={`${styles.heroUI} ${styles.sectionHero}`}>
+            {/* Ambient EKG Lightning (Night Mode Only) */}
+            {theme === 'dark' && <div className={styles.ambientEkgLightning} />}
+            
             {/* MAIN CONTENT (Left Side) */}
             <main className={styles.mainContent}>
             <div className={styles.textContent}>
