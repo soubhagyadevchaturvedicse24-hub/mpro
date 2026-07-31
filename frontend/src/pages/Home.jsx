@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ChevronDown, HeartPulse, Building2, User, ShieldCheck, 
-  Box, Lock, Sun, Moon
+  Box, Lock, Sun, Moon, BrainCircuit, Target, Play
 } from 'lucide-react';
 import Button from '../components/Button';
 import Heart3D from '../components/Heart3D';
@@ -374,53 +374,67 @@ const Home = () => {
             <main className={styles.mainContent}>
             <div className={styles.textContent}>
               <h1 className={styles.headline}>
-                Every donation deserves <br />
+                Every donation <br />
+                deserves <br />
                 <span className={styles.highlightText}>absolute trust.</span>
               </h1>
+              
+              <div className={styles.heroEkgLine}>
+                <svg viewBox="0 0 400 30" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M 0 15 L 100 15 L 115 5 L 130 25 L 150 -5 L 170 35 L 190 10 L 210 20 L 225 15 L 400 15" 
+                        fill="none" stroke="rgba(0, 191, 255, 0.8)" strokeWidth="2" 
+                        style={{ filter: 'drop-shadow(0px 0px 4px rgba(0,191,255,0.8))' }}/>
+                  <circle cx="400" cy="15" r="3" fill="rgba(0, 191, 255, 1)" style={{ filter: 'drop-shadow(0px 0px 6px rgba(0,191,255,1))' }} />
+                </svg>
+              </div>
+
               <p className={styles.paragraph}>
-                NeoLife is a blockchain-powered organ transplant ecosystem. 
-                We bring total transparency, impenetrable security, and AI-driven 
-                matching to the gift of life.
+                NeoLife is a blockchain-powered organ transplant 
+                ecosystem. We bring total transparency, impenetrable 
+                security, and AI-driven matching to the gift of life.
               </p>
+
+              <div className={styles.ctaGroup}>
+                <Button variant="outline" size="lg" className={styles.btnRegisterHospital}>
+                  <Building2 size={18} /> Register Hospital
+                </Button>
+                <Button variant="primary" size="lg" className={styles.btnBecomeDonor}>
+                  <User size={18} /> Become a Donor
+                </Button>
+                <Button variant="outline" size="lg" className={styles.btnLearnMore}>
+                  <Play size={18} /> Learn More
+                </Button>
+              </div>
 
               <div className={styles.featureGrid}>
                 <div className={styles.featureItem}>
                   <div className={styles.featureIconBox}><ShieldCheck size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>SECURE</div>
-                    <div className={styles.featureSub}>Blockchain Secured</div>
+                    <div className={styles.featureTitle}>Blockchain Secured</div>
+                    <div className={styles.featureSub}>Immutable &<br/>verifiable</div>
                   </div>
                 </div>
                 <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><Box size={20} className={styles.featureIcon} /></div>
+                  <div className={styles.featureIconBox}><BrainCircuit size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>SMART</div>
-                    <div className={styles.featureSub}>AI Powered Matching</div>
+                    <div className={styles.featureTitle}>AI-Powered Matching</div>
+                    <div className={styles.featureSub}>Smarter, faster<br/>better matches</div>
                   </div>
                 </div>
                 <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><HeartPulse size={20} className={styles.featureIcon} /></div>
+                  <div className={styles.featureIconBox}><Building2 size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>LIFE</div>
-                    <div className={styles.featureSub}>Connecting Life</div>
+                    <div className={styles.featureTitle}>Hospital Network</div>
+                    <div className={styles.featureSub}>Trusted hospitals<br/>across India</div>
                   </div>
                 </div>
                 <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><Lock size={20} className={styles.featureIcon} /></div>
+                  <div className={styles.featureIconBox}><Target size={20} className={styles.featureIcon} /></div>
                   <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>TRUST</div>
-                    <div className={styles.featureSub}>Tamper Proof</div>
+                    <div className={styles.featureTitle}>Live Organ Tracking</div>
+                    <div className={styles.featureSub}>Real-time updates<br/>every step</div>
                   </div>
                 </div>
-              </div>
-
-              <div className={styles.ctaGroup}>
-                <Button variant="primary" size="lg" className={styles.btnExplore}>
-                  Explore the Network
-                </Button>
-                <Button variant="outline" size="lg" className={styles.btnWhitepaper}>
-                  Read Whitepaper
-                </Button>
               </div>
             </div>
             </main>
