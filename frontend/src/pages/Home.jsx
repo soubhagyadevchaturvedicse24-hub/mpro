@@ -99,7 +99,87 @@ const Home = () => {
     container.addEventListener('scroll', handleScroll, { passive: true });
     return () => container.removeEventListener('scroll', handleScroll);
   }, [isHeroActive]);
+  // ── CUSTOM SLOW-MOTION JS SCROLLING ────────────────────────────────
+  useEffect(() => {
+    if (!isHeroActive) return;
+    const container = containerRef.current;
+    if (!container) return;
 
+    let isSnapping = false;
+    let wheelAccumulator = 0;
+    let wheelTimeout = null;
+    let currentSegmentIndex = 0;
+
+    // Use specific targets (3 full screens + 1 short footer)
+    const getTargets = () => {
+      const vh = window.innerHeight;
+      const footer = document.querySelector('footer');
+      const footerHeight = footer ? footer.offsetHeight : 0;
+      return [
+        0,                 // Hero
+        vh,                // Ecosystem
+        vh * 2,            // LifeSaved
+        vh * 2 + footerHeight // Footer
+      ];
+    };
+
+    // Very slow, luxurious easing (quart ease in out)
+    const easeInOutQuart = (t) => t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+
+    const smoothScrollTo = (targetY, duration = 1500) => {
+      const startY = container.scrollTop;
+      const distance = targetY - startY;
+      const startTime = performance.now();
+      isSnapping = true;
+
+      const step = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        container.scrollTop = startY + distance * easeInOutQuart(progress);
+        
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          isSnapping = false;
+        }
+      };
+
+      requestAnimationFrame(step);
+    };
+
+    const handleWheel = (e) => {
+      e.preventDefault(); // Take over all scrolling
+      
+      if (isSnapping) return;
+
+      wheelAccumulator += e.deltaY;
+      clearTimeout(wheelTimeout);
+
+      wheelTimeout = setTimeout(() => {
+        const targets = getTargets();
+        const maxIndex = targets.length - 1;
+
+        if (wheelAccumulator > 50 && currentSegmentIndex < maxIndex) {
+          // Scroll Down
+          currentSegmentIndex++;
+          smoothScrollTo(targets[currentSegmentIndex]);
+        } else if (wheelAccumulator < -50 && currentSegmentIndex > 0) {
+          // Scroll Up
+          currentSegmentIndex--;
+          smoothScrollTo(targets[currentSegmentIndex]);
+        }
+        
+        wheelAccumulator = 0;
+      }, 50); // Small debounce to catch trackpad flick as one event
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      clearTimeout(wheelTimeout);
+    };
+  }, [isHeroActive]);
 
   useEffect(() => {
     let mounted = true;

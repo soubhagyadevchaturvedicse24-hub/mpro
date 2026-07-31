@@ -52,9 +52,7 @@
   height: 100vh;
   min-height: 100vh;
   overflow-x: hidden;
-  overflow-y: scroll;
-  scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
+  overflow-y: hidden; /* Hide scrollbar entirely for pure JS control */
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
   background-color: var(--neo-base);
@@ -223,8 +221,6 @@
 .sectionHero {
   background: transparent;
   height: 100vh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 .sectionEco {
   /* Ultra-thin tinted overlay for the ecosystem dark depth */
