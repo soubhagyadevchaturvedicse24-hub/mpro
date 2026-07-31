@@ -359,7 +359,6 @@ const Home = () => {
         <div className={styles.glowBloom} />
 
         <Heart3D 
-          mousePos={mousePos} 
           modelUrl={theme === 'light' ? "/heart3d.glb" : "/heart3d_night.glb"} 
           className={theme === 'light' ? styles.heart3DBeatingDay : styles.heart3DBeating}
         />
