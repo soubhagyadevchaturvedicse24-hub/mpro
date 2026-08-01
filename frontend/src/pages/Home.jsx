@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ChevronDown, HeartPulse, Building2, User, ShieldCheck, 
-  Box, Lock, Sun, Moon
+  Box, Lock, Sun, Moon, ArrowRight, Heart
 } from 'lucide-react';
 import Button from '../components/Button';
 import Heart3D from '../components/Heart3D';
@@ -64,26 +64,26 @@ const Home = () => {
       const ecoTop = ecoSection ? ecoSection.offsetTop : vh;
       
       const p1 = Math.min(1, Math.max(0, scrollY / ecoTop));
-      const newLeft = 75 - (25 * p1); // 75 -> 50
+      const newLeft = 75 - (25 * p1); // 75% -> 50%
       const newScale = 1 - (0.72 * p1); // 1.0 -> 0.28
-      const newOffsetX = 15 * p1; // 0px -> 15px
       
-      // Dynamically find the exact vertical center of the node ring
-      let targetOffsetY = -67; // Fallback
+      // Dynamically find the exact horizontal and vertical center of the blockchain node ring
+      let targetOffsetX = 0;
+      let targetOffsetY = 0;
       const stageCenter = document.getElementById('network-stage-center');
       if (stageCenter && ecoSection) {
-        const ecoRect = ecoSection.getBoundingClientRect();
         const stageRect = stageCenter.getBoundingClientRect();
-        // Calculate the center of the nodes relative to the top of the Ecosystem section
-        const centerRelToEco = (stageRect.top - ecoRect.top) + (stageRect.height / 2);
-        // The Y offset needed from 50vh to hit this exact center
-        targetOffsetY = centerRelToEco - (vh / 2);
+        const stageCenterX = stageRect.left + stageRect.width / 2;
+        const stageCenterY = stageRect.top + stageRect.height / 2;
+        
+        const vwCenter = window.innerWidth / 2;
+        const vhCenter = window.innerHeight / 2;
+        
+        targetOffsetX = stageCenterX - vwCenter;
+        targetOffsetY = stageCenterY - vhCenter;
       }
       
-      // Interpolate the vertical offset.
-      // At scrollY = 0, newOffsetY = 0 (centered in Hero).
-      // At scrollY >= ecoTop, p1 = 1, and newOffsetY perfectly locks the heart to the node center 
-      // even if the user scrolls past it (ecoTop - scrollY = -excessScroll).
+      const newOffsetX = p1 * targetOffsetX;
       const newOffsetY = p1 * (ecoTop - scrollY + targetOffsetY);
       
       // No abrupt fade out; it stays stable in the segment.
@@ -308,25 +308,25 @@ const Home = () => {
                 ref={dropdownRef}
               >
                 <Button 
-                  variant="secondary" 
-                  size="sm"
+                  variant="primary" 
+                  size="md"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  Login <ChevronDown size={16} style={{ marginLeft: '4px' }} />
+                  Log in as <ChevronDown size={16} style={{ marginLeft: '4px' }} />
                 </Button>
                 {isDropdownOpen && (
                   <div className={styles.dropdownMenu}>
-                    <Link to="/login" className={styles.dropdownItem}>
-                      <HeartPulse size={16} className={styles.dropdownIcon} /> Donor
+                    <Link to="/login?role=donor" className={styles.dropdownItem} onClick={() => setIsDropdownOpen(false)}>
+                      <HeartPulse size={16} className={styles.dropdownIcon} /> Donor Login
                     </Link>
-                    <Link to="/login" className={styles.dropdownItem}>
-                      <Building2 size={16} className={styles.dropdownIcon} /> Hospital
+                    <Link to="/login?role=hospital" className={styles.dropdownItem} onClick={() => setIsDropdownOpen(false)}>
+                      <Building2 size={16} className={styles.dropdownIcon} /> Hospital Login
                     </Link>
-                    <Link to="/login" className={styles.dropdownItem}>
-                      <User size={16} className={styles.dropdownIcon} /> Receiver
+                    <Link to="/login?role=receiver" className={styles.dropdownItem} onClick={() => setIsDropdownOpen(false)}>
+                      <User size={16} className={styles.dropdownIcon} /> Receiver Login
                     </Link>
-                    <Link to="/login" className={styles.dropdownItem}>
-                      <ShieldCheck size={16} className={styles.dropdownIcon} /> Admin
+                    <Link to="/login?role=admin" className={styles.dropdownItem} onClick={() => setIsDropdownOpen(false)}>
+                      <ShieldCheck size={16} className={styles.dropdownIcon} /> Admin Login
                     </Link>
                   </div>
                 )}
@@ -335,9 +335,6 @@ const Home = () => {
           </nav>
 
           <div className={`${styles.heroUI} ${styles.sectionHero}`}>
-            {/* Ambient EKG Lightning (Night Mode Only) */}
-            {theme === 'dark' && <div className={styles.ambientEkgLightning} />}
-            
             {/* MAIN CONTENT (Left Side) */}
             <main className={styles.mainContent}>
             <div className={styles.textContent}>
@@ -352,34 +349,73 @@ const Home = () => {
               </p>
 
               <div className={styles.featureGrid}>
-                <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><ShieldCheck size={20} className={styles.featureIcon} /></div>
-                  <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>SECURE</div>
-                    <div className={styles.featureSub}>Blockchain Secured</div>
+                <Link to="/login?role=donor" className={`${styles.portalCard} ${styles.cardBlue}`} data-theme={theme}>
+                  <div className={styles.portalLeft}>
+                    <div className={styles.portalIconRing}>
+                      <Heart size={20} strokeWidth={2} />
+                    </div>
+                    <div className={styles.portalTextGroup}>
+                      <div className={styles.portalTitle}>Enter as Donor</div>
+                      <div className={styles.portalSub}>Pledge & donor registry</div>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><Box size={20} className={styles.featureIcon} /></div>
-                  <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>SMART</div>
-                    <div className={styles.featureSub}>AI Powered Matching</div>
+                  <div className={styles.portalArrowOuter}>
+                    <div className={styles.portalArrowInner}>
+                      <ArrowRight size={16} strokeWidth={2.5} />
+                    </div>
                   </div>
-                </div>
-                <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><HeartPulse size={20} className={styles.featureIcon} /></div>
-                  <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>LIFE</div>
-                    <div className={styles.featureSub}>Connecting Life</div>
+                </Link>
+
+                <Link to="/login?role=receiver" className={`${styles.portalCard} ${styles.cardPurple}`} data-theme={theme}>
+                  <div className={styles.portalLeft}>
+                    <div className={styles.portalIconRing}>
+                      <User size={20} strokeWidth={2} />
+                    </div>
+                    <div className={styles.portalTextGroup}>
+                      <div className={styles.portalTitle}>Enter as Receiver</div>
+                      <div className={styles.portalSub}>Allocation & recipient queue</div>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.featureItem}>
-                  <div className={styles.featureIconBox}><Lock size={20} className={styles.featureIcon} /></div>
-                  <div className={styles.featureTextGroup}>
-                    <div className={styles.featureTitle}>TRUST</div>
-                    <div className={styles.featureSub}>Tamper Proof</div>
+                  <div className={styles.portalArrowOuter}>
+                    <div className={styles.portalArrowInner}>
+                      <ArrowRight size={16} strokeWidth={2.5} />
+                    </div>
                   </div>
-                </div>
+                </Link>
+
+                <Link to="/login?role=hospital" className={`${styles.portalCard} ${styles.cardGreen}`} data-theme={theme}>
+                  <div className={styles.portalLeft}>
+                    <div className={styles.portalIconRing}>
+                      <Building2 size={20} strokeWidth={2} />
+                    </div>
+                    <div className={styles.portalTextGroup}>
+                      <div className={styles.portalTitle}>Enter as Hospital</div>
+                      <div className={styles.portalSub}>Authorized medical center</div>
+                    </div>
+                  </div>
+                  <div className={styles.portalArrowOuter}>
+                    <div className={styles.portalArrowInner}>
+                      <ArrowRight size={16} strokeWidth={2.5} />
+                    </div>
+                  </div>
+                </Link>
+
+                <Link to="/login?role=admin" className={`${styles.portalCard} ${styles.cardAmber}`} data-theme={theme}>
+                  <div className={styles.portalLeft}>
+                    <div className={styles.portalIconRing}>
+                      <ShieldCheck size={20} strokeWidth={2} />
+                    </div>
+                    <div className={styles.portalTextGroup}>
+                      <div className={styles.portalTitle}>Enter as Admin</div>
+                      <div className={styles.portalSub}>System administration & governance</div>
+                    </div>
+                  </div>
+                  <div className={styles.portalArrowOuter}>
+                    <div className={styles.portalArrowInner}>
+                      <ArrowRight size={16} strokeWidth={2.5} />
+                    </div>
+                  </div>
+                </Link>
               </div>
 
               <div className={styles.ctaGroup}>
@@ -409,11 +445,6 @@ const Home = () => {
           pointerEvents: 'none'
         } : {}}
       >
-        <div className={styles.ringOuter} />
-        <div className={styles.ringMiddle} />
-        <div className={styles.ringInner} />
-        <div className={styles.glowBloom} />
-
         <Heart3D 
           mousePos={mousePos} 
           modelUrl={theme === 'light' ? "/heart3d.glb" : "/heart3d_night.glb"} 

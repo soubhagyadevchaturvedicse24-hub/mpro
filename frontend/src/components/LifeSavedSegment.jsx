@@ -44,13 +44,9 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
         transition: 'background 0.5s ease',
       }}
     >
-      {/* Localized Ambient Lightning (Night Mode Only) */}
-      {!isLight && (
-        <>
-          <div className={styles.ambientLeftLightning} />
-          <div className={styles.ambientRightLightning} />
-        </>
-      )}
+      {/* Localized Ambient Lightning Backgrounds */}
+      <div className={styles.ambientLeftLightning} />
+      <div className={styles.ambientRightLightning} />
 
       <motion.div
         className={styles.contentWrapper}
@@ -149,7 +145,9 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
           <Link to="/dashboard/donor-consent" className={`${styles.portalCard} ${styles.cardDonor}`} data-theme={theme}>
             <div className={styles.portalLeft}>
               <div className={styles.portalIconRing}>
-                <UserPlus size={28} />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px' }}>
+                  <UserPlus size={32} strokeWidth={1.5} />
+                </div>
               </div>
               <div className={styles.portalTextGroup}>
                 <div className={styles.portalTitle}>Enter as Donor</div>
@@ -158,7 +156,7 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
             </div>
             <div className={styles.portalArrowOuter}>
               <div className={styles.portalArrowInner}>
-                <ArrowRight size={20} strokeWidth={2.5} />
+                <ArrowRight size={20} strokeWidth={2} />
               </div>
             </div>
           </Link>
@@ -166,7 +164,9 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
           <Link to="/login" className={`${styles.portalCard} ${styles.cardReceiver}`} data-theme={theme}>
             <div className={styles.portalLeft}>
               <div className={styles.portalIconRing}>
-                <Users size={28} />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px' }}>
+                  <Users size={32} strokeWidth={1.5} />
+                </div>
               </div>
               <div className={styles.portalTextGroup}>
                 <div className={styles.portalTitle}>Enter as Receiver</div>
@@ -175,7 +175,7 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
             </div>
             <div className={styles.portalArrowOuter}>
               <div className={styles.portalArrowInner}>
-                <ArrowRight size={20} strokeWidth={2.5} />
+                <ArrowRight size={20} strokeWidth={2} />
               </div>
             </div>
           </Link>
@@ -183,7 +183,9 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
           <Link to="/dashboard/hospital-registry" className={`${styles.portalCard} ${styles.cardHospital}`} data-theme={theme}>
             <div className={styles.portalLeft}>
               <div className={styles.portalIconRing}>
-                <Building2 size={28} />
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px' }}>
+                  <Building2 size={32} strokeWidth={1.5} />
+                </div>
               </div>
               <div className={styles.portalTextGroup}>
                 <div className={styles.portalTitle}>Enter as Hospital</div>
@@ -192,7 +194,7 @@ const LifeSavedSegment = ({ theme = 'dark' }) => {
             </div>
             <div className={styles.portalArrowOuter}>
               <div className={styles.portalArrowInner}>
-                <ArrowRight size={20} strokeWidth={2.5} />
+                <ArrowRight size={20} strokeWidth={2} />
               </div>
             </div>
           </Link>

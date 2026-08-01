@@ -83,31 +83,31 @@
   /* ── Legacy UI tokens (light) ─────────────────────── */
   --bg-color: #F8FAFF;
   --text-main: #020617;
-  --text-muted: #475569;
-  --card-bg: rgba(255, 255, 255, 0.75);
-  --card-border: rgba(255, 255, 255, 0.9);
-  --card-hover-bg: rgba(255, 255, 255, 0.92);
-  --card-hover-border: rgba(99, 102, 241, 0.25);
+  --text-muted: #334155;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(255, 255, 255, 0.95);
+  --card-hover-bg: rgba(255, 255, 255, 0.98);
+  --card-hover-border: rgba(29, 78, 216, 0.3);
   --ambient-bg: transparent;
-  --nav-link: #64748B;
-  --nav-link-hover: #0F172A;
-  --dropdown-bg: rgba(255, 255, 255, 0.95);
-  --dropdown-text: #475569;
-  --dropdown-hover: rgba(99, 102, 241, 0.06);
-  --icon-box-bg: rgba(99, 102, 241, 0.06);
-  --icon-box-border: rgba(99, 102, 241, 0.14);
+  --nav-link: #334155;
+  --nav-link-hover: #1d4ed8;
+  --dropdown-bg: rgba(255, 255, 255, 0.98);
+  --dropdown-text: #1e293b;
+  --dropdown-hover: rgba(29, 78, 216, 0.08);
+  --icon-box-bg: rgba(29, 78, 216, 0.08);
+  --icon-box-border: rgba(29, 78, 216, 0.2);
   --heart-mix-blend: normal;
-  --primary-accent: #1976FF;
-  --highlight-gradient: linear-gradient(90deg, #4f46e5 0%, #0284c7 100%);
-  --btn-login-border: rgba(99, 102, 241, 0.18);
-  --btn-login-hover-border: rgba(99, 102, 241, 0.4);
-  --btn-login-hover-bg: rgba(99, 102, 241, 0.05);
-  --btn-sec-color: #0F172A;
-  --btn-sec-border: rgba(0, 0, 0, 0.16);
-  --btn-sec-bg-hover: rgba(99, 102, 241, 0.05);
-  --btn-sec-border-hover: rgba(99, 102, 241, 0.3);
-  --btn-ghost-color: #475569;
-  --btn-ghost-hover: #6366F1;
+  --primary-accent: #1d4ed8;
+  --highlight-gradient: linear-gradient(135deg, #1d4ed8 0%, #1e40af 50%, #6d28d9 100%);
+  --btn-login-border: rgba(29, 78, 216, 0.4);
+  --btn-login-hover-border: rgba(29, 78, 216, 0.8);
+  --btn-login-hover-bg: rgba(29, 78, 216, 0.12);
+  --btn-sec-color: #ffffff;
+  --btn-sec-border: rgba(29, 78, 216, 0.4);
+  --btn-sec-bg-hover: rgba(29, 78, 216, 0.08);
+  --btn-sec-border-hover: rgba(29, 78, 216, 0.6);
+  --btn-ghost-color: #334155;
+  --btn-ghost-hover: #1d4ed8;
 
   background-color: var(--neo-base);
   color: var(--text-main);
@@ -598,18 +598,19 @@
 
 .headline {
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 4rem;
-  font-weight: 400;
+  font-size: 3.8rem;
+  font-weight: 700;
   line-height: 1.1;
   margin-bottom: 24px;
-  letter-spacing: -1.5px;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  letter-spacing: -1.2px;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 .highlightText {
-  font-weight: 500;
-  background: var(--highlight-gradient);
+  font-weight: 800;
+  background: linear-gradient(135deg, #00c2ff 0%, #38bdf8 45%, #a78bfa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 20px rgba(0, 194, 255, 0.4));
 }
 
 .paragraph {
@@ -629,46 +630,241 @@
   margin-bottom: 45px;
 }
 
-.featureItem {
+/* Portal Cards Base for Hero Segment */
+.portalCard {
+  border-radius: 16px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  padding: 16px 20px;
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
+  justify-content: space-between;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.portalCard:hover {
+  transform: translateY(-2px) translateX(4px);
+}
+
+/* Light Mode Portal Cards (Clean, non-glowing enterprise buttons) */
+.portalCard[data-theme='light'].cardBlue {
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.portalCard[data-theme='light'].cardPurple {
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.portalCard[data-theme='light'].cardGreen {
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.portalCard[data-theme='light'].cardAmber {
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* Night Mode Portal Cards (Crisp Dark Glass, Zero Neon Glows) */
+.portalCard[data-theme='dark'].cardBlue,
+.portalCard:not([data-theme='light']).cardBlue {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.portalCard[data-theme='dark'].cardPurple,
+.portalCard:not([data-theme='light']).cardPurple {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.portalCard[data-theme='dark'].cardGreen,
+.portalCard:not([data-theme='light']).cardGreen {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.portalCard[data-theme='dark'].cardAmber,
+.portalCard:not([data-theme='light']).cardAmber {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Hover Elevation Shadow (Crisp & Clean) */
+.portalCard[data-theme='light'].cardBlue:hover,
+.portalCard[data-theme='light'].cardPurple:hover,
+.portalCard[data-theme='light'].cardGreen:hover,
+.portalCard[data-theme='light'].cardAmber:hover { 
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.09); 
+}
+
+.portalCard[data-theme='dark'].cardBlue:hover,
+.portalCard[data-theme='dark'].cardPurple:hover,
+.portalCard[data-theme='dark'].cardGreen:hover,
+.portalCard[data-theme='dark'].cardAmber:hover { 
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); 
+}
+
+/* Background Wave Texture inside Cards */
+.cardBlue::before, .cardPurple::before, .cardGreen::before, .cardAmber::before {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0; width: 100%;
+  pointer-events: none;
+  opacity: 0.45;
+  z-index: 1;
+}
+.cardBlue::before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' preserveAspectRatio='xMaxYMid slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M150,200 C250,50 350,150 450,0' fill='none' stroke='rgba(59, 130, 246, 0.8)' stroke-width='1.5'/%3E%3Cpath d='M200,220 C300,70 380,180 500,20' fill='none' stroke='rgba(59, 130, 246, 0.6)' stroke-width='3'/%3E%3C/svg%3E") no-repeat right center/cover;
+}
+.cardPurple::before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' preserveAspectRatio='xMaxYMid slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M150,200 C250,50 350,150 450,0' fill='none' stroke='rgba(168, 85, 247, 0.8)' stroke-width='1.5'/%3E%3Cpath d='M200,220 C300,70 380,180 500,20' fill='none' stroke='rgba(168, 85, 247, 0.6)' stroke-width='3'/%3E%3C/svg%3E") no-repeat right center/cover;
+}
+.cardGreen::before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' preserveAspectRatio='xMaxYMid slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M150,200 C250,50 350,150 450,0' fill='none' stroke='rgba(34, 197, 94, 0.8)' stroke-width='1.5'/%3E%3Cpath d='M200,220 C300,70 380,180 500,20' fill='none' stroke='rgba(34, 197, 94, 0.6)' stroke-width='3'/%3E%3C/svg%3E") no-repeat right center/cover;
+}
+.cardAmber::before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 200' preserveAspectRatio='xMaxYMid slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M150,200 C250,50 350,150 450,0' fill='none' stroke='rgba(245, 158, 11, 0.8)' stroke-width='1.5'/%3E%3Cpath d='M200,220 C300,70 380,180 500,20' fill='none' stroke='rgba(245, 158, 11, 0.6)' stroke-width='3'/%3E%3C/svg%3E") no-repeat right center/cover;
+}
+
+.portalLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 2;
+}
+
+/* 3D Icon Spheres */
+.portalIconRing {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.portalCard:hover .portalIconRing {
+  transform: scale(1.1);
+}
+
+.cardBlue .portalIconRing {
+  background: radial-gradient(circle, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+.cardPurple .portalIconRing {
+  background: radial-gradient(circle, #a855f7 0%, #7c3aed 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+.cardGreen .portalIconRing {
+  background: radial-gradient(circle, #22c55e 0%, #15803d 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+.cardAmber .portalIconRing {
+  background: radial-gradient(circle, #f59e0b 0%, #b45309 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.portalTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.portalTitle {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+}
+.portalCard[data-theme='light'] .portalTitle {
+  color: #0f172a;
+}
+
+.portalSub {
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+.portalCard[data-theme='light'] .portalSub {
+  color: #475569;
+}
+
+/* 3D Action Arrow Bubbles */
+.portalArrowOuter {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+.cardBlue .portalArrowOuter { background: rgba(59, 130, 246, 0.2); }
+.cardPurple .portalArrowOuter { background: rgba(168, 85, 247, 0.2); }
+.cardGreen .portalArrowOuter { background: rgba(34, 197, 94, 0.2); }
+.cardAmber .portalArrowOuter { background: rgba(245, 158, 11, 0.2); }
+
+.portalArrowInner {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
-.featureItem:hover {
-  background: var(--card-hover-bg);
-  border-color: var(--card-hover-border);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 210, 255, 0.1);
+.cardBlue .portalArrowInner { color: #1d4ed8; }
+.cardPurple .portalArrowInner { color: #7c3aed; }
+.cardGreen .portalArrowInner { color: #15803d; }
+.cardAmber .portalArrowInner { color: #b45309; }
+
+.portalCard:hover .portalArrowOuter {
+  transform: translateX(3px);
+}
+.portalCard:hover .portalArrowInner {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .featureIconBox {
-  background: var(--icon-box-bg);
-  padding: 12px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid var(--icon-box-border);
+  transition: all 0.35s ease;
+  flex-shrink: 0;
 }
 .featureIcon {
-  color: var(--primary-accent);
+  transition: color 0.3s ease;
 }
 .featureTextGroup {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 .featureTitle {
   font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-main);
-  letter-spacing: 1px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  transition: color 0.3s ease;
 }
 .featureSub {
   font-family: var(--font-sans, 'Inter', sans-serif);
@@ -678,16 +874,29 @@
 
 .ctaGroup {
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 24px;
 }
 .btnExplore {
-  padding: 0 32px;
-  font-weight: 500;
-  box-shadow: 0 0 20px rgba(0, 119, 255, 0.4);
+  padding: 14px 34px;
+  font-weight: 600;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #0284c7 100%);
+  border: 1px solid rgba(147, 197, 253, 0.4);
+  box-shadow: 0 12px 30px -4px rgba(37, 99, 235, 0.65), 0 0 20px rgba(0, 194, 255, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+}
+.btnExplore:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(37, 99, 235, 0.85), 0 0 28px rgba(0, 194, 255, 0.65);
 }
 .btnWhitepaper {
-  padding: 0 32px;
+  padding: 14px 28px;
   color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+.btnWhitepaper:hover {
+  color: #ffffff;
 }
 
 
@@ -1156,7 +1365,7 @@
   color: #1976ff;
 }
 
-/* ─── AMBIENT MEDICAL LIGHTNING ─── */
+/* ─── NIGHT MODE MINIMALIST ELEGANT MEDICAL LIGHTNING ─── */
 .ambientEkgLightning {
   position: absolute;
   top: 0;
@@ -1165,15 +1374,75 @@
   bottom: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='1200' height='600' viewBox='0 0 1200 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 0 300 L 400 300 L 430 220 L 470 450 L 530 150 L 580 300 L 1200 300' fill='none' stroke='rgba(0,210,255,0.2)' stroke-width='3'/%3E%3Cpath d='M 0 300 L 400 300 L 430 220 L 470 450 L 530 150 L 580 300 L 1200 300' fill='none' stroke='rgba(0,210,255,0.6)' stroke-width='8' filter='blur(6px)'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 100% auto;
-  opacity: 0.5;
-  animation: pulseEkg 4s infinite alternate;
+  overflow: hidden;
+  background: 
+    /* Delicate EKG Pulse Line (Top Left Margin — clear of text) */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 300' preserveAspectRatio='xMinYMid slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-50,150 L60,150 L85,50 L110,250 L135,100 L160,180 L175,150 L380,150' fill='none' stroke='rgba(0, 240, 255, 0.45)' stroke-width='2' stroke-linejoin='round' stroke-linecap='round' filter='drop-shadow(0 0 6px rgba(0, 240, 255, 0.6))'/%3E%3Ccircle cx='175' cy='150' r='4' fill='%2300F0FF' filter='drop-shadow(0 0 8px %2300F0FF)'/%3E%3C/svg%3E") no-repeat top left / 380px auto,
+    /* Delicate Cyan Wave Curve (Bottom Left Margin) */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' preserveAspectRatio='xMinYMax slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-80,400 C80,400 200,220 400,120' fill='none' stroke='rgba(0, 210, 255, 0.35)' stroke-width='6' filter='blur(3px)'/%3E%3Cpath d='M-20,400 C100,300 260,250 480,180' fill='none' stroke='rgba(0, 240, 255, 0.5)' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat bottom left / 360px auto,
+    /* Delicate Molecular Hexagon Network (Bottom Right Margin) */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 300 350' preserveAspectRatio='xMaxYMax slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cg stroke='rgba(0, 210, 255, 0.35)' stroke-width='1.2' fill='rgba(0, 194, 255, 0.6)'%3E%3Cpath d='M180,300 L220,275 L220,225 L180,200 L140,225 L140,275 Z' fill='none'/%3E%3Cpath d='M140,225 L100,200 L100,150 L140,125 L180,150 L180,200 Z' fill='none'/%3E%3Ccircle cx='180' cy='300' r='3'/%3E%3Ccircle cx='220' cy='275' r='3'/%3E%3Ccircle cx='220' cy='225' r='3'/%3E%3Ccircle cx='180' cy='200' r='3'/%3E%3Ccircle cx='140' cy='225' r='3'/%3E%3Ccircle cx='140' cy='275' r='3'/%3E%3Ccircle cx='100' cy='200' r='3'/%3E%3Ccircle cx='100' cy='150' r='3'/%3E%3C/g%3E%3C/svg%3E") no-repeat bottom right / 280px auto,
+    /* Soft Cyan Aura behind Heart on the Right */
+    radial-gradient(circle at 75% 45%, rgba(0, 194, 255, 0.12) 0%, rgba(0, 194, 255, 0.03) 45%, transparent 70%),
+    /* Soft Emerald Ambient Glow Bottom Right */
+    radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+    /* Soft Indigo Glow Top Left Edge */
+    radial-gradient(circle at 10% 15%, rgba(99, 102, 241, 0.10) 0%, transparent 50%);
+  opacity: 0.85;
+  animation: pulseNightEkg 6s ease-in-out infinite alternate;
 }
 
-@keyframes pulseEkg {
-  0% { opacity: 0.3; transform: scale(1.01); }
-  100% { opacity: 0.7; transform: scale(1); }
+@keyframes pulseNightEkg {
+  0% { opacity: 0.6; }
+  100% { opacity: 0.9; }
+}
+
+/* ─── DAY MODE HERO AMBIENT MEDICAL LIGHTNING & GRAPHICS ─── */
+.container[data-theme='light'] .heroUI::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 75% 50%, rgba(255,255,255,0.7) 1px, transparent 1px),
+    radial-gradient(circle at 20% 70%, rgba(255,255,255,0.9) 2px, transparent 2px),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.75) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+  background-size: 150px 150px, 150px 150px, 150px 150px, 150px 150px, 32px 32px;
+  background-position: 0 0, 40px 60px, 100px 30px, 50px 100px, 0 0;
+  opacity: 0.75;
+  z-index: 0;
+}
+
+.dayModeHeroLeftLightning {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 550px;
+  z-index: 0;
+  pointer-events: none;
+  background: 
+    /* EKG Pulse Line Trace at top left */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' preserveAspectRatio='xMinYMid slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-50,180 L80,180 L110,40 L140,320 L170,120 L200,220 L220,180 L450,180' fill='none' stroke='rgba(255,255,255,0.85)' stroke-width='3.5' stroke-linejoin='round' stroke-linecap='round' filter='drop-shadow(0 0 6px rgba(255,255,255,0.9))'/%3E%3Ccircle cx='220' cy='180' r='5.5' fill='white' filter='drop-shadow(0 0 8px white)'/%3E%3C/svg%3E") no-repeat top left,
+    /* Glowing Cyan Ribbon Wave Streaks at bottom left */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 450 450' preserveAspectRatio='xMinYMax slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-100,450 C100,450 250,220 450,120' fill='none' stroke='rgba(167, 243, 208, 0.7)' stroke-width='9' filter='blur(3px)'/%3E%3Cpath d='M-50,500 C150,380 280,120 500,60' fill='none' stroke='rgba(186, 230, 253, 0.9)' stroke-width='4.5' filter='blur(2px)'/%3E%3Cpath d='M-20,450 C120,330 300,270 520,200' fill='none' stroke='rgba(255, 255, 255, 0.75)' stroke-width='2'/%3E%3C/svg%3E") no-repeat bottom left,
+    /* Soft cyan/blue radial glows */
+    radial-gradient(circle at -10% 75%, rgba(167, 243, 208, 0.38) 0%, transparent 60%),
+    radial-gradient(circle at 10% 25%, rgba(186, 230, 253, 0.38) 0%, transparent 50%);
+}
+
+.dayModeHeroRightLightning {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 550px;
+  z-index: 0;
+  pointer-events: none;
+  background: 
+    /* Molecular Hexagon Node Grid at bottom right */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 350 450' preserveAspectRatio='xMaxYMax slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cg stroke='rgba(255,255,255,0.85)' stroke-width='1.5' fill='white'%3E%3Cpath d='M220,380 L270,350 L270,290 L220,260 L170,290 L170,350 Z' fill='none'/%3E%3Cpath d='M170,290 L120,260 L120,200 L170,170 L220,200 L220,260 Z' fill='none'/%3E%3Cpath d='M120,200 L70,170' fill='none'/%3E%3Cpath d='M270,290 L320,260' fill='none'/%3E%3Cpath d='M220,380 L220,430' fill='none'/%3E%3Ccircle cx='220' cy='380' r='4'/%3E%3Ccircle cx='270' cy='350' r='4'/%3E%3Ccircle cx='270' cy='290' r='4'/%3E%3Ccircle cx='220' cy='260' r='4'/%3E%3Ccircle cx='170' cy='290' r='4'/%3E%3Ccircle cx='170' cy='350' r='4'/%3E%3Ccircle cx='120' cy='260' r='4'/%3E%3Ccircle cx='120' cy='200' r='4'/%3E%3Ccircle cx='170' cy='170' r='4'/%3E%3Ccircle cx='220' cy='200' r='4'/%3E%3Ccircle cx='70' cy='170' r='4'/%3E%3Ccircle cx='320' cy='260' r='4'/%3E%3C/g%3E%3C/svg%3E") no-repeat bottom right,
+    /* Glowing Green Wave Curve at top right */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 450 450' preserveAspectRatio='xMaxYMin slice' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,220 C220,120 330,60 480,-40' fill='none' stroke='rgba(134, 239, 172, 0.8)' stroke-width='7' filter='blur(3px)'/%3E%3Cpath d='M60,270 C270,190 380,90 480,10' fill='none' stroke='rgba(74, 222, 128, 0.6)' stroke-width='2.5'/%3E%3C/svg%3E") no-repeat top right,
+    /* Soft green/cyan radial glow */
+    radial-gradient(circle at 110% 70%, rgba(134, 239, 172, 0.38) 0%, transparent 60%),
+    radial-gradient(circle at 90% 10%, rgba(186, 230, 253, 0.35) 0%, transparent 50%);
 }

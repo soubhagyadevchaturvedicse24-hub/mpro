@@ -9,6 +9,7 @@ import './App.css';
 /* ── Lazy-loaded pages for code splitting ── */
 const Home             = lazy(() => import('./pages/Home'));
 const Login            = lazy(() => import('./pages/Login'));
+const RegisterHospital = lazy(() => import('./pages/RegisterHospital'));
 const DashboardLayout  = lazy(() => import('./layouts/DashboardLayout'));
 const ExecutiveOverview = lazy(() => import('./pages/ExecutiveOverview'));
 const MatchingQueue    = lazy(() => import('./pages/MatchingQueue'));
@@ -56,6 +57,9 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/register/hospital" element={<RegisterHospital />} />
+                  <Route path="/register-hospital" element={<RegisterHospital />} />
+                  <Route path="/hospital-register" element={<RegisterHospital />} />
                   
                   <Route path="/dashboard" element={<DashboardLayout />}>
                     <Route index element={<Navigate to="overview" replace />} />

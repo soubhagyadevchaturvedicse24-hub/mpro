@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Thermometer, MapPin, ShieldCheck, Bell, BatteryCharging, 
+  Thermometer, MapPin, ShieldCheck, Shield, Bell, BatteryCharging, 
   Box, ArrowRight, Building2, Landmark, Heart, 
   Wifi, Lock, Network, UserCheck, HeartPulse
 } from 'lucide-react';
@@ -11,8 +11,15 @@ import styles from './EcosystemSegment.module.css';
 const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
   return (
     <section id={id} className={styles.segmentContainer} data-theme={theme}>
-      {/* Ambient Neural Lightning (Night Mode Only) */}
-      {theme === 'dark' && <div className={styles.ambientNeuralLightning} />}
+      {/* Ambient Background Layers */}
+      {theme === 'dark' ? (
+        <div className={styles.ambientNeuralLightning} />
+      ) : (
+        <>
+          <div className={styles.ambientLeftLightning} />
+          <div className={styles.ambientRightLightning} />
+        </>
+      )}
 
 
       {/* ── TOP BADGE (absorbed from divider) ── */}
@@ -228,49 +235,99 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
         {/* RIGHT COLUMN: ACCESS PORTAL SHORTCUTS */}
         <div className={styles.accessPortalCard}>
           <div className={styles.cardHeader}>
-            <Lock size={16} className={styles.headerLockIcon} />
-            <span className={styles.cardTitle}>ACCESS PORTAL</span>
+            <div className={styles.headerBadgeHexagon}>
+              <Shield size={18} className={styles.headerBadgeIcon} />
+            </div>
+            <div className={styles.headerTextGroup}>
+              <div className={styles.cardTitle}>ACCESS PORTAL</div>
+              <div className={styles.cardSubtitle}>Secure. Verified. Connected.</div>
+            </div>
           </div>
 
           <div className={styles.portalList}>
-            <Link to="/login?role=hospital" className={styles.portalItem}>
+            <Link to="/login?role=hospital" className={`${styles.portalCard} ${styles.cardBlue}`} data-theme={theme}>
               <div className={styles.portalLeft}>
-                <Building2 size={20} className={styles.portalIcon} />
-                <span className={styles.portalName}>Hospitals</span>
+                <div className={styles.portalIconRing}>
+                  <Building2 size={24} strokeWidth={1.5} />
+                </div>
+                <div className={styles.portalTextGroup}>
+                  <div className={styles.portalTitle}>Hospitals</div>
+                  <div className={styles.portalSub}>Authorized hospital network</div>
+                </div>
               </div>
-              <span className={styles.portalSub}>Login &rarr;</span>
+              <div className={styles.portalArrowOuter}>
+                <div className={styles.portalArrowInner}>
+                  <ArrowRight size={18} strokeWidth={2} />
+                </div>
+              </div>
             </Link>
 
-            <Link to="/login?role=sotto" className={styles.portalItem}>
+            <Link to="/login?role=sotto" className={`${styles.portalCard} ${styles.cardCyan}`} data-theme={theme}>
               <div className={styles.portalLeft}>
-                <Landmark size={20} className={styles.portalIcon} />
-                <span className={styles.portalName}>SOTTO</span>
+                <div className={styles.portalIconRing}>
+                  <Landmark size={24} strokeWidth={1.5} />
+                </div>
+                <div className={styles.portalTextGroup}>
+                  <div className={styles.portalTitle}>SOTTO</div>
+                  <div className={styles.portalSub}>State Organ & Tissue Transplant</div>
+                </div>
               </div>
-              <span className={styles.portalSub}>Login &rarr;</span>
+              <div className={styles.portalArrowOuter}>
+                <div className={styles.portalArrowInner}>
+                  <ArrowRight size={18} strokeWidth={2} />
+                </div>
+              </div>
             </Link>
 
-            <Link to="/login?role=rotto" className={styles.portalItem}>
+            <Link to="/login?role=rotto" className={`${styles.portalCard} ${styles.cardPurple}`} data-theme={theme}>
               <div className={styles.portalLeft}>
-                <Landmark size={20} className={styles.portalIcon} />
-                <span className={styles.portalName}>ROTTO</span>
+                <div className={styles.portalIconRing}>
+                  <Landmark size={24} strokeWidth={1.5} />
+                </div>
+                <div className={styles.portalTextGroup}>
+                  <div className={styles.portalTitle}>ROTTO</div>
+                  <div className={styles.portalSub}>Regional Organ & Tissue Transplant</div>
+                </div>
               </div>
-              <span className={styles.portalSub}>Login &rarr;</span>
+              <div className={styles.portalArrowOuter}>
+                <div className={styles.portalArrowInner}>
+                  <ArrowRight size={18} strokeWidth={2} />
+                </div>
+              </div>
             </Link>
 
-            <Link to="/login?role=notto" className={styles.portalItem}>
+            <Link to="/login?role=notto" className={`${styles.portalCard} ${styles.cardGreen}`} data-theme={theme}>
               <div className={styles.portalLeft}>
-                <Landmark size={20} className={styles.portalIcon} />
-                <span className={styles.portalName}>NOTTO</span>
+                <div className={styles.portalIconRing}>
+                  <Landmark size={24} strokeWidth={1.5} />
+                </div>
+                <div className={styles.portalTextGroup}>
+                  <div className={styles.portalTitle}>NOTTO</div>
+                  <div className={styles.portalSub}>National Organ & Tissue Transplant</div>
+                </div>
               </div>
-              <span className={styles.portalSub}>Login &rarr;</span>
+              <div className={styles.portalArrowOuter}>
+                <div className={styles.portalArrowInner}>
+                  <ArrowRight size={18} strokeWidth={2} />
+                </div>
+              </div>
             </Link>
 
-            <Link to="/login?role=transplant" className={styles.portalItem}>
+            <Link to="/login?role=admin" className={`${styles.portalCard} ${styles.cardAmber}`} data-theme={theme}>
               <div className={styles.portalLeft}>
-                <Heart size={20} className={styles.portalIcon} />
-                <span className={styles.portalName}>Transplant Team</span>
+                <div className={styles.portalIconRing}>
+                  <ShieldCheck size={24} strokeWidth={1.5} />
+                </div>
+                <div className={styles.portalTextGroup}>
+                  <div className={styles.portalTitle}>Admin Login</div>
+                  <div className={styles.portalSub}>System administration & governance</div>
+                </div>
               </div>
-              <span className={styles.portalSub}>Login &rarr;</span>
+              <div className={styles.portalArrowOuter}>
+                <div className={styles.portalArrowInner}>
+                  <ArrowRight size={18} strokeWidth={2} />
+                </div>
+              </div>
             </Link>
           </div>
         </div>
@@ -283,12 +340,14 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
         
         <div className={styles.timelineItem}>
           <div className={styles.timelineIconCircle}>
-            <Heart size={18} />
+            <ShieldCheck size={18} />
           </div>
           <span className={styles.timelineLabel}>Organ Secured</span>
         </div>
 
-        <span className={styles.timelineArrow}>&rarr;</span>
+        <div className={styles.timelineArrow}>
+          <ArrowRight size={14} />
+        </div>
 
         <div className={styles.timelineItem}>
           <div className={styles.timelineIconCircle}>
@@ -297,7 +356,9 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
           <span className={styles.timelineLabel}>IoT Sensors</span>
         </div>
 
-        <span className={styles.timelineArrow}>&rarr;</span>
+        <div className={styles.timelineArrow}>
+          <ArrowRight size={14} />
+        </div>
 
         <div className={styles.timelineItem}>
           <div className={styles.timelineIconCircle}>
@@ -306,7 +367,9 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
           <span className={styles.timelineLabel}>Data Encrypted</span>
         </div>
 
-        <span className={styles.timelineArrow}>&rarr;</span>
+        <div className={styles.timelineArrow}>
+          <ArrowRight size={14} />
+        </div>
 
         <div className={styles.timelineItem}>
           <div className={styles.timelineIconCirclePurple}>
@@ -315,7 +378,9 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
           <span className={styles.timelineLabel}>Blockchain Ledger</span>
         </div>
 
-        <span className={styles.timelineArrow}>&rarr;</span>
+        <div className={styles.timelineArrow}>
+          <ArrowRight size={14} />
+        </div>
 
         <div className={styles.timelineItem}>
           <div className={styles.timelineIconCircle}>
@@ -324,7 +389,9 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
           <span className={styles.timelineLabel}>Decentralized Network</span>
         </div>
 
-        <span className={styles.timelineArrow}>&rarr;</span>
+        <div className={styles.timelineArrow}>
+          <ArrowRight size={14} />
+        </div>
 
         <div className={styles.timelineItem}>
           <div className={styles.timelineIconCircle}>
@@ -333,7 +400,9 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
           <span className={styles.timelineLabel}>Verified Data</span>
         </div>
 
-        <span className={styles.timelineArrow}>&rarr;</span>
+        <div className={styles.timelineArrow}>
+          <ArrowRight size={14} />
+        </div>
 
         <div className={styles.timelineItem}>
           <div className={styles.timelineIconCircleGreen}>

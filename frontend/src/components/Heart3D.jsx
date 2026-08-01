@@ -45,12 +45,13 @@ const Heart3D = ({ mousePos, modelUrl, className }) => {
         ref={modelRef}
         src={modelUrl || "/heart3d.glb"} 
         alt="NeoLife 3D Holographic Heart"
-        shadow-intensity="1" 
+        shadow-intensity="0.4"
+        shadow-softness="1" 
         environment-image="neutral"
         exposure="1"
         style={{ 
-          width: '80%', 
-          height: '80%', 
+          width: '100%', 
+          height: '100%', 
           backgroundColor: 'transparent',
           '--progress-bar-color': 'transparent',
           '--progress-bar-height': '0px',
