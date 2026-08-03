@@ -12,6 +12,7 @@ const ALL_LINKS = [
   { name: 'Matching Queue',      path: '/dashboard/matching',          icon: GitFork,         section: null, roles: ['HOSPITAL_COORDINATOR'] },
   { name: 'Live Transport',      path: '/dashboard/transport',         icon: Map,            section: null, roles: ['COURIER', 'PLATFORM_ADMIN', 'HOSPITAL_COORDINATOR'] },
   { name: 'Donor Consent',       path: '/dashboard/donor-consent',     icon: FileCheck,       section: 'THOTA Legal', roles: ['PLATFORM_ADMIN', 'HOSPITAL_COORDINATOR'] },
+  { name: 'Hospital Approvals',  path: '/dashboard/hospital-approvals', icon: ShieldCheck,     section: 'Approvals', roles: ['PLATFORM_ADMIN'] },
   { name: 'Hospital Compliance', path: '/dashboard/hospital-registry', icon: Building2,       section: null, roles: ['PLATFORM_ADMIN'] },
   { name: 'Committee Approval',  path: '/dashboard/committee',         icon: Scale,           section: null, roles: ['PLATFORM_ADMIN', 'HOSPITAL_COORDINATOR'] },
   { name: 'Analytics',           path: '/dashboard/analytics',         icon: BarChart3,       section: 'Insights', roles: ['PLATFORM_ADMIN', 'HOSPITAL_COORDINATOR'] },

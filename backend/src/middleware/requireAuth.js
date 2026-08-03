@@ -15,6 +15,7 @@ export const requireAuth = (req, res, next) => {
   }
 
   const token = authHeader.split(' ')[1];
+
   const decoded = verifyAccessToken(token);
 
   if (!decoded) {

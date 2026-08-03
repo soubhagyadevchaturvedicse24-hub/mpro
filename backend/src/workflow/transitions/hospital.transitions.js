@@ -27,7 +27,7 @@ export const HOSPITAL_TRANSITIONS = Object.freeze({
     to: 'UNDER_REVIEW',
   },
   approve: {
-    from: ['UNDER_REVIEW'],
+    from: ['PENDING_VERIFICATION', 'UNDER_REVIEW'], // Admin can approve directly
     to: 'APPROVED',
   },
   reject: {

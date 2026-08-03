@@ -1,0 +1,408 @@
+.pageContainer {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.statIconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.statLabel {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.controlsRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.searchBox {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-tertiary);
+}
+
+.searchInput {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.filterSelect {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  outline: none;
+  min-width: 150px;
+}
+
+.tableCard {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.table td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.table tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.hospitalNameCol {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hospitalIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hospitalName {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.hospitalCode {
+  font-family: monospace;
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.btnReview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--brand-blue);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnReview:hover {
+  background: #2563eb;
+  transform: translateX(2px);
+}
+
+/* Drawer */
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.drawer {
+  width: 600px;
+  max-width: 100%;
+  background: #0f172a;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.5);
+  border-left: 1px solid var(--border-color);
+}
+
+.drawerHeader {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.drawerTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.btnCloseDrawer {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+.btnCloseDrawer:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.drawerTabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 2rem;
+  gap: 2rem;
+}
+
+.drawerTab {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  padding: 1rem 0;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.drawerTabActive {
+  color: white;
+  border-bottom-color: var(--brand-blue);
+}
+
+.drawerContent {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.detailSection {
+  margin-bottom: 2rem;
+}
+.detailTitle {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.detailLabel {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+.detailVal {
+  color: white;
+  font-weight: 500;
+}
+
+.docItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+.docName {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+}
+.docBtn {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.drawerFooter {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: 1rem;
+  background: #0b1120;
+}
+
+.btnUnderReview {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btnUnderReview:hover { background: rgba(255,255,255,0.05); }
+
+.btnReject {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btnReject:hover { background: rgba(239, 68, 68, 0.2); }
+
+.btnApprove {
+  flex: 2;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  background: #10b981;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btnApprove:hover { background: #059669; }
+
+.rejectionBox {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border-color);
+  background: #0b1120;
+}
+.rejectTextarea {
+  width: 100%;
+  background: #1e293b;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 80px;
+  margin-bottom: 1rem;
+}
+.rejectActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.errorBox {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

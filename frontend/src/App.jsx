@@ -18,9 +18,11 @@ const BlockchainAudit  = lazy(() => import('./pages/BlockchainAudit'));
 const SimulatorPage    = lazy(() => import('./pages/SimulatorPage'));
 const DonorConsent     = lazy(() => import('./pages/DonorConsent'));
 const HospitalRegistry = lazy(() => import('./pages/HospitalRegistry'));
+const HospitalApprovals = lazy(() => import('./pages/HospitalApprovals'));
 const CommitteeApproval = lazy(() => import('./pages/CommitteeApproval'));
 const Analytics        = lazy(() => import('./pages/Analytics'));
 const DataEntryHub     = lazy(() => import('./pages/DataEntryHub'));
+const ApplicationStatus = lazy(() => import('./pages/ApplicationStatus'));
 
 /* ── Skeleton fallback while chunk loads ── */
 const PageLoader = () => (
@@ -60,6 +62,7 @@ function App() {
                   <Route path="/register/hospital" element={<RegisterHospital />} />
                   <Route path="/register-hospital" element={<RegisterHospital />} />
                   <Route path="/hospital-register" element={<RegisterHospital />} />
+                  <Route path="/application-status" element={<ApplicationStatus />} />
                   
                   <Route path="/dashboard" element={<DashboardLayout />}>
                     <Route index element={<Navigate to="overview" replace />} />
@@ -77,6 +80,9 @@ function App() {
                     } />
                     <Route path="hospital-registry" element={
                       <ErrorBoundary><Suspense fallback={<PageLoader />}><HospitalRegistry /></Suspense></ErrorBoundary>
+                    } />
+                    <Route path="hospital-approvals" element={
+                      <ErrorBoundary><Suspense fallback={<PageLoader />}><HospitalApprovals /></Suspense></ErrorBoundary>
                     } />
                     <Route path="committee" element={
                       <ErrorBoundary><Suspense fallback={<PageLoader />}><CommitteeApproval /></Suspense></ErrorBoundary>

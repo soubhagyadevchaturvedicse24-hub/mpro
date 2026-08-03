@@ -6,9 +6,10 @@ import {
   Heart, Check, Phone, Mail, FileCheck2, UserCheck, HeartPulse, Building,
   Calendar, XCircle, Shield, Info, ChevronDown, Network, Boxes, Eye, EyeOff,
   Smartphone, ClipboardList, HelpCircle, Activity, Link as LinkIcon, BadgeCheck,
-  Stethoscope, FileCheck, Share2, Users, Vault
+  Stethoscope, FileCheck, Share2, Users, Vault, Key
 } from 'lucide-react';
 import styles from './RegisterHospital.module.css';
+import { publicRegisterHospital } from '../services/hospitalApi';
 
 // ── ALL 36 INDIAN STATES & UNION TERRITORIES WITH THEIR DISTRICTS ──
 const INDIA_STATES_DISTRICTS = {
@@ -207,7 +208,13 @@ const RegisterHospital = () => {
     // Step 9
     declareTrue: false,
     declareThotaComply: false,
-    declareLegalTerms: false
+    declareLegalTerms: false,
+
+    // Step 10
+    loginEmail: '',
+    password: '',
+    confirmPassword: '',
+    displayName: ''
   };
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -221,8 +228,13 @@ const RegisterHospital = () => {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const dropdownRef = useRef(null);
 
-  const [draftSavedAt, setDraftSavedAt] = useState(null);
+
   const [registrationId, setRegistrationId] = useState('');
+  const [apiError, setApiError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hospitalCode, setHospitalCode] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState({ score: 0, text: '', color: '' });
+  const [showPassword, setShowPassword] = useState(false);
 
   // ─── FORM STATE ───
   const [formData, setFormData] = useState(() => {
@@ -233,7 +245,7 @@ const RegisterHospital = () => {
         if (parsed.currentStep) setCurrentStep(parsed.currentStep);
         if (parsed.highestStep) setHighestStep(parsed.highestStep);
         if (parsed.registrationId) setRegistrationId(parsed.registrationId);
-        if (parsed.savedAt) setDraftSavedAt(new Date(parsed.savedAt));
+
         return { ...defaultFormData, ...parsed.formData };
       } catch (e) {
         return defaultFormData;
@@ -271,7 +283,7 @@ const RegisterHospital = () => {
   // Save to LocalStorage on form/step change
   useEffect(() => {
     const now = new Date();
-    setDraftSavedAt(now);
+
     
     let newRegId = registrationId;
     if (formData.hospitalLegalName && !registrationId) {
@@ -292,8 +304,106 @@ const RegisterHospital = () => {
     }));
   }, [formData, currentStep, highestStep]);
 
+  const checkPasswordStrength = (pass) => {
+    let score = 0;
+    if (pass.length > 11) score += 1;
+    if (/[A-Z]/.test(pass)) score += 1;
+    if (/[a-z]/.test(pass)) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+
+    if (score < 3) return { score, text: 'Weak', color: '#ef4444' };
+    if (score < 5) return { score, text: 'Good', color: '#f59e0b' };
+    return { score, text: 'Strong', color: '#10b981' };
+  };
+
+  const handleFillMockData = () => {
+    const r = Math.floor(1000 + Math.random() * 9000);
+    const createDummyFile = (name) => new File(["dummy content"], name, { type: "application/pdf" });
+    
+    setFormData(prev => ({
+      ...prev,
+      hospitalLegalName: `Apollo Hospitals Mock ${r}`,
+      tradeName: `Apollo Group ${r}`,
+      establishmentYear: '1995',
+      hospitalType: 'Private',
+      
+      addressLine1: `123 Health Ave, Block ${r}`,
+      addressLine2: 'Sector 5',
+      state: 'Karnataka',
+      district: 'Bengaluru Urban',
+      pin: '560001',
+      officialEmail: `admin${r}@apollo.mock.com`,
+      landline: `0802345${r}`,
+      nodalMobile: `987654${r}`,
+      accountHolderName: 'Apollo Trust',
+      primaryFundingSource: 'Private Equity',
+      
+      healthAuthRegNo: `HARN-KA-${r}`,
+      gstin: `29ABCDE1234F1Z${r % 9}`,
+      pan: `ABCDE123${r % 9}F`,
+      cin: `U85110KA1995PTC018${r}`,
+      pmjayId: `PMJAY-${r}`,
+      abdmHfrId: `HFR-ABDM-${r}`,
+      
+      isNabhAccredited: true,
+      nabhNumber: `NABH-HP-${r}`,
+      nabhValidUntil: '2028-12-31',
+      
+      isThotaRegistered: true,
+      thotaRegNumber: `THOTA-KA-${r}`,
+      issuingAuthority: 'State Auth',
+      thotaValidUntil: '2028-12-31',
+      thotaAuthTypes: ['Transplant Centre'],
+      approvedOrgans: ['Kidney', 'Liver'],
+      nottoId: `NOTTO-H-${r}`,
+      sottoId: `SOTTO-KA-${r}`,
+      rottoId: `ROTTO-S-${r}`,
+      
+      headName: `Dr. Ramesh ${r}`,
+      headRegNo: `MCI-${r}`,
+      headEmail: `head${r}@apollo.mock.com`,
+      headMobile: `912345${r}`,
+      coordName: `Dr. Suresh ${r}`,
+      coordQualification: 'MS Surgery',
+      coordEmail: `coord${r}@apollo.mock.com`,
+      coordMobile: `998877${r % 1000 + 1000}`,
+      
+      icuBeds: '50',
+      ventilators: '20',
+      bloodBankType: 'In-house',
+      bloodBankLicense: `BB-${r}`,
+      tieupHospitalName: '',
+      otCount: '10',
+
+      docStateHealth: createDummyFile('state_health.pdf'),
+      docThotaCert: createDummyFile('thota_cert.pdf'),
+      docNottoId: createDummyFile('notto_id.pdf'),
+      docNabhCert: createDummyFile('nabh_cert.pdf'),
+      docBloodBank: createDummyFile('blood_bank.pdf'),
+      docMsId: createDummyFile('ms_id.pdf'),
+      docCoordAppt: createDummyFile('coord_appt.pdf'),
+      docApprovedOrgans: createDummyFile('approved_organs.pdf'),
+      docDsc: createDummyFile('dsc_auth.pdf'),
+      
+      declareTrue: true,
+      declareThotaComply: true,
+      declareLegalTerms: true,
+      
+      loginEmail: `admin${r}@apollo.mock.com`,
+      password: 'MockPassword@123',
+      confirmPassword: 'MockPassword@123',
+      displayName: `Admin Apollo ${r}`
+    }));
+    
+    setPasswordStrength({ score: 5, text: 'Strong', color: '#10b981' });
+  };
+
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'password') {
+      setPasswordStrength(checkPasswordStrength(value));
+    }
   };
 
   const toggleThotaAuthType = (typeVal) => {
@@ -333,14 +443,14 @@ const RegisterHospital = () => {
   const handleNextStep = (e) => {
     if (e) e.preventDefault();
     
-    // Return to Step 9 logic if we were just editing a step
-    if (returnToStep && currentStep < 9) {
-       setCurrentStep(9);
+    // Return to Step 10 logic if we were just editing a step
+    if (returnToStep && currentStep < 10) {
+       setCurrentStep(10);
        setReturnToStep(null);
        return;
     }
 
-    if (currentStep < 9) {
+    if (currentStep < 10) {
       const next = currentStep + 1;
       setCurrentStep(next);
       if (next > highestStep) {
@@ -352,7 +462,7 @@ const RegisterHospital = () => {
   };
 
   const handleEditSection = (stepId) => {
-    setReturnToStep(9);
+    setReturnToStep(10);
     setCurrentStep(stepId);
   };
 
@@ -371,7 +481,8 @@ const RegisterHospital = () => {
     { id: 6, name: 'Key Personnel' },
     { id: 7, name: 'Infrastructure' },
     { id: 8, name: 'Documents' },
-    { id: 9, name: 'Declarations' }
+    { id: 9, name: 'Declarations' },
+    { id: 10, name: 'Account Setup' }
   ];
 
   return (
@@ -520,24 +631,27 @@ const RegisterHospital = () => {
                 </div>
 
                 <div className={styles.progressTrackerContainer}>
-                  {draftSavedAt && (
-                    <div className={styles.draftSavedText}>
-                      Draft Saved • {draftSavedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                    </div>
-                  )}
-                  {currentStep === 9 ? (
+                  <button 
+                    onClick={handleFillMockData} 
+                    type="button"
+                    style={{ background: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', padding: '6px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', marginRight: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <ClipboardList size={14} /> Auto-fill Demo Data
+                  </button>
+                  {/* Removed Draft Saved text as requested */}
+                  {currentStep === 10 ? (
                     <div className={styles.stepCountBadge}>
-                      Step 9 of 9
+                      Step 10 of 10
                     </div>
                   ) : (
                     <div className={styles.progressTracker}>
                       <div className={styles.progressText}>
-                        {Math.floor(((currentStep - 1) / 9) * 100)}% Complete
+                        {Math.floor(((currentStep - 1) / 10) * 100)}% Complete
                       </div>
                       <div className={styles.progressBarWrapper}>
                         <div 
                           className={styles.progressBarFill} 
-                          style={{ width: `${Math.floor(((currentStep - 1) / 9) * 100)}%` }} 
+                          style={{ width: `${Math.floor(((currentStep - 1) / 10) * 100)}%` }} 
                         />
                       </div>
                     </div>
@@ -1661,6 +1775,92 @@ const RegisterHospital = () => {
                         </div>
                       </div>
                     )}
+
+                    {/* STEP 10: ACCOUNT SETUP */}
+                    {currentStep === 10 && (
+                      <div className={styles.step10Wrapper}>
+                        <div className={styles.sectionHeaderBox}>
+                          <div className={styles.sectionHeaderIcon} style={{ color: '#059669' }}><UserCheck size={20} /></div>
+                          <div>
+                            <div className={styles.sectionTitle}>Account Setup</div>
+                            <div className={styles.sectionSubtitle}>Create the admin account for this hospital.</div>
+                          </div>
+                        </div>
+
+                        <div className={styles.inputGrid}>
+                          <div className={styles.inputGroup}>
+                            <label className={styles.inputLabel}>Admin Display Name <span style={{ color: '#ef4444' }}>*</span></label>
+                            <input 
+                              type="text" 
+                              className={styles.inputField} 
+                              placeholder="e.g. Dr. Ramesh Sharma" 
+                              value={formData.displayName} 
+                              onChange={(e) => handleInputChange('displayName', e.target.value)} 
+                              required 
+                            />
+                          </div>
+                          <div className={styles.inputGroup}>
+                            <label className={styles.inputLabel}>Login Email <span style={{ color: '#ef4444' }}>*</span></label>
+                            <input 
+                              type="email" 
+                              className={styles.inputField} 
+                              placeholder="admin@hospital.com" 
+                              value={formData.loginEmail} 
+                              onChange={(e) => handleInputChange('loginEmail', e.target.value)} 
+                              required 
+                            />
+                          </div>
+                        </div>
+
+                        <div className={styles.inputGrid}>
+                          <div className={styles.inputGroup}>
+                            <label className={styles.inputLabel}>Password <span style={{ color: '#ef4444' }}>*</span></label>
+                            <div className={styles.inputFieldWrapper}>
+                              <Key size={16} className={styles.inputFieldIcon} />
+                              <input 
+                                type={showPassword ? "text" : "password"} 
+                                className={`${styles.inputField} ${styles.inputFieldWithIcon}`} 
+                                placeholder="Min 12 chars, upper, lower, number, special" 
+                                value={formData.password} 
+                                onChange={(e) => handleInputChange('password', e.target.value)} 
+                                required 
+                              />
+                              <div className={styles.passwordToggle} onClick={() => setShowPassword(!showPassword)}>
+                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                              </div>
+                            </div>
+                            <div className={styles.passwordStrengthBar}>
+                              <div className={styles.passwordStrengthFill} style={{ width: `${(passwordStrength.score / 5) * 100}%`, backgroundColor: passwordStrength.color }}></div>
+                            </div>
+                            <div className={styles.passwordStrengthText} style={{ color: passwordStrength.color }}>
+                              Strength: {passwordStrength.text || 'None'}
+                            </div>
+                          </div>
+
+                          <div className={styles.inputGroup}>
+                            <label className={styles.inputLabel}>Confirm Password <span style={{ color: '#ef4444' }}>*</span></label>
+                            <div className={styles.inputFieldWrapper}>
+                              <Lock size={16} className={styles.inputFieldIcon} />
+                              <input 
+                                type="password" 
+                                className={`${styles.inputField} ${styles.inputFieldWithIcon}`} 
+                                placeholder="Re-enter password" 
+                                value={formData.confirmPassword} 
+                                onChange={(e) => handleInputChange('confirmPassword', e.target.value)} 
+                                required 
+                              />
+                              {formData.confirmPassword && formData.password === formData.confirmPassword && (
+                                <CheckCircle2 size={16} className={styles.validCheckIcon} />
+                              )}
+                            </div>
+                            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                              <div style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>Passwords do not match</div>
+                            )}
+                          </div>
+                        </div>
+
+                      </div>
+                    )}
                   </div>
 
                 {/* Footer Action Buttons */}
@@ -1675,7 +1875,7 @@ const RegisterHospital = () => {
                     <button type="submit" className={`${styles.btnSaveContinuePill} ${currentStep === 1 ? styles.btnSaveFullWidth : ''}`}>
                       <div className={styles.btnShine}></div>
                       <div className={styles.btnContent}>
-                        {currentStep === 9 ? (
+                        {currentStep === 10 ? (
                           <>
                             <span className={styles.btnText}><Lock size={16} style={{marginRight: '6px', verticalAlign: 'middle'}}/> Submit Registration</span>
                             <ArrowRight size={18} className={styles.btnArrow} />
@@ -1712,7 +1912,7 @@ const RegisterHospital = () => {
             </div>
             <h2 className={styles.successTitle}>Registration Submitted</h2>
             <p className={styles.successSubtitle}>
-              Application ID: <strong>{registrationId}</strong><br/>
+              Hospital Code: <strong>{hospitalCode || registrationId}</strong><br/>
               Your hospital registration has been securely transmitted.
             </p>
             
@@ -1760,13 +1960,116 @@ const RegisterHospital = () => {
               Your application will be submitted for verification.<br />
               You can no longer edit the information after submission.
             </p>
+            
+            {apiError && (
+              <div className={styles.apiErrorBox}>
+                <AlertCircle size={16} />
+                <span>{apiError}</span>
+              </div>
+            )}
+
             <div className={styles.confirmDialogActions}>
-              <button className={styles.btnCancel} onClick={() => setShowSubmitConfirm(false)}>Cancel</button>
-              <button className={styles.btnSubmitFinal} onClick={() => {
-                setShowSubmitConfirm(false);
-                setIsSubmitted(true);
-                localStorage.removeItem('hospitalRegistrationDraft');
-              }}>Submit Registration</button>
+              <button className={styles.btnCancel} onClick={() => setShowSubmitConfirm(false)} disabled={isSubmitting}>Cancel</button>
+              <button className={styles.btnSubmitFinal} disabled={isSubmitting} onClick={async () => {
+                if (formData.password !== formData.confirmPassword) {
+                  setApiError("Passwords do not match");
+                  return;
+                }
+                setIsSubmitting(true);
+                setApiError(null);
+                
+                try {
+                  const apiData = new FormData();
+                  
+                  // Construct nested JSON payload
+                  const payload = {
+                    name: formData.hospitalLegalName,
+                    tradeName: formData.tradeName || null,
+                    establishmentYear: formData.establishmentYear ? parseInt(formData.establishmentYear) : null,
+                    hospitalType: formData.hospitalType.toUpperCase(),
+                    address: {
+                      street: formData.addressLine1 + (formData.addressLine2 ? ', ' + formData.addressLine2 : ''),
+                      city: formData.district,
+                      state: formData.state,
+                      pincode: formData.pin
+                    },
+                    contact: {
+                      phone: formData.nodalMobile,
+                      email: formData.officialEmail,
+                      landline: formData.landline || null
+                    },
+                    legalDetails: {
+                      registrationNumber: formData.healthAuthRegNo,
+                      gstin: formData.gstin || null,
+                      pan: formData.pan || null,
+                      cin: formData.cin || null,
+                      pmjayId: formData.pmjayId || null,
+                      abdmHfrId: formData.abdmHfrId || null
+                    },
+                    keyPersonnel: {
+                      headName: formData.headName || null,
+                      headRegNo: formData.headRegNo || null,
+                      headEmail: formData.headEmail || null,
+                      headMobile: formData.headMobile || null,
+                      coordName: formData.coordName || null,
+                      coordQualification: formData.coordQualification || null,
+                      coordEmail: formData.coordEmail || null,
+                      coordMobile: formData.coordMobile || null,
+                    },
+                    accreditation: {
+                      isNabh: formData.isNabhAccredited,
+                      nabhNumber: formData.nabhNumber || null,
+                      nabhValidUntil: formData.nabhValidUntil || null
+                    },
+                    thota: {
+                      isRegistered: formData.isThotaRegistered,
+                      regNumber: formData.thotaRegNumber || null,
+                      issuingAuthority: formData.issuingAuthority || null,
+                      validUntil: formData.thotaValidUntil || null,
+                      authTypes: formData.thotaAuthTypes || [],
+                      approvedOrgans: formData.approvedOrgans ? formData.approvedOrgans.map(o => o.toUpperCase()) : [],
+                      nottoId: formData.nottoId || null,
+                      sottoId: formData.sottoId || null,
+                      rottoId: formData.rottoId || null
+                    },
+                    infrastructure: {
+                      icuBeds: formData.icuBeds ? parseInt(formData.icuBeds) : null,
+                      ventilators: formData.ventilators ? parseInt(formData.ventilators) : null,
+                      bloodBankType: formData.bloodBankType || null,
+                      bloodBankLicense: formData.bloodBankLicense || null,
+                      operatingTheatres: formData.otCount ? parseInt(formData.otCount) : null
+                    },
+                    loginEmail: formData.loginEmail,
+                    password: formData.password,
+                    displayName: formData.displayName,
+                  };
+
+                  apiData.append('hospitalData', JSON.stringify(payload));
+                  
+                  // Append files
+                  if (formData.docStateHealth) apiData.append('docStateHealth', formData.docStateHealth);
+                  if (formData.docThotaCert) apiData.append('docThotaCert', formData.docThotaCert);
+                  if (formData.docNottoId) apiData.append('docNottoId', formData.docNottoId);
+                  if (formData.docNabhCert) apiData.append('docNabhCert', formData.docNabhCert);
+                  if (formData.docBloodBank) apiData.append('docBloodBank', formData.docBloodBank);
+                  if (formData.docMsId) apiData.append('docMsId', formData.docMsId);
+                  if (formData.docCoordAppt) apiData.append('docCoordAppt', formData.docCoordAppt);
+                  if (formData.docApprovedOrgans) apiData.append('docApprovedOrgans', formData.docApprovedOrgans);
+                  if (formData.docDsc) apiData.append('docDsc', formData.docDsc);
+
+                  const result = await publicRegisterHospital(apiData);
+                  setHospitalCode(result.hospitalCode);
+                  setShowSubmitConfirm(false);
+                  setIsSubmitted(true);
+                  localStorage.removeItem(DRAFT_KEY);
+                } catch (err) {
+                  setApiError(err.message || "Failed to submit registration");
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}>
+                {isSubmitting ? 'Submitting...' : 'Submit Registration'}
+              </button>
             </div>
           </div>
         </div>

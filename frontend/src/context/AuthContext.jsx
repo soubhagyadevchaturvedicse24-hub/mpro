@@ -23,35 +23,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      // DEMO BYPASS: Intercept demo credentials and allow login
-      if (password === 'demo123' || password === 'network123' || password === 'aiims123aiims') {
-        let assignedRole = 'PLATFORM_ADMIN';
-        let assignedName = 'System Admin';
-        
-        if (email.includes('network') || email.includes('gov')) {
-          assignedRole = 'PLATFORM_ADMIN'; // Network staff use the admin dashboard
-          assignedName = 'Network Official';
-        } else if (email.includes('aiims') || email.includes('hospital')) {
-          assignedRole = 'HOSPITAL_COORDINATOR';
-          assignedName = 'Hospital Staff';
-        }
 
-        const dummyUser = { 
-          id: 'demo-user-1', 
-          role: assignedRole, 
-          name: assignedName,
-          email: email
-        };
-        const token = 'demo-mock-token-12345';
-        
-        setUser(dummyUser);
-        setTokenState(token);
-        localStorage.setItem('neolife_user', JSON.stringify(dummyUser));
-        localStorage.setItem('neolife_token', token);
-        return dummyUser;
-      }
-
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://v1-organ-transport-system.onrender.com/api/v1';
+      const { getBaseUrl } = await import('../services/api');
+      const baseUrl = getBaseUrl();
       const response = await fetch(`${baseUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
