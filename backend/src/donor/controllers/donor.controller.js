@@ -2,7 +2,20 @@ import * as donorService from '../services/donor.service.js';
 
 export const createDonor = async (req, res, next) => {
   try {
-    const donor = await donorService.createDonor(req.body, req.user.sub);
+    const user = req.user;
+    const hospitalScope = (user.scopes || []).find((s) => s.startsWith('hospital:'));
+    if (!hospitalScope) {
+      return res.status(403).json({ error: 'HOSPITAL_SCOPE_REQUIRED' });
+    }
+    const [, hospitalId] = hospitalScope.split(':');
+
+    // Ignore any hospitalId from request body; enforce scope
+    const donorData = {
+      ...req.body,
+      hospitalId
+    };
+
+    const donor = await donorService.createDonor(donorData, user.id || user.sub);
     res.status(201).json(donor);
   } catch (error) {
     next(error);

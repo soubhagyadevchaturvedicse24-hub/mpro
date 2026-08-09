@@ -1,0 +1,245 @@
+/* ═══════════════════════════════════════════════════════
+   BlockchainAuditLogin.module.css  —  DARK GLASSMORPHISM
+   Apple-level dark professional login gate
+═══════════════════════════════════════════════════════ */
+
+/* Full-screen overlay */
+.overlay {
+  position: absolute;
+  inset: -1.5rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-void);
+  overflow: hidden;
+}
+
+/* ── Animated Grid Background ── */
+.gridBg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(34, 211, 160, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 160, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridDrift 20s linear infinite;
+  pointer-events: none;
+}
+@keyframes gridDrift {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 40px 40px, 40px 40px; }
+}
+
+/* ── Ambient Glow Orbs ── */
+.glowOrb1 {
+  position: absolute;
+  top: -200px; left: -200px;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 211, 160, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+  animation: orbFloat 8s ease-in-out infinite;
+}
+.glowOrb2 {
+  position: absolute;
+  bottom: -200px; right: -200px;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+  animation: orbFloat 10s ease-in-out infinite reverse;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(20px, -20px); }
+}
+
+/* ── Card ── */
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  background: rgba(12, 16, 26, 0.85);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 160, 0.06),
+    0 8px 60px rgba(0, 0, 0, 0.8),
+    0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Shield Icon + Glow Rings ── */
+.iconWrap {
+  position: relative;
+  width: 80px; height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.shieldCircle {
+  position: relative;
+  z-index: 3;
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(34, 211, 160, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+  border: 1px solid rgba(34, 211, 160, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-green);
+  box-shadow: 0 0 20px rgba(34, 211, 160, 0.25), inset 0 0 12px rgba(34, 211, 160, 0.1);
+}
+
+.ring1, .ring2, .ring3 {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(34, 211, 160, 0.2);
+  animation: ringPulse 2.5s ease-out infinite;
+}
+.ring1 { width: 72px; height: 72px; animation-delay: 0s; }
+.ring2 { width: 84px; height: 84px; animation-delay: 0.5s; opacity: 0.6; }
+.ring3 { width: 96px; height: 96px; animation-delay: 1s;   opacity: 0.3; }
+@keyframes ringPulse {
+  0%   { transform: scale(0.9); opacity: 0.8; }
+  70%  { transform: scale(1.1); opacity: 0; }
+  100% { transform: scale(1.1); opacity: 0; }
+}
+
+/* ── Headings ── */
+.headings { text-align: center; }
+.title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin: 0 0 0.35rem;
+  font-family: var(--font-heading);
+}
+.subtitle {
+  font-size: 0.775rem;
+  color: var(--text-tertiary);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ── Divider ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+}
+
+/* ── Error Banner ── */
+.errorBanner {
+  width: 100%;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.775rem;
+  overflow: hidden;
+}
+
+/* ── Form ── */
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.fieldGroup { display: flex; flex-direction: column; gap: 0.35rem; }
+.label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.inputWrap { position: relative; display: flex; align-items: center; }
+.fieldIcon { position: absolute; left: 0.85rem; color: var(--text-muted); pointer-events: none; flex-shrink: 0; }
+
+.input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem 0.75rem 2.5rem;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.input::placeholder { color: #334155; }
+.input:focus {
+  border-color: rgba(34, 211, 160, 0.4);
+  background: rgba(34, 211, 160, 0.04);
+  box-shadow: 0 0 0 3px rgba(34, 211, 160, 0.08);
+}
+
+.eyeBtn {
+  position: absolute; right: 0.85rem;
+  background: transparent; border: none; color: var(--text-muted);
+  cursor: pointer; padding: 4px;
+  display: flex; align-items: center; transition: color 0.2s;
+}
+.eyeBtn:hover { color: var(--text-secondary); }
+
+/* ── CTA ── */
+.cta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--brand-green) 0%, #059669 100%);
+  color: #030a06;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 20px rgba(34, 211, 160, 0.3);
+  margin-top: 0.25rem;
+}
+.cta:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(34, 211, 160, 0.45); }
+.cta:active:not(:disabled) { transform: translateY(0); }
+.cta:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.spinner { animation: spin 0.9s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* ── Trust Bar ── */
+.trustBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+.trustItem {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.68rem; color: var(--text-muted); font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.trustDot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--brand-green); opacity: 0.7;
+}
+.trustSep { width: 1px; height: 12px; background: rgba(255,255,255,0.06); }

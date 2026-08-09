@@ -15,9 +15,11 @@ const accessSecret = () => process.env.JWT_ACCESS_SECRET || 'access_secret_dev';
 export const generateAccessToken = (user) => {
   return jwt.sign(
     {
-      sub: user._id.toString(),
-      role: user.role,
-      status: user.status,
+      sub:          user._id.toString(),
+      role:         user.role,
+      status:       user.status,
+      hospitalId:   user.hospitalId ? user.hospitalId.toString() : null,
+      hospitalName: user.hospitalName || null,
     },
     accessSecret(),
     { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }

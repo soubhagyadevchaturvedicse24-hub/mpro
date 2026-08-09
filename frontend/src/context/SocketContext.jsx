@@ -14,32 +14,27 @@ export const SocketProvider = ({ children }) => {
   const { user, token } = useAuth(); // Assuming useAuth provides the JWT token
 
   useEffect(() => {
-    if (user && token) {
-      // Connect to the backend WebSocket server dynamically
-      const socketUrl = getSocketUrl();
-      const newSocket = io(socketUrl, {
-        auth: { token },
-        withCredentials: true
-      });
+    // Connect to the backend WebSocket server dynamically
+    const socketUrl = getSocketUrl();
+    const newSocket = io(socketUrl, {
+      auth: token ? { token } : {},
+      withCredentials: true
+    });
 
-      newSocket.on('connect', () => {
-        console.log('Connected to real-time telemetry server');
-      });
+    newSocket.on('connect', () => {
+      console.log('Connected to real-time telemetry server');
+    });
 
-      newSocket.on('connect_error', (err) => {
-        console.error('Socket connection error:', err.message);
-      });
+    newSocket.on('connect_error', (err) => {
+      console.warn('Socket connection note:', err.message);
+    });
 
-      setSocket(newSocket);
+    setSocket(newSocket);
 
-      return () => {
-        newSocket.disconnect();
-      };
-    } else if (socket) {
-      socket.disconnect();
-      setSocket(null);
-    }
-  }, [user, token]);
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [token]);
 
   return (
     <SocketContext.Provider value={socket}>

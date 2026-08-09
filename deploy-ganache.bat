@@ -8,6 +8,6 @@ echo ==============================================================
 echo.
 echo Make sure start-ganache.bat is running in another terminal!
 echo.
-cd backend
-node src/scripts/deploy-ganache.js
+cd blockchain
+node scripts/deploy-ethereum.js
 echo.

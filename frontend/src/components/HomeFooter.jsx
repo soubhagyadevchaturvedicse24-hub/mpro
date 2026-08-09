@@ -117,7 +117,7 @@ const HomeFooter = ({ theme = 'dark' }) => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: isLight ? '#1D1D1F' : '#ffffff', margin: '0 0 4px 0' }}>Contact</h4>
             {[
-              { Icon: Mail,   text: 'support@neolife.org' },
+              { Icon: Mail,   text: 'support@jeevansetu.org' },
               { Icon: Phone,  text: '+91 98765 43210' },
               { Icon: MapPin, text: 'Raipur, Chhattisgarh, India' },
             ].map(({ Icon, text }) => (
@@ -155,7 +155,7 @@ const HomeFooter = ({ theme = 'dark' }) => {
           gap: '12px' 
         }}>
           <p style={{ fontSize: '0.8rem', color: isLight ? '#6E6E73' : '#64748b', margin: 0 }}>
-            &copy; 2026 <span style={{ color: isLight ? '#1D1D1F' : '#cbd5e1' }}>NeoLife OrganChain Network</span>. All rights reserved.
+            &copy; 2026 <span style={{ color: isLight ? '#1D1D1F' : '#cbd5e1' }}>Jeevan Setu OrganChain Network</span>. All rights reserved.
           </p>
           <div style={{ display: 'flex', gap: '24px' }}>
             {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(l => (

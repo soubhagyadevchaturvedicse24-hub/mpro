@@ -6,10 +6,12 @@ import {
   Heart, Check, Phone, Mail, FileCheck2, UserCheck, HeartPulse, Building,
   Calendar, XCircle, Shield, Info, ChevronDown, Network, Boxes, Eye, EyeOff,
   Smartphone, ClipboardList, HelpCircle, Activity, Link as LinkIcon, BadgeCheck,
-  Stethoscope, FileCheck, Share2, Users, Vault, Key
+  Stethoscope, FileCheck, Share2, Users, Vault, Key, Sun, Moon
 } from 'lucide-react';
 import styles from './RegisterHospital.module.css';
 import { publicRegisterHospital } from '../services/hospitalApi';
+import { registerHospitalInRegistry } from '../data/hospitals';
+import { useTheme } from '../context/ThemeContext';
 
 // ── ALL 36 INDIAN STATES & UNION TERRITORIES WITH THEIR DISTRICTS ──
 const INDIA_STATES_DISTRICTS = {
@@ -130,6 +132,7 @@ const PremiumUploadCard = ({ title, fieldId, file, mandatory, requiredText, onUp
 
 const RegisterHospital = () => {
   const navigate = useNavigate();
+  const { isDayMode, toggleTheme } = useTheme();
   
   const defaultFormData = {
     // Step 1
@@ -486,7 +489,7 @@ const RegisterHospital = () => {
   ];
 
   return (
-    <div className={styles.pageContainer}>
+    <div className={styles.pageContainer} data-theme={isDayMode ? 'day' : 'night'}>
 
       {/* ── TOP NAVIGATION NAVBAR ── */}
       <nav className={styles.navbar}>
@@ -505,11 +508,18 @@ const RegisterHospital = () => {
             Home
             <div className={styles.activeIndicator} />
           </Link>
-          <a href="#" className={styles.navLink}>About</a>
-          <a href="#" className={styles.navLink}>Contact</a>
         </div>
 
-        <div className={styles.navRight} ref={dropdownRef}>
+        <div className={styles.navRight} ref={dropdownRef} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button 
+            type="button" 
+            className={styles.themeToggleBtn} 
+            onClick={toggleTheme}
+            title={isDayMode ? "Switch to Night Mode" : "Switch to Day Mode"}
+          >
+            {isDayMode ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
+
           <button 
             type="button" 
             className={styles.portalDropdownBtn}
@@ -2059,6 +2069,7 @@ const RegisterHospital = () => {
 
                   const result = await publicRegisterHospital(apiData);
                   setHospitalCode(result.hospitalCode);
+                  registerHospitalInRegistry(payload);
                   setShowSubmitConfirm(false);
                   setIsSubmitted(true);
                   localStorage.removeItem(DRAFT_KEY);

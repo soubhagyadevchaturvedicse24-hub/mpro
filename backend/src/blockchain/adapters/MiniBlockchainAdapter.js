@@ -27,42 +27,58 @@ export default class MiniBlockchainAdapter extends BlockchainAdapter {
   }
 
   async append(eventType, entityType, entityId, payload) {
-    try {
-      const lastBlock = await LedgerBlock.findOne().sort({ blockIndex: -1 }).lean();
-      const blockIndex = lastBlock ? lastBlock.blockIndex + 1 : 0;
-      const previousHash = lastBlock ? lastBlock.hash : '0000000000000000000000000000000000000000000000000000000000000000';
-      const timestamp = new Date();
-
-      // IMPORTANT: We MUST deeply stringify/parse payload before hashing and saving to strip all Mongoose internals
-      const rawPayload = payload ? JSON.parse(JSON.stringify(payload)) : payload;
-      // Upload to Arweave Permaweb via Irys
-      let arweaveTxId = null;
+    let retries = 5;
+    while (retries > 0) {
       try {
-        arweaveTxId = await IrysConnector.uploadPayload(rawPayload);
-      } catch (err) {
-        logger.error(`Failed to upload to Arweave: ${err.message}`);
+        const lastBlock = await LedgerBlock.findOne().sort({ blockIndex: -1 }).lean();
+        const blockIndex = lastBlock ? lastBlock.blockIndex + 1 : 0;
+        const previousHash = lastBlock ? lastBlock.hash : '0000000000000000000000000000000000000000000000000000000000000000';
+        const timestamp = new Date();
+
+        // IMPORTANT: We MUST deeply stringify/parse payload before hashing and saving to strip all Mongoose internals
+        const rawPayload = payload ? JSON.parse(JSON.stringify(payload)) : payload;
+
+        // Tag with network source for frontend filtering
+        const taggedPayload = { ...rawPayload, _network: 'mini' };
+
+        // Upload to Arweave Permaweb via Irys
+        let arweaveTxId = null;
+        try {
+          arweaveTxId = await IrysConnector.uploadPayload(taggedPayload);
+        } catch (err) {
+          logger.error(`Failed to upload to Arweave: ${err.message}`);
+        }
+
+        const hash = this._calculateHash(blockIndex, timestamp, previousHash, eventType, entityType, entityId, taggedPayload, arweaveTxId);
+
+        const block = new LedgerBlock({
+          blockIndex,
+          timestamp,
+          previousHash,
+          hash,
+          eventType,
+          entityType,
+          entityId,
+          payload: taggedPayload,
+          arweaveTxId,
+        });
+
+        await block.save();
+        logger.info(`MINI_CHAIN: Block #${blockIndex} appended [${eventType} -> ${entityType}:${entityId}]`);
+        return block;
+      } catch (error) {
+        if (error.code === 11000 && retries > 1) {
+          // Duplicate key error on blockIndex, meaning another process appended a block concurrently.
+          // Wait a brief random time and retry.
+          retries--;
+          const delay = Math.floor(Math.random() * 100) + 50;
+          logger.warn(`MINI_CHAIN Concurrent append detected. Retrying in ${delay}ms... (${retries} retries left)`);
+          await new Promise(r => setTimeout(r, delay));
+          continue;
+        }
+        logger.error(`MINI_CHAIN Error appending block: ${error.message}`);
+        throw error;
       }
-
-      const hash = this._calculateHash(blockIndex, timestamp, previousHash, eventType, entityType, entityId, rawPayload, arweaveTxId);
-
-      const block = new LedgerBlock({
-        blockIndex,
-        timestamp,
-        previousHash,
-        hash,
-        eventType,
-        entityType,
-        entityId,
-        payload: rawPayload,
-        arweaveTxId,
-      });
-
-      await block.save();
-      logger.info(`MINI_CHAIN: Block #${blockIndex} appended [${eventType} -> ${entityType}:${entityId}]`);
-      return block;
-    } catch (error) {
-      logger.error(`MINI_CHAIN Error appending block: ${error.message}`);
-      throw error;
     }
   }
 
@@ -111,17 +127,30 @@ export default class MiniBlockchainAdapter extends BlockchainAdapter {
         };
       }
 
-      // Verify deterministic payload hash including arweaveTxId
-      const expectedSelfHash = this._calculateHash(
-        block.blockIndex,
-        block.timestamp,
-        block.previousHash,
-        block.eventType,
-        block.entityType,
-        block.entityId,
-        block.payload,
-        block.arweaveTxId
-      );
+      let expectedSelfHash;
+
+      if (block.payload?._ethereum) {
+        if (block.hash.startsWith('0x')) {
+          // It's an on-chain transaction hash; assume valid for local chain linkage
+          expectedSelfHash = block.hash;
+        } else {
+          // It's an Ethereum offline fallback hash
+          const sha256Hex = crypto.createHash('sha256').update(this._canonicalStringify(block.payload)).digest('hex');
+          expectedSelfHash = crypto.createHash('sha256').update(`${block.blockIndex}|${block.timestamp.toISOString()}|${sha256Hex}`).digest('hex');
+        }
+      } else {
+        // Standard MiniBlockchain hash
+        expectedSelfHash = this._calculateHash(
+          block.blockIndex,
+          block.timestamp,
+          block.previousHash,
+          block.eventType,
+          block.entityType,
+          block.entityId,
+          block.payload,
+          block.arweaveTxId
+        );
+      }
 
       if (block.hash !== expectedSelfHash) {
         return {

@@ -70,11 +70,13 @@ export const loginUser = async (email, password) => {
 
   return {
     user: {
-      id: user._id,
-      email: user.email,
-      role: user.role,
-      displayName: user.displayName,
-      status: user.status,
+      id:           user._id,
+      email:        user.email,
+      role:         user.role,
+      displayName:  user.displayName,
+      status:       user.status,
+      hospitalId:   user.hospitalId || null,
+      hospitalName: user.hospitalName || null,
     },
     accessToken,
     refreshToken,

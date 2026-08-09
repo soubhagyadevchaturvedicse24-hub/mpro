@@ -13,6 +13,7 @@ import { generateAndEncryptKeyPair } from '../../utils/eccKeyPair.util.js';
 import { enforcePasswordPolicy }    from '../../utils/passwordPolicy.util.js';
 import { sendEmail }                from '../../utils/email.util.js';
 import logger from '../../logger/index.js';
+import { logHospitalEvent } from '../../utils/auditLogger.js';
 
 // ── Public registration (no auth required) ────────────────────────────────────
 
@@ -262,10 +263,108 @@ const applyTransition = async (id, action, actorId, extra = {}) => {
 
 export const submitHospital     = (id, actorId) => applyTransition(id, 'submit',     actorId);
 export const reviewHospital     = (id, actorId) => applyTransition(id, 'review',     actorId);
-export const approveHospital    = (id, actorId) => applyTransition(id, 'approve',    actorId);
 export const rejectHospital     = (id, actorId, rejectionReason) =>
   applyTransition(id, 'reject', actorId, { rejectionReason });
 export const activateHospital   = (id, actorId) => applyTransition(id, 'activate',   actorId);
-export const suspendHospital    = (id, actorId) => applyTransition(id, 'suspend',    actorId);
 export const reactivateHospital = (id, actorId) => applyTransition(id, 'reactivate', actorId);
 export const deactivateHospital = (id, actorId) => applyTransition(id, 'deactivate', actorId);
+
+export const approveHospital = async (hospitalId, userId, { validUntil, remarks }) => {
+  const validUntilDate = new Date(validUntil);
+  if (Number.isNaN(validUntilDate.getTime()) || validUntilDate.getTime() <= Date.now()) {
+    const err = new Error('INVALID_VALID_UNTIL_DATE');
+    err.code = 'INVALID_VALID_UNTIL_DATE';
+    err.status = 400;
+    throw err;
+  }
+
+  const hospital = await Hospital.findById(hospitalId);
+  if (!hospital) {
+    const err = new Error('HOSPITAL_NOT_FOUND');
+    err.code = 'HOSPITAL_NOT_FOUND';
+    err.status = 404;
+    throw err;
+  }
+
+  const allowedPrevStatuses = ['PENDING_VERIFICATION', 'UNDER_REVIEW', 'REJECTED', 'DRAFT'];
+  if (!allowedPrevStatuses.includes(hospital.status)) {
+    const err = new Error('HOSPITAL_INVALID_STATE_FOR_ACTION');
+    err.code = 'HOSPITAL_INVALID_STATE_FOR_ACTION';
+    err.status = 409;
+    throw err;
+  }
+
+  hospital.status = 'APPROVED';
+  hospital.thota = hospital.thota || {};
+  hospital.thota.validUntil = validUntilDate;
+  hospital.lastComplianceCheckAt = new Date();
+  if (remarks) hospital.thota.remarks = remarks;
+
+  // Clear previous rejection/suspension if any
+  if (hospital.rejectionReason) hospital.rejectionReason = null;
+  if (hospital.suspensionReason) hospital.suspensionReason = null;
+
+  await hospital.save();
+
+  try {
+    await logHospitalEvent({
+      eventType: 'HOSPITAL_APPROVED',
+      hospitalId: hospital._id.toString(),
+      actorId: userId,
+      payload: {
+        validUntil: validUntilDate.toISOString(),
+        remarks: remarks || null
+      }
+    });
+  } catch (auditErr) {
+    logger.error(`Audit log failed for HOSPITAL_APPROVED: ${auditErr.message}`);
+  }
+
+  return hospital;
+};
+
+export const suspendHospital = async (hospitalId, userId, { reason }) => {
+  if (!reason || typeof reason !== 'string' || !reason.trim()) {
+    const err = new Error('REASON_REQUIRED');
+    err.code = 'REASON_REQUIRED';
+    err.status = 400;
+    throw err;
+  }
+
+  const hospital = await Hospital.findById(hospitalId);
+  if (!hospital) {
+    const err = new Error('HOSPITAL_NOT_FOUND');
+    err.code = 'HOSPITAL_NOT_FOUND';
+    err.status = 404;
+    throw err;
+  }
+
+  const allowedPrevStatuses = ['APPROVED', 'ACTIVE'];
+  if (!allowedPrevStatuses.includes(hospital.status)) {
+    const err = new Error('HOSPITAL_INVALID_STATE_FOR_ACTION');
+    err.code = 'HOSPITAL_INVALID_STATE_FOR_ACTION';
+    err.status = 409;
+    throw err;
+  }
+
+  hospital.status = 'SUSPENDED';
+  hospital.suspensionReason = reason.trim();
+  hospital.lastComplianceCheckAt = new Date();
+
+  await hospital.save();
+
+  try {
+    await logHospitalEvent({
+      eventType: 'HOSPITAL_SUSPENDED',
+      hospitalId: hospital._id.toString(),
+      actorId: userId,
+      payload: {
+        reason: hospital.suspensionReason
+      }
+    });
+  } catch (auditErr) {
+    logger.error(`Audit log failed for HOSPITAL_SUSPENDED: ${auditErr.message}`);
+  }
+
+  return hospital;
+};

@@ -173,6 +173,8 @@ const hospitalSchema = new mongoose.Schema(
     },
 
     rejectionReason: { type: String, default: null },
+    suspensionReason: { type: String, default: null },
+    lastComplianceCheckAt: { type: Date, default: null },
 
     // ── Audit refs ────────────────────────────────────────────────────────────
     createdBy:  { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

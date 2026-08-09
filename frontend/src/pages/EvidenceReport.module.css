@@ -1,0 +1,264 @@
+.reportOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 99999;
+  overflow-y: auto;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+  padding: 40px;
+}
+
+.reportContainer {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+}
+
+.header {
+  border-bottom: 3px solid #1e293b;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.headerRight {
+  text-align: right;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 40px;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.safetyBadgeSafe {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #ecfdf5;
+  border: 1.5px solid #10b981;
+  border-radius: 10px;
+  color: #065f46;
+  margin-bottom: 24px;
+}
+
+.safetyBadgeWarning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #fef2f2;
+  border: 1.5px solid #ef4444;
+  border-radius: 10px;
+  color: #991b1b;
+  margin-bottom: 24px;
+}
+
+.badgeSub {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+.anomalyRow {
+  background-color: #fef2f2 !important;
+}
+
+.anomalyRow td {
+  border-bottom: 1px solid #fca5a5 !important;
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metaLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.metaValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.eventsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 40px;
+  font-size: 13px;
+}
+
+.eventsTable th {
+  background: #f1f5f9;
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+  color: #334155;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+.eventsTable td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+
+.hashCell {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  color: #475569;
+  word-break: break-all;
+  background: #f8fafc;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px dashed #cbd5e1;
+  display: inline-block;
+}
+
+.eventTitle {
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.eventMeta {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.footer {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.signature {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.signatureLine {
+  width: 200px;
+  border-bottom: 1px solid #000;
+  margin: 0 auto 10px;
+}
+
+/* Print Specific Rules */
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+  
+  body * {
+    visibility: hidden;
+  }
+  
+  .reportOverlay, .reportOverlay * {
+    visibility: visible;
+  }
+  
+  .reportOverlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .closeBtn {
+    display: none !important;
+  }
+}
+
+.closeBtn {
+  position: fixed;
+  top: 20px;
+  right: 40px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 100000;
+}
+
+.closeBtn:hover {
+  background: #dc2626;
+}
+
+.printBtn {
+  position: fixed;
+  top: 20px;
+  right: 120px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.printBtn:hover {
+  background: #2563eb;
+}

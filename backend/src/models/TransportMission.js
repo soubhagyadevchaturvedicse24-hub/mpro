@@ -40,22 +40,30 @@ const transportMissionSchema = new mongoose.Schema(
     organId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Organ',
-      required: true,
+      required: false,
+      default: null,
     },
     matchId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Match',
-      required: true,
+      required: false,
+      default: null,
     },
     boxId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'TransportBox',
       required: true,
     },
+    assignedRfidCard: {
+      type: Number,
+      enum: [1, 2, 3],
+      default: null, // 1, 2, or 3 — physical RFID card slot assigned by NOTTO/ROTO/SOTTO
+    },
     courierId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
+      default: null,
     },
     originHospital: {
       type: mongoose.Schema.Types.ObjectId,
@@ -110,7 +118,12 @@ const transportMissionSchema = new mongoose.Schema(
 );
 
 transportMissionSchema.index({ status: 1 });
+transportMissionSchema.index({ originHospital: 1, status: 1 });          // Origin hospital's missions
+transportMissionSchema.index({ destinationHospital: 1, status: 1 });     // Destination hospital's missions
+transportMissionSchema.index({ courierId: 1, status: 1 });               // Courier's assigned missions
+transportMissionSchema.index({ originHospital: 1, destinationHospital: 1 }); // Bidirectional tenant lookup
 transportMissionSchema.index({ 'chainOfCustody.location': '2dsphere' });
+
 
 const TransportMission = mongoose.model('TransportMission', transportMissionSchema);
 export default TransportMission;

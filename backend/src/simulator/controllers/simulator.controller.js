@@ -80,20 +80,29 @@ const getSimulatorEntities = async () => {
 
 export const executeSimulatorStep = async (req, res, next) => {
   try {
-    const { stepId, payload = {} } = req.body;
+    const { stepId, payload = {}, organType = 'KIDNEY' } = req.body;
     const adapter = getBlockchainAdapter();
     const { admin, h1, h2, box } = await getSimulatorEntities();
 
     let resultData = null;
     let eventType = '';
     let entityType = 'TransportMission';
-    let entityId = 'TRN-2026-001';
+    
+    // Generate dynamic IDs based on organType
+    const shortType = organType.substring(0, 3).toUpperCase();
+    const missionIdStr = `TRN-${shortType}-2026-001`;
+    const organIdStr = `ORG-${shortType}-2026-SIM`;
+    const matchIdStr = `MATCH-${shortType}-2026-SIM`;
+    const donorIdStr = `DON-${shortType}-2026-SIM`;
+    const recIdStr = `REC-${shortType}-2026-SIM`;
+    
+    let entityId = missionIdStr;
 
     switch (stepId) {
       case 'donor_created': {
         eventType = 'DONOR_CREATED';
         entityType = 'Donor';
-        entityId = 'DON-2026-SIM';
+        entityId = donorIdStr;
 
         const donor = await Donor.findOneAndUpdate(
           { donorId: entityId },
@@ -119,12 +128,12 @@ export const executeSimulatorStep = async (req, res, next) => {
       case 'organ_registered': {
         eventType = 'ORGAN_REGISTERED';
         entityType = 'Organ';
-        entityId = 'ORG-2026-SIM';
+        entityId = organIdStr;
 
-        let donor = await Donor.findOne({ donorId: 'DON-2026-SIM' });
+        let donor = await Donor.findOne({ donorId: donorIdStr });
         if (!donor) {
           donor = await Donor.create({
-            donorId: 'DON-2026-SIM',
+            donorId: donorIdStr,
             hospitalId: h1._id,
             donorType: 'DECEASED',
             bloodGroup: 'O+',
@@ -141,14 +150,14 @@ export const executeSimulatorStep = async (req, res, next) => {
           {
             organId: entityId,
             donorId: donor._id,
-            organType: 'KIDNEY',
+            organType: organType,
             bloodGroup: 'O+',
             status: 'AWAITING_ALLOCATION',
             medicalAssessment: {
               viabilityStatus: 'VIABLE',
               preservationMethod: 'STATIC_COLD_STORAGE',
               coldIschemiaTimeLimit: 24,
-              qualityAssessment: 'High quality kidney organ',
+              qualityAssessment: `High quality ${organType.toLowerCase()} organ`,
               assessedBy: admin._id,
             },
             createdBy: admin._id,
@@ -162,17 +171,17 @@ export const executeSimulatorStep = async (req, res, next) => {
       case 'match_accepted': {
         eventType = 'MATCH_ACCEPTED';
         entityType = 'Match';
-        entityId = 'MATCH-2026-SIM';
+        entityId = matchIdStr;
 
-        const organ = await Organ.findOne({ organId: 'ORG-2026-SIM' });
+        const organ = await Organ.findOne({ organId: organIdStr });
         
-        let recipient = await Recipient.findOne({ recipientId: 'REC-2026-SIM' });
+        let recipient = await Recipient.findOne({ recipientId: recIdStr });
         if (!recipient) {
           recipient = await Recipient.create({
-            recipientId: 'REC-2026-SIM',
+            recipientId: recIdStr,
             hospitalId: h2._id,
             bloodGroup: 'O+',
-            requiredOrganType: 'KIDNEY',
+            requiredOrganType: organType,
             age: 42,
             urgencyLevel: 'EMERGENCY',
             waitlistDate: new Date(),
@@ -213,10 +222,10 @@ export const executeSimulatorStep = async (req, res, next) => {
       case 'transport_created': {
         eventType = 'transport.created';
         entityType = 'TransportMission';
-        entityId = 'TRN-2026-001';
+        entityId = missionIdStr;
 
-        const organ = await Organ.findOne({ organId: 'ORG-2026-SIM' });
-        const match = await Match.findOne({ matchId: 'MATCH-2026-SIM' });
+        const organ = await Organ.findOne({ organId: organIdStr });
+        const match = await Match.findOne({ matchId: matchIdStr });
 
         const mission = await TransportMission.findOneAndUpdate(
           { missionId: entityId },
@@ -241,7 +250,7 @@ export const executeSimulatorStep = async (req, res, next) => {
       case 'transport_dispatched': {
         eventType = 'transport.dispatched';
         entityType = 'TransportMission';
-        entityId = 'TRN-2026-001';
+        entityId = missionIdStr;
 
         const mission = await TransportMission.findOneAndUpdate(
           { missionId: entityId },
@@ -261,7 +270,7 @@ export const executeSimulatorStep = async (req, res, next) => {
         );
 
         await Organ.findOneAndUpdate(
-          { organId: 'ORG-2026-SIM' },
+          { organId: organIdStr },
           { status: 'IN_TRANSIT', 'logistics.transportStatus': 'IN_TRANSIT' }
         );
 
@@ -272,7 +281,7 @@ export const executeSimulatorStep = async (req, res, next) => {
       case 'telemetry_normal': {
         eventType = 'TELEMETRY_RECEIVED';
         entityType = 'TransportMission';
-        entityId = 'TRN-2026-001';
+        entityId = missionIdStr;
 
         const mission = await TransportMission.findOne({ missionId: entityId });
         await TelemetryLog.create({
@@ -296,7 +305,7 @@ export const executeSimulatorStep = async (req, res, next) => {
       case 'telemetry_alert': {
         eventType = 'TELEMETRY_ALERT';
         entityType = 'TransportMission';
-        entityId = 'TRN-2026-001';
+        entityId = missionIdStr;
 
         const mission = await TransportMission.findOne({ missionId: entityId });
         await TelemetryLog.create({
@@ -325,7 +334,7 @@ export const executeSimulatorStep = async (req, res, next) => {
       case 'transport_arrived': {
         eventType = 'transport.arrived';
         entityType = 'TransportMission';
-        entityId = 'TRN-2026-001';
+        entityId = missionIdStr;
 
         const mission = await TransportMission.findOneAndUpdate(
           { missionId: entityId },
@@ -351,7 +360,7 @@ export const executeSimulatorStep = async (req, res, next) => {
       case 'transport_completed': {
         eventType = 'transport.completed';
         entityType = 'TransportMission';
-        entityId = 'TRN-2026-001';
+        entityId = missionIdStr;
 
         const mission = await TransportMission.findOneAndUpdate(
           { missionId: entityId },
@@ -360,7 +369,7 @@ export const executeSimulatorStep = async (req, res, next) => {
         );
 
         await Organ.findOneAndUpdate(
-          { organId: 'ORG-2026-SIM' },
+          { organId: organIdStr },
           { status: 'TRANSPLANTED', 'logistics.transportStatus': 'DELIVERED' }
         );
 

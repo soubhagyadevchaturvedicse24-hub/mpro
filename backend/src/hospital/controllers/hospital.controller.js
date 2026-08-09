@@ -5,6 +5,7 @@
  */
 
 import * as hospitalService from '../services/hospital.service.js';
+import Hospital from '../../models/Hospital.js';
 import { mapUploadedFiles } from '../../middleware/upload.middleware.js';
 import {
   publicRegisterSchema,
@@ -125,6 +126,33 @@ export const createHospital = async (req, res, next) => {
       data:    { hospital },
     });
   } catch (err) { next(err); }
+};
+
+export const listHospitalsForStateController = async (req, res, next) => {
+  try {
+    const user = req.user;
+    const stateScope = (user.scopes || []).find((s) => s.startsWith('state:'));
+    if (!stateScope) {
+      return res.status(403).json({ error: 'STATE_SCOPE_REQUIRED' });
+    }
+    const [, stateCode] = stateScope.split(':');
+
+    // Assuming Hospital has an 'address.state' field based on standard schema, adjusting to schema:
+    const hospitals = await Hospital.find({ 'address.state': stateCode }).select('-__v');
+
+    return res.status(200).json(hospitals);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const listAllHospitalsController = async (req, res, next) => {
+  try {
+    const hospitals = await Hospital.find({}).select('-__v');
+    return res.status(200).json(hospitals);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 export const listHospitals = async (req, res, next) => {
@@ -288,4 +316,69 @@ export const downloadKey = async (req, res, next) => {
     res.setHeader('Content-Type', 'application/x-pem-file');
     res.status(200).send(rawPrivateKey);
   } catch (err) { next(err); }
+};
+
+export const approveHospitalController = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id || req.user.sub; // Handle different JWT payload fields
+    const { validUntil, remarks } = req.body;
+
+    if (!validUntil) {
+      return res.status(400).json({ error: 'VALID_UNTIL_REQUIRED', message: 'validUntil is required.' });
+    }
+
+    const hospital = await hospitalService.approveHospital(id, userId, { validUntil, remarks });
+
+    return res.status(200).json({
+      hospitalId: hospital._id.toString(),
+      status: hospital.status,
+      thota: {
+        validUntil: hospital.thota?.validUntil?.toISOString?.() || null
+      },
+      message: 'Hospital approved successfully.'
+    });
+  } catch (err) {
+    if (err.code === 'HOSPITAL_NOT_FOUND') {
+      return res.status(404).json({ error: err.code, message: 'Hospital not found.' });
+    }
+    if (err.code === 'INVALID_VALID_UNTIL_DATE') {
+      return res.status(400).json({ error: err.code, message: 'validUntil must be a future date.' });
+    }
+    if (err.code === 'HOSPITAL_INVALID_STATE_FOR_ACTION') {
+      return res.status(409).json({ error: err.code, message: 'Hospital is not in a valid state for approval.' });
+    }
+    return next(err);
+  }
+};
+
+export const suspendHospitalController = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id || req.user.sub;
+    const { reason } = req.body;
+
+    if (!reason || typeof reason !== 'string' || !reason.trim()) {
+      return res.status(400).json({ error: 'REASON_REQUIRED', message: 'reason is required and must be non-empty.' });
+    }
+
+    const hospital = await hospitalService.suspendHospital(id, userId, { reason });
+
+    return res.status(200).json({
+      hospitalId: hospital._id.toString(),
+      status: hospital.status,
+      message: 'Hospital suspended successfully.'
+    });
+  } catch (err) {
+    if (err.code === 'HOSPITAL_NOT_FOUND') {
+      return res.status(404).json({ error: err.code, message: 'Hospital not found.' });
+    }
+    if (err.code === 'REASON_REQUIRED') {
+      return res.status(400).json({ error: err.code, message: 'reason is required.' });
+    }
+    if (err.code === 'HOSPITAL_INVALID_STATE_FOR_ACTION') {
+      return res.status(409).json({ error: err.code, message: 'Hospital is not in a valid state for suspension.' });
+    }
+    return next(err);
+  }
 };

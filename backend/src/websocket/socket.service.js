@@ -16,17 +16,18 @@ export const initializeSocket = (server) => {
     }
   });
 
-  // Optional: JWT Middleware for socket connections
+  // Optional: JWT Middleware for socket connections (fallback to guest)
   io.use((socket, next) => {
-    const token = socket.handshake.auth.token;
-    if (!token) {
-      return next(new Error('Authentication error: Token missing'));
+    const token = socket.handshake.auth?.token;
+    if (token) {
+      const decoded = verifyAccessToken(token);
+      if (decoded) {
+        socket.user = decoded;
+        return next();
+      }
     }
-    const decoded = verifyAccessToken(token);
-    if (!decoded) {
-      return next(new Error('Authentication error: Invalid token'));
-    }
-    socket.user = decoded;
+    // Guest fallback
+    socket.user = { id: 'guest-session', role: 'GUEST' };
     next();
   });
 
@@ -76,6 +77,36 @@ const bindEventBus = () => {
     if (payload.missionId) {
       io.to(payload.missionId).emit('transport:health_change', payload);
     }
+  });
+
+  eventBus.on(TRANSPORT_EVENTS.RFID_ACCESS_ATTEMPT, (payload) => {
+    io.emit('device:access', payload);
+  });
+
+  eventBus.on(TRANSPORT_EVENTS.RFID_TRANSPORT_STARTED, (payload) => {
+    // Broadcast to all clients: RFID auto-started a transport
+    io.emit('transport:rfid_started', payload);
+    // Also broadcast as a general mission update so the board refreshes
+    io.emit('transport:mission_update', { missionId: payload.missionId, status: 'IN_TRANSIT', triggeredBy: 'RFID_SCAN' });
+    if (payload.missionId) {
+      io.to(payload.missionId).emit('transport:rfid_started', payload);
+    }
+  });
+
+  eventBus.on(TRANSPORT_EVENTS.TRANSPORT_COMPLETED, (payload) => {
+    io.emit('transport:rfid_completed', payload);
+    io.emit('transport:mission_update', { missionId: payload.missionId, status: 'COMPLETED', triggeredBy: 'RFID_SCAN' });
+    if (payload.missionId) {
+      io.to(payload.missionId).emit('transport:rfid_completed', payload);
+    }
+  });
+
+  eventBus.on('transport:rfid_completed', (payload) => {
+    io.emit('transport:rfid_completed', payload);
+  });
+
+  eventBus.on(TRANSPORT_EVENTS.LOCK_STATE_CHANGED, (payload) => {
+    io.emit('device:lock_state', payload);
   });
 
   // Matching Events

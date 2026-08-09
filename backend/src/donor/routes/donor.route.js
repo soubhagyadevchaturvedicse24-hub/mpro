@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as donorController from '../controllers/donor.controller.js';
 import { requireAuth } from '../../middleware/requireAuth.js';
 import { requirePermission } from '../../middleware/requirePermission.js';
+import { requirePermissionWithScope } from '../../middleware/rbac.js';
 import { DONOR_PERMISSIONS } from '../../permissions/donor.permissions.js';
 import { validateRequest } from '../../middleware/validateRequest.js';
 import {
@@ -19,7 +20,7 @@ router.use(requireAuth);
 // --- CRUD Endpoints ---
 router.post(
   '/',
-  requirePermission(DONOR_PERMISSIONS.CREATE),
+  requirePermissionWithScope('donor_case.create', 'hospital'),
   validateRequest({ body: createDonorSchema }),
   donorController.createDonor
 );

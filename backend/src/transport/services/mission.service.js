@@ -1,3 +1,4 @@
+import Hospital from '../../models/Hospital.js';
 import TransportMission from '../../models/TransportMission.js';
 import TransportBox from '../../models/TransportBox.js';
 import { TRANSPORT_ERRORS, WORKFLOW_ERRORS } from '../../constants/errorCodes.js';
@@ -7,10 +8,38 @@ import { TRANSPORT_EVENTS } from '../../domain/events/transport.events.js';
 import logger from '../../logger/index.js';
 
 export const createMission = async (missionData, actorId) => {
-  // Check if box is available
-  const box = await TransportBox.findById(missionData.boxId);
-  if (!box || box.status !== 'AVAILABLE') {
+  // Check if box is available, or find one if not provided
+  let box;
+  if (missionData.boxId) {
+    box = await TransportBox.findById(missionData.boxId);
+  } else {
+    box = await TransportBox.findOne({ status: 'AVAILABLE' });
+  }
+
+  if (!box || !['AVAILABLE'].includes(box.status)) {
     throw TRANSPORT_ERRORS.BOX_UNAVAILABLE;
+  }
+
+  missionData.boxId = box._id;
+
+  // Resolve hospital names → ObjectIDs if strings were passed from the frontend
+  if (missionData.originHospitalName && !missionData.originHospital) {
+    const origin = await Hospital.findOne({ name: new RegExp(missionData.originHospitalName, 'i') });
+    if (origin) missionData.originHospital = origin._id;
+  }
+  if (missionData.destinationHospitalName && !missionData.destinationHospital) {
+    const dest = await Hospital.findOne({ name: new RegExp(missionData.destinationHospitalName, 'i') });
+    if (dest) missionData.destinationHospital = dest._id;
+  }
+
+  // If hospitals still not resolved, try to find any existing hospital as fallback
+  if (!missionData.originHospital) {
+    const anyHosp = await Hospital.findOne({ status: { $in: ['ACTIVE', 'APPROVED'] } });
+    if (anyHosp) missionData.originHospital = anyHosp._id;
+  }
+  if (!missionData.destinationHospital) {
+    const anyHosp = await Hospital.findOne({ status: { $in: ['ACTIVE', 'APPROVED'] } });
+    if (anyHosp) missionData.destinationHospital = anyHosp._id;
   }
 
   const mission = new TransportMission({
@@ -28,9 +57,7 @@ export const createMission = async (missionData, actorId) => {
 
   await mission.save();
 
-  // Mark box as IN_TRANSIT (operationally committed)
-  box.status = 'IN_TRANSIT';
-  await box.save();
+  // Box status is updated when mission transitions to IN_TRANSIT via workflow
 
   eventBus.emit(TRANSPORT_EVENTS.TRANSPORT_CREATED, { missionId: mission._id });
   logger.info(`MISSION_CREATED: ${mission.missionId}`);
@@ -63,17 +90,17 @@ export const updateMissionWorkflow = async (missionId, action, actorId, location
     eventBus.emit(TRANSPORT_EVENTS.TRANSPORT_DISPATCHED, { missionId: mission._id });
   } else if (newStatus === 'IN_TRANSIT') {
     mission.actualDepartureTime = Date.now();
+    // Now physically lock the box as IN_TRANSIT
+    await TransportBox.findByIdAndUpdate(mission.boxId, { status: 'IN_TRANSIT' }).catch(() => {});
     eventBus.emit(TRANSPORT_EVENTS.TRANSPORT_STARTED, { missionId: mission._id });
   } else if (newStatus === 'ARRIVED') {
     mission.actualArrivalTime = Date.now();
     eventBus.emit(TRANSPORT_EVENTS.TRANSPORT_ARRIVED, { missionId: mission._id });
   } else if (newStatus === 'COMPLETED' || newStatus === 'CANCELLED') {
-    // Release the box
-    const box = await TransportBox.findById(mission.boxId);
-    if (box) {
-      box.status = 'AVAILABLE';
-      await box.save();
-    }
+    // Release the box back to AVAILABLE
+    await TransportBox.findByIdAndUpdate(mission.boxId, { status: 'AVAILABLE' }).catch(() => {});
+    // Free the RFID card slot so it can be assigned to the next transport
+    mission.assignedRfidCard = null;
     const eventName = newStatus === 'COMPLETED' ? TRANSPORT_EVENTS.TRANSPORT_COMPLETED : TRANSPORT_EVENTS.TRANSPORT_CANCELLED;
     eventBus.emit(eventName, { missionId: mission._id });
   }
@@ -90,10 +117,27 @@ export const getMissionById = async (id) => {
   return mission;
 };
 
-export const listMissions = async () => {
-  const missions = await TransportMission.find().sort({ createdAt: -1 });
+export const listMissions = async ({ isNodalAdmin = false, hospitalId } = {}) => {
+  let query = {};
+
+  if (!isNodalAdmin && hospitalId) {
+    // Multi-tenant isolation: hospital users only see their own transports
+    query = {
+      $or: [
+        { originHospital: hospitalId },
+        { destinationHospital: hospitalId },
+      ],
+    };
+  }
+  // Nodal officers (isNodalAdmin = true) get no filter → see all missions globally
+
+  const missions = await TransportMission.find(query)
+    .populate('originHospital destinationHospital', 'name hospitalCode address')
+    .sort({ createdAt: -1 });
+
   return { missions };
 };
+
 
 export const getActiveShipments = async () => {
   const activeMissions = await TransportMission.find({

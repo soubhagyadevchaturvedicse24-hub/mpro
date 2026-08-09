@@ -11,6 +11,7 @@ import {
 import { getMissions, getLiveMission } from '../services/api';
 import { useSocket } from '../context/SocketContext';
 import { useSimulatorContext } from '../context/SimulatorContext';
+import { useLiveRoutePipeline } from '../hooks/useLiveRoutePipeline';
 import styles from './TransportMap.module.css';
 
 // ═══════════════════════════════════════════════════
@@ -465,6 +466,18 @@ const TransportMap = () => {
     mission && [currentLocation.lat, currentLocation.lng],
   ].filter(Boolean);
 
+  // Smooth Live 3-Point Route Pipeline
+  const {
+    displayPos,
+    traveledPath,
+    remainingPath,
+  } = useLiveRoutePipeline({
+    origin: origin || { lat: 28.6139, lng: 77.2090 },
+    destination: dest || { lat: 28.4595, lng: 77.0266 },
+    rawLivePos: currentLocation,
+    lerpDuration: 2000,
+  });
+
   // Build custody timeline
   const custodyEvents = [];
   if (mission) {
@@ -569,37 +582,43 @@ const TransportMap = () => {
               {/* Auto-fit bounds */}
               <MapBounds points={boundsPoints} />
 
-              {/* Planned route line (dashed) */}
-              {origin && dest && (
+              {/* Leg 1: Traveled Path (Origin -> Current Live Position) */}
+              {traveledPath && traveledPath.length > 1 && (
                 <Polyline
-                  positions={[[origin.lat, origin.lng], [dest.lat, dest.lng]]}
-                  color="rgba(255,255,255,0.1)"
-                  weight={2}
-                  dashArray="6,10"
+                  positions={traveledPath}
+                  color="#22d3a0"
+                  weight={4}
+                  opacity={0.9}
                 />
               )}
 
-              {/* Actual trail (solid green) */}
-              {trail.length > 1 && (
-                <Polyline positions={trail} color="#22d3a0" weight={3} opacity={0.8} />
+              {/* Leg 2: Remaining Path (Current Live Position -> Destination) */}
+              {remainingPath && remainingPath.length > 1 && (
+                <Polyline
+                  positions={remainingPath}
+                  color="#8b5cf6"
+                  weight={3}
+                  opacity={0.6}
+                  dashArray="6,10"
+                />
               )}
 
               {/* Origin marker */}
               {origin && (
                 <Marker position={[origin.lat, origin.lng]} icon={HospitalIcon('#60a5fa')}>
-                  <Popup><strong>Origin</strong><br />{origin.name}</Popup>
+                  <Popup><strong>Origin Hospital</strong><br />{origin.name}</Popup>
                 </Marker>
               )}
 
               {/* Destination marker */}
               {dest && (
                 <Marker position={[dest.lat, dest.lng]} icon={HospitalIcon('#a78bfa')}>
-                  <Popup><strong>Destination</strong><br />{dest.name}</Popup>
+                  <Popup><strong>Destination Hospital</strong><br />{dest.name}</Popup>
                 </Marker>
               )}
 
-              {/* Moving box marker */}
-              <Marker position={[currentLocation.lat, currentLocation.lng]} icon={makeBoxIcon(health.status)}>
+              {/* Moving box live marker (60 FPS interpolated) */}
+              <Marker position={displayPos} icon={makeBoxIcon(health.status)}>
                 <Popup>
                   <strong>{safeStr(mission.boxId?.deviceId || mission.boxId, mission.missionId)}</strong><br />
                   Temp: {telemetry.temperature}°C<br />
@@ -611,7 +630,7 @@ const TransportMap = () => {
               {/* Alert radius when health not NORMAL */}
               {health.status !== 'NORMAL' && (
                 <Circle
-                  center={[currentLocation.lat, currentLocation.lng]}
+                  center={displayPos}
                   radius={60000}
                   color={healthColor}
                   fillOpacity={0.04}

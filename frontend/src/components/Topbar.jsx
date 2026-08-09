@@ -1,19 +1,23 @@
-import { useState, useEffect, useRef } from 'react';
-import { Bell, Search, AlertTriangle, Activity, ShieldCheck, Check, Trash2, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Bell, Search, AlertTriangle, Activity, ShieldCheck, Check, Trash2, X, Sun, Moon, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useSimulatorContext } from '../context/SimulatorContext';
+import { useTheme } from '../context/ThemeContext';
 import styles from './Topbar.module.css';
 
 const Topbar = () => {
   const [time, setTime] = useState(new Date());
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const simContext = useSimulatorContext();
+  const { isDayMode, toggleTheme } = useTheme();
 
   const [notifications, setNotifications] = useState([
     {
       id: 1,
       title: 'System Active',
-      message: 'Organ transport logistics platform initialized.',
+      message: 'Jeevan Setu organ transport logistics platform initialized.',
       type: 'info',
       time: 'Just now',
       read: false
@@ -21,6 +25,7 @@ const Topbar = () => {
   ]);
   const [activeToasts, setActiveToasts] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [unreadCount, setUnreadCount] = useState(1);
   
   const lastHealthRef = useRef('NORMAL');
@@ -89,8 +94,8 @@ const Topbar = () => {
   const dateStr = time.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 
   const getInitials = (name) => {
-    if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    const displayName = name || user?.name || user?.hospitalName || 'NOTTO Officer';
+    return displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
   const formatRole = (role) => {
@@ -111,9 +116,14 @@ const Topbar = () => {
     setUnreadCount(0);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <>
-      {/* Floating Top-Right Toast Notifications Container */}
+      {/* Floating Toast Notifications */}
       <div className={styles.toastContainer}>
         {activeToasts.map(toast => (
           <div key={toast.id} className={`${styles.toastCard} ${styles[`toast_${toast.type}`]}`}>
@@ -135,7 +145,29 @@ const Topbar = () => {
       </div>
 
       <header className={styles.topbar}>
-        {/* Search */}
+
+        {/* ── LEFT: Jeevan Setu Brand ── */}
+        <div className={styles.brandSection}>
+          <div className={styles.logoWrap}>
+            <img
+              src="/White and Blue Modern Health Care Presentation.png"
+              alt="Jeevan Setu Logo"
+              className={styles.logoImg}
+            />
+          </div>
+          <div className={styles.brandTextGroup}>
+            <div className={styles.brandName}>
+              Jeevan <span className={styles.brandAccent}>Setu</span>
+            </div>
+            <div className={styles.brandTagline}>Smart Organ Transit Network</div>
+          </div>
+          <div className={styles.livePill}>
+            <span className={styles.liveDot} />
+            LIVE
+          </div>
+        </div>
+
+        {/* ── CENTER: Search ── */}
         <div className={styles.searchWrap}>
           <Search className={styles.searchIcon} size={16} />
           <input
@@ -145,17 +177,35 @@ const Topbar = () => {
           />
         </div>
 
+        {/* ── RIGHT: Actions ── */}
         <div className={styles.actions}>
           {/* Live Clock */}
           <div className={styles.timeDisplay}>
-            <div style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{timeStr}</div>
-            <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem' }}>{dateStr}</div>
+            <div className={styles.timeClock}>{timeStr}</div>
+            <div className={styles.timeDate}>{dateStr}</div>
           </div>
 
-          {/* Notifications Button & Dropdown */}
+          {/* Day / Night Toggle */}
+          <button
+            className={styles.themeToggleBtn}
+            onClick={toggleTheme}
+            title={isDayMode ? 'Switch to Night Mode' : 'Switch to Day Mode'}
+            id="global-theme-toggle"
+          >
+            <span className={styles.themeToggleTrack} data-mode={isDayMode ? 'day' : 'night'}>
+              <span className={styles.themeToggleThumb}>
+                {isDayMode ? <Sun size={11} color="#f59e0b" /> : <Moon size={11} color="#a78bfa" />}
+              </span>
+            </span>
+            <span className={styles.themeToggleLabel}>
+              {isDayMode ? 'Day' : 'Night'}
+            </span>
+          </button>
+
+          {/* Notifications */}
           <div className={styles.notifWrapper}>
-            <button 
-              className={styles.iconBtn} 
+            <button
+              className={styles.iconBtn}
               title="Notifications"
               onClick={handleToggleNotifications}
             >
@@ -177,7 +227,6 @@ const Topbar = () => {
                     </button>
                   )}
                 </div>
-
                 <div className={styles.notifList}>
                   {notifications.length === 0 ? (
                     <div className={styles.notifEmpty}>No new notifications</div>
@@ -205,13 +254,26 @@ const Topbar = () => {
 
           <div className={styles.divider} />
 
-          {/* Profile */}
-          <div className={styles.profile}>
-            <div className={styles.avatar}>{getInitials(user?.displayName)}</div>
-            <div className={styles.userInfo}>
-              <span className={styles.userName}>{user?.displayName || 'Loading...'}</span>
-              <span className={styles.userRole}>{formatRole(user?.role)}</span>
+          {/* Profile + Logout */}
+          <div className={styles.profileSection}>
+            <div className={styles.profile}>
+              <div className={styles.avatar}>
+                {getInitials(user?.displayName)}
+              </div>
+              <div className={styles.userInfo}>
+                <span className={styles.userName}>{user?.displayName || user?.name || user?.hospitalName || 'NOTTO Officer'}</span>
+                <span className={styles.userRole}>{formatRole(user?.role)}</span>
+              </div>
             </div>
+            <button
+              className={styles.logoutBtn}
+              onClick={handleLogout}
+              onMouseOver={e => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = '#fff'; }}
+              onMouseOut={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444'; }}
+            >
+              <LogOut size={14} />
+              <span>Log Out</span>
+            </button>
           </div>
         </div>
       </header>

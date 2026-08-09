@@ -1,4 +1,4 @@
-﻿/* â”€â”€ PAGE OUTER CONTAINER â”€â”€ */
+/* â”€â”€ PAGE OUTER CONTAINER â”€â”€ */
 .pageContainer {
   position: relative;
   width: 100vw;
@@ -93,6 +93,27 @@
   height: 3px;
   background: #10b981;
   border-radius: 99px;
+}
+
+.themeToggleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 99px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.themeToggleBtn:hover {
+  background: #f1f5f9;
+  border-color: #10b981;
+  color: #10b981;
 }
 
 .portalDropdownBtn {
@@ -1901,4 +1922,114 @@ background: #94a3b8;
 
 .btnReturnLogin:hover {
   background-color: #0f172a;
+}
+
+/* ══ NIGHT MODE OVERRIDES FOR HOSPITAL REGISTRATION ════ */
+.pageContainer[data-theme='night'] {
+  background-color: #030712;
+  color: #f8fafc;
+}
+
+.pageContainer[data-theme='night'] .navbar {
+  background: rgba(11, 19, 38, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.pageContainer[data-theme='night'] .brandName {
+  color: #ffffff;
+}
+
+.pageContainer[data-theme='night'] .brandTagline {
+  color: #94a3b8;
+}
+
+.pageContainer[data-theme='night'] .navLink {
+  color: #cbd5e1;
+}
+
+.pageContainer[data-theme='night'] .portalDropdownBtn {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+}
+
+.pageContainer[data-theme='night'] .dropdownMenu {
+  background: #0f172a;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+}
+
+.pageContainer[data-theme='night'] .dropdownItem {
+  color: #cbd5e1;
+}
+
+.pageContainer[data-theme='night'] .dropdownItem:hover {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.pageContainer[data-theme='night'] .themeToggleBtn {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fbbf24;
+}
+
+.pageContainer[data-theme='night'] .themeToggleBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #fbbf24;
+}
+
+/* Card & Section Overrides for all 10 registration steps */
+.pageContainer[data-theme='night'] .mainCard,
+.pageContainer[data-theme='night'] .leftPanel,
+.pageContainer[data-theme='night'] .rightPanel,
+.pageContainer[data-theme='night'] .formCard,
+.pageContainer[data-theme='night'] .sidebarCard,
+.pageContainer[data-theme='night'] .stepCard,
+.pageContainer[data-theme='night'] .reviewSection,
+.pageContainer[data-theme='night'] .sectionCard,
+.pageContainer[data-theme='night'] .uploadListRow,
+.pageContainer[data-theme='night'] .stepIndicatorCard,
+.pageContainer[data-theme='night'] .declarationBox {
+  background: #0b1329 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4) !important;
+}
+
+.pageContainer[data-theme='night'] input,
+.pageContainer[data-theme='night'] select,
+.pageContainer[data-theme='night'] textarea {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.pageContainer[data-theme='night'] input::placeholder,
+.pageContainer[data-theme='night'] textarea::placeholder {
+  color: #64748b !important;
+}
+
+.pageContainer[data-theme='night'] select option {
+  background: #0f172a !important;
+  color: #ffffff !important;
+}
+
+.pageContainer[data-theme='night'] label,
+.pageContainer[data-theme='night'] h1,
+.pageContainer[data-theme='night'] h2,
+.pageContainer[data-theme='night'] h3,
+.pageContainer[data-theme='night'] h4,
+.pageContainer[data-theme='night'] h5 {
+  color: #f8fafc !important;
+}
+
+.pageContainer[data-theme='night'] p,
+.pageContainer[data-theme='night'] span {
+  color: #cbd5e1;
+}
+
+.pageContainer[data-theme='night'] .stepTitle,
+.pageContainer[data-theme='night'] .sectionTitle {
+  color: #ffffff !important;
 }

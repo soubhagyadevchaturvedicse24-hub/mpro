@@ -6,7 +6,8 @@ import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { useSimulatorContext } from '../context/SimulatorContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertTriangle, X, Cpu, Play, Square, RotateCcw, ChevronDown, ChevronUp } from 'lucide-react';
+import { AlertTriangle, X, Cpu, Play, Square, RotateCcw, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { ORGAN_PROFILES } from '../context/SimulatorContext';
  
 const DashboardLayout = () => {
   const { user } = useAuth();
@@ -21,12 +22,31 @@ const DashboardLayout = () => {
 
     const addToast = (message, type = 'warning') => {
       const id = Date.now() + Math.random();
-      setToasts(prev => [...prev, { id, message, type }]);
       
-      // Auto-remove after 6 seconds
+      setToasts(prev => {
+        // Check if an existing toast has identical or very similar message
+        const existingIndex = prev.findIndex(t => t.message === message || t.baseMessage === message);
+        if (existingIndex !== -1) {
+          const updated = [...prev];
+          const existing = updated[existingIndex];
+          const count = (existing.count || 1) + 1;
+          updated[existingIndex] = {
+            ...existing,
+            id,
+            count,
+            displayMessage: `${message} (${count}x)`
+          };
+          return updated.slice(-3); // Cap max 3 toasts
+        }
+
+        const newToast = { id, message, baseMessage: message, displayMessage: message, type, count: 1 };
+        return [...prev, newToast].slice(-3); // Cap max 3 toasts
+      });
+
+      // Auto-remove after 3.5 seconds
       setTimeout(() => {
         setToasts(prev => prev.filter(t => t.id !== id));
-      }, 6000);
+      }, 3500);
     };
 
     socket.on('transport:alert', (payload) => {
@@ -35,7 +55,7 @@ const DashboardLayout = () => {
 
     socket.on('transport:health_change', (payload) => {
       if (payload.health && payload.health.status !== 'NORMAL') {
-        addToast(`⚠️ Mission Health status changed to ${payload.health.status}! Reasons: ${payload.health.reasons?.join(', ') || ''}`, 'warning');
+        addToast(`⚠️ Mission Health status changed to ${payload.health.status}! ${payload.health.reasons?.join(', ') || ''}`, 'warning');
       }
     });
 
@@ -44,11 +64,11 @@ const DashboardLayout = () => {
       socket.off('transport:health_change');
     };
   }, [socket]);
- 
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
- 
+
   const removeToast = (id) => {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
@@ -61,17 +81,19 @@ const DashboardLayout = () => {
         <Outlet />
       </div>
 
-      {/* Floating Global Toast Notifications */}
+      {/* Floating Smart Toast Notifications (Top Center - Zero UI Obstruction) */}
       <div style={{
         position: 'fixed',
-        top: '20px',
-        right: '24px',
-        zIndex: 99999,
+        top: '24px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 999999,
         display: 'flex',
         flexDirection: 'column',
-        gap: '10px',
-        maxWidth: '320px',
-        width: '100%',
+        alignItems: 'center',
+        gap: '8px',
+        maxWidth: '460px',
+        width: '90%',
         pointerEvents: 'none'
       }}>
         <AnimatePresence>
@@ -80,42 +102,47 @@ const DashboardLayout = () => {
             return (
               <motion.div
                 key={toast.id}
-                initial={{ opacity: 0, x: 50, y: -20, scale: 0.9 }}
-                animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 100, scale: 0.9, transition: { duration: 0.15 } }}
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95, transition: { duration: 0.15 } }}
                 style={{
                   pointerEvents: 'auto',
                   display: 'flex',
-                  alignItems: 'flex-start',
+                  alignItems: 'center',
+                  justify: 'space-between',
                   gap: '12px',
-                  background: isCritical ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                  backdropFilter: 'blur(12px)',
-                  border: isCritical ? '1px solid rgba(239, 68, 68, 0.5)' : '1px solid rgba(245, 158, 11, 0.5)',
-                  borderRadius: '12px',
-                  padding: '12px 16px',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                  background: isCritical ? 'rgba(15, 23, 42, 0.92)' : 'rgba(15, 23, 42, 0.88)',
+                  backdropFilter: 'blur(16px)',
+                  border: isCritical ? '1px solid rgba(239, 68, 68, 0.6)' : '1px solid rgba(245, 158, 11, 0.6)',
+                  borderRadius: '14px',
+                  padding: '10px 16px',
+                  boxShadow: isCritical 
+                    ? '0 10px 30px -5px rgba(239, 68, 68, 0.3)' 
+                    : '0 10px 30px -5px rgba(0, 0, 0, 0.4)',
                   color: '#ffffff',
-                  fontFamily: 'Inter, sans-serif'
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  width: '100%'
                 }}
               >
-                <AlertTriangle size={16} style={{ flexShrink: 0, marginTop: '2px', color: isCritical ? '#ef4444' : '#f59e0b' }} />
-                <div style={{ flex: 1, fontSize: '0.8rem', fontWeight: 500, lineHeight: 1.4 }}>
-                  {toast.message}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+                  <AlertTriangle size={15} style={{ color: isCritical ? '#ef4444' : '#f59e0b', shrink: 0 }} />
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {toast.displayMessage}
+                  </span>
                 </div>
                 <button
                   onClick={() => removeToast(toast.id)}
                   style={{
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    cursor: 'pointer',
-                    marginTop: '2px',
-                    transition: 'color 0.2s',
-                    background: 'none',
+                    background: 'transparent',
                     border: 'none',
-                    outline: 'none',
-                    padding: '2px'
+                    color: '#94a3b8',
+                    cursor: 'pointer',
+                    padding: '2px',
+                    display: 'flex',
+                    alignItems: 'center'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = 'white'}
-                  onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.5)'}
                 >
                   <X size={14} />
                 </button>
@@ -137,25 +164,34 @@ const DashboardLayout = () => {
         pointerEvents: 'none'
       }}>
         {simMinimized ? (
-          <button
+          <button 
             onClick={() => setSimMinimized(false)}
             style={{
               pointerEvents: 'auto',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              background: sim.running ? 'rgba(34, 211, 160, 0.95)' : 'rgba(32, 32, 58, 0.95)',
-              border: '1px solid ' + (sim.running ? 'var(--brand-green)' : 'var(--glass-border)'),
+              background: sim.running 
+                ? 'rgba(6, 78, 59, 0.6)' 
+                : 'rgba(136, 19, 55, 0.6)',
+              border: sim.running 
+                ? '1px solid rgba(16, 185, 129, 0.5)' 
+                : '1px solid rgba(244, 63, 94, 0.5)',
+              backdropFilter: 'blur(12px)',
               borderRadius: '24px',
-              padding: '10px 16px',
-              color: '#ffffff',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+              padding: '8px 14px',
+              color: sim.running ? '#6ee7b7' : '#fda4af',
+              boxShadow: sim.running ? '0 8px 24px rgba(16,185,129,0.25)' : '0 8px 24px rgba(239,68,68,0.25)',
               cursor: 'pointer',
-              fontWeight: 600,
-              fontSize: '0.8rem',
+              fontWeight: 700,
+              fontSize: '0.78rem',
               transition: 'all 0.2s'
             }}
           >
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className={`w-2 h-2 rounded-full ${sim.running ? 'bg-emerald-500' : 'bg-rose-500'} animate-ping absolute inset-0 opacity-75`} />
+              <span className={`w-2 h-2 rounded-full ${sim.running ? 'bg-emerald-500' : 'bg-rose-500'} relative inline-flex`} />
+            </div>
             <Cpu size={14} className={sim.running ? 'spin' : ''} style={{ animation: sim.running ? 'spin 4s linear infinite' : 'none' }} />
             <span>IoT Simulator: {sim.running ? 'ACTIVE' : 'OFFLINE'}</span>
             <ChevronUp size={14} />
@@ -180,10 +216,54 @@ const DashboardLayout = () => {
               <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>IoT Simulator Overlay</span>
               <button 
                 onClick={() => setSimMinimized(true)}
-                style={{ marginLeft: 'auto', color: 'var(--text-secondary)', cursor: 'pointer' }}
+                style={{ marginLeft: 'auto', color: 'var(--text-secondary)', cursor: 'pointer', background: 'none', border: 'none' }}
               >
                 <ChevronDown size={16} />
               </button>
+            </div>
+
+            {/* Organ Mission Selection */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Active Mission Type</div>
+              <select 
+                value={sim.cfg.organType}
+                onChange={(e) => sim.setOrganProfile(e.target.value)}
+                disabled={sim.running}
+                style={{
+                  width: '100%',
+                  background: 'rgba(0,0,0,0.2)',
+                  border: '1px solid var(--glass-border)',
+                  color: 'var(--text-primary)',
+                  padding: '6px 8px',
+                  borderRadius: '6px',
+                  fontSize: '0.75rem',
+                  outline: 'none',
+                  cursor: sim.running ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {Object.values(ORGAN_PROFILES).map(p => (
+                  <option key={p.organType} value={p.organType}>
+                    {p.organType} Transport ({p.min} - {p.max}°C)
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Standard Cold Storage Rules Info Box */}
+            <div style={{
+              background: 'rgba(56, 189, 248, 0.05)',
+              border: '1px solid rgba(56, 189, 248, 0.2)',
+              borderRadius: '6px',
+              padding: '8px',
+              display: 'flex',
+              gap: '8px',
+              alignItems: 'flex-start'
+            }}>
+              <Info size={14} color="#38bdf8" style={{ flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                <strong style={{ color: '#38bdf8', display: 'block', marginBottom: '2px' }}>Standard Cold Storage Rules</strong>
+                {sim.cfg.notes}
+              </div>
             </div>
 
             {/* Controls */}
@@ -280,7 +360,7 @@ const DashboardLayout = () => {
                 <input 
                   type="range" 
                   min="0" 
-                  max="15" 
+                  max="20" 
                   step="0.5"
                   value={sim.currentTemp}
                   onChange={e => sim.overrideTemp(parseFloat(e.target.value))}

@@ -626,14 +626,14 @@
 .featureGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 24px;
   margin-bottom: 45px;
 }
 
 /* Portal Cards Base for Hero Segment */
 .portalCard {
-  border-radius: 16px;
-  padding: 12px 16px;
+  border-radius: 18px;
+  padding: 18px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -641,10 +641,11 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  min-height: 80px;
 }
 
 .portalCard:hover {
-  transform: translateY(-2px) translateX(4px);
+  transform: translateY(-3px) scale(1.02);
 }
 
 /* Light Mode Portal Cards (Clean, non-glowing enterprise buttons) */
@@ -659,14 +660,14 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 .portalCard[data-theme='light'].cardGreen {
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  border: 1px solid rgba(34, 197, 94, 0.35);
   background: #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 .portalCard[data-theme='light'].cardAmber {
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   background: #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 /* Night Mode Portal Cards (Crisp Dark Glass, Zero Neon Glows) */
@@ -685,14 +686,14 @@
 .portalCard[data-theme='dark'].cardGreen,
 .portalCard:not([data-theme='light']).cardGreen {
   background: rgba(15, 23, 42, 0.92);
-  border: 1px solid rgba(34, 197, 94, 0.4);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(34, 197, 94, 0.5);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 .portalCard[data-theme='dark'].cardAmber,
 .portalCard:not([data-theme='light']).cardAmber {
   background: rgba(15, 23, 42, 0.92);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border: 1.5px solid rgba(245, 158, 11, 0.5);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 /* Hover Elevation Shadow (Crisp & Clean) */
@@ -700,14 +701,14 @@
 .portalCard[data-theme='light'].cardPurple:hover,
 .portalCard[data-theme='light'].cardGreen:hover,
 .portalCard[data-theme='light'].cardAmber:hover { 
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.09); 
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12); 
 }
 
 .portalCard[data-theme='dark'].cardBlue:hover,
 .portalCard[data-theme='dark'].cardPurple:hover,
 .portalCard[data-theme='dark'].cardGreen:hover,
 .portalCard[data-theme='dark'].cardAmber:hover { 
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); 
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7); 
 }
 
 /* Background Wave Texture inside Cards */
@@ -735,14 +736,14 @@
 .portalLeft {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   z-index: 2;
 }
 
 /* 3D Icon Spheres */
 .portalIconRing {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -751,7 +752,7 @@
   transition: transform 0.3s ease;
 }
 .portalCard:hover .portalIconRing {
-  transform: scale(1.1);
+  transform: scale(1.12);
 }
 
 .cardBlue .portalIconRing {
@@ -767,23 +768,23 @@
 .cardGreen .portalIconRing {
   background: radial-gradient(circle, #22c55e 0%, #15803d 100%);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 .cardAmber .portalIconRing {
   background: radial-gradient(circle, #f59e0b 0%, #b45309 100%);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
 .portalTextGroup {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .portalTitle {
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 0.95rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.2px;
@@ -794,7 +795,7 @@
 
 .portalSub {
   font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   color: rgba(255, 255, 255, 0.7);
 }
 .portalCard[data-theme='light'] .portalSub {
@@ -803,8 +804,8 @@
 
 /* 3D Action Arrow Bubbles */
 .portalArrowOuter {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1071,36 +1072,77 @@
 .brandContainer { 
   display: flex; 
   align-items: center; 
-  justify-content: center; 
-  font-size: 2.2rem; 
-  font-weight: 300; 
-  margin-bottom: 6px; 
-  letter-spacing: 4px; 
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+/* ── Glowing logo orb ── */
+.loaderLogoWrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid rgba(56, 189, 248, 0.35);
+  box-shadow:
+    0 0 0 4px rgba(56, 189, 248, 0.10),
+    0 0 28px rgba(14, 165, 233, 0.55),
+    0 0 60px rgba(14, 165, 233, 0.25),
+    inset 0 0 14px rgba(14, 165, 233, 0.08);
+  animation: logoGlowPulse 3s ease-in-out infinite alternate;
+}
+@keyframes logoGlowPulse {
+  0%  { box-shadow: 0 0 0 4px rgba(56,189,248,0.10), 0 0 28px rgba(14,165,233,0.45), 0 0 60px rgba(14,165,233,0.18); }
+  100%{ box-shadow: 0 0 0 6px rgba(56,189,248,0.18), 0 0 42px rgba(14,165,233,0.75), 0 0 90px rgba(14,165,233,0.35); }
+}
+.loaderLogoImg {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(14, 165, 233, 0.5));
+}
+
+/* ── Brand words ── */
+.loaderBrandWords {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .brandText { 
   color: #ffffff;
+  font-size: 2.4rem;
   font-weight: 300;
   letter-spacing: 3px;
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
 }
-.brandLogo { 
-  width: 20px; 
-  height: 20px; 
-  border-radius: 50%; 
-  border: 1.5px solid rgba(56, 189, 248, 0.6); 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  margin: 0 10px; 
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3); 
-  background: rgba(14, 165, 233, 0.1);
+.brandAccent {
+  color: #38bdf8;
+  text-shadow:
+    0 0 12px rgba(56, 189, 248, 0.9),
+    0 0 30px rgba(14, 165, 233, 0.6),
+    0 0 60px rgba(14, 165, 233, 0.3);
 }
-.brandLogoInner { 
-  width: 6px; 
-  height: 6px; 
-  border-radius: 50%; 
-  background-color: #38bdf8; 
-  box-shadow: 0 0 8px #38bdf8; 
+.brandDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8, 0 0 22px rgba(56, 189, 248, 0.6);
+  flex-shrink: 0;
+  animation: dotPulse 2s ease-in-out infinite alternate;
 }
+@keyframes dotPulse {
+  0%  { transform: scale(0.8); opacity: 0.6; }
+  100%{ transform: scale(1.3); opacity: 1; }
+}
+/* Keep old class stubs so any refs don't break */
+.brandLogo { display: none; }
+.brandLogoInner { display: none; }
 .loaderSubtitle { 
   font-size: 0.65rem; 
   letter-spacing: 7px; 
@@ -1109,6 +1151,7 @@
   text-transform: uppercase; 
   margin-bottom: 28px; 
 }
+
 
 .progressBarContainer { 
   width: 260px; 
@@ -1220,17 +1263,33 @@
 
 .container[data-theme='light'] .brandText {
   color: #0F172A;
+  text-shadow: none;
 }
 
-.container[data-theme='light'] .brandLogo {
-  border: 1.5px solid rgba(25, 118, 255, 0.5);
-  box-shadow: 0 0 10px rgba(25, 118, 255, 0.2);
-  background: rgba(25, 118, 255, 0.05);
+.container[data-theme='light'] .brandAccent {
+  color: #1976FF;
+  text-shadow:
+    0 0 10px rgba(25, 118, 255, 0.4),
+    0 0 24px rgba(25, 118, 255, 0.2);
 }
 
-.container[data-theme='light'] .brandLogoInner {
-  background-color: #1976FF;
-  box-shadow: 0 0 8px #1976FF;
+.container[data-theme='light'] .loaderLogoWrap {
+  border: 2px solid rgba(25, 118, 255, 0.25);
+  box-shadow:
+    0 0 0 4px rgba(25, 118, 255, 0.05),
+    0 0 20px rgba(25, 118, 255, 0.3),
+    0 0 40px rgba(25, 118, 255, 0.1);
+  animation: logoGlowPulseLight 3s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlowPulseLight {
+  0%  { box-shadow: 0 0 0 4px rgba(25,118,255,0.05), 0 0 20px rgba(25,118,255,0.3), 0 0 40px rgba(25,118,255,0.1); }
+  100%{ box-shadow: 0 0 0 6px rgba(25,118,255,0.1), 0 0 30px rgba(25,118,255,0.45), 0 0 60px rgba(25,118,255,0.2); }
+}
+
+.container[data-theme='light'] .brandDot {
+  background: #1976FF;
+  box-shadow: 0 0 8px #1976FF, 0 0 16px rgba(25, 118, 255, 0.4);
 }
 
 .container[data-theme='light'] .loaderSubtitle {

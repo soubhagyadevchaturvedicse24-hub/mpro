@@ -34,6 +34,15 @@ export const seedData = async () => {
     });
     const platformAdminId = adminUser._id.toString();
 
+    const nottoUser = await User.create({
+      email: 'notto@gov.in',
+      password: 'notto123notto',
+      displayName: 'NOTTO Nodal Officer',
+      role: 'NOTTO_OFFICER',
+      status: 'ACTIVE',
+      scopes: ['global']
+    });
+
     const courierUser = await User.create({
       email: 'courier@transport.com',
       password: 'courier123courier',
@@ -51,6 +60,21 @@ export const seedData = async () => {
       status: 'ACTIVE'
     });
 
+    const tmcUser = await User.create({
+      email: 'info@tmc.gov.in',
+      password: 'tmc123tmc',
+      displayName: 'Dr. R. Desai',
+      role: 'HOSPITAL_COORDINATOR',
+      status: 'ACTIVE'
+    });
+
+    await User.create({ email: 'contact@sstc.ac.in', password: 'sstc123sstc', displayName: 'Dr. P. Kumar', role: 'HOSPITAL_COORDINATOR', status: 'ACTIVE' });
+    await User.create({ email: 'info@ssipmt.com', password: 'ssipmt123ssipmt', displayName: 'Dr. A. Sharma', role: 'HOSPITAL_COORDINATOR', status: 'ACTIVE' });
+    await User.create({ email: 'transplant@fortishealth.com', password: 'fortis123fortis', displayName: 'Dr. S. Mehta', role: 'HOSPITAL_COORDINATOR', status: 'ACTIVE' });
+    await User.create({ email: 'transplant@apollohospitals.com', password: 'apollo123apollo', displayName: 'Dr. R. Nair', role: 'HOSPITAL_COORDINATOR', status: 'ACTIVE' });
+    await User.create({ email: 'organ.transplant@maxhealthcare.com', password: 'max123max', displayName: 'Dr. V. Gupta', role: 'HOSPITAL_COORDINATOR', status: 'ACTIVE' });
+
+
     // 1. Create Hospitals
     console.log('🏥 Seeding Hospitals...');
     const h1 = await Hospital.create({
@@ -66,7 +90,7 @@ export const seedData = async () => {
       contact: { email: 'contact@aiims.edu', phone: '9876543210' },
       address: { street: 'Ansari Nagar', city: 'New Delhi', state: 'Delhi', pincode: '110029' },
       hospitalType: 'GOVERNMENT',
-      registrationNumber: 'REG-AIIMS-01',
+      legalDetails: { registrationNumber: 'REG-AIIMS-01' },
       transplantCapabilities: ['KIDNEY', 'LIVER']
     });
  
@@ -83,9 +107,95 @@ export const seedData = async () => {
       contact: { email: 'info@tmc.gov.in', phone: '8765432109' },
       address: { street: 'Dr E Borges Road', city: 'Mumbai', state: 'Maharashtra', pincode: '400012' },
       hospitalType: 'GOVERNMENT',
-      registrationNumber: 'REG-TMC-02',
+      legalDetails: { registrationNumber: 'REG-TMC-02' },
       transplantCapabilities: ['KIDNEY', 'LIVER']
     });
+
+    await Hospital.create({
+      hospitalCode: 'HOS-RGR-SSTC',
+      name: 'Shri Shankaracharya Technical Campus',
+      licenseNumber: 'LIC-0003',
+      licenseExpiry: new Date('2030-01-01'),
+      status: 'ACTIVE',
+      region: 'CENTRAL',
+      state: 'Chhattisgarh',
+      geoLocation: { type: 'Point', coordinates: [81.3509, 21.1938] },
+      createdBy: platformAdminId,
+      contact: { email: 'contact@sstc.ac.in', phone: '9123456789' },
+      address: { street: 'Junwani', city: 'Bhilai', state: 'Chhattisgarh', pincode: '490020' },
+      hospitalType: 'PRIVATE',
+      legalDetails: { registrationNumber: 'REG-SSTC-01' },
+      transplantCapabilities: ['KIDNEY', 'LIVER']
+    });
+
+    await Hospital.create({
+      hospitalCode: 'HOS-RGR-SSTPMT',
+      name: 'Shri Shankaracharya Inst. of Prof. Mgmt.',
+      licenseNumber: 'LIC-0004',
+      licenseExpiry: new Date('2030-01-01'),
+      status: 'ACTIVE',
+      region: 'CENTRAL',
+      state: 'Chhattisgarh',
+      geoLocation: { type: 'Point', coordinates: [81.6296, 21.2514] },
+      createdBy: platformAdminId,
+      contact: { email: 'info@ssipmt.com', phone: '9123456780' },
+      address: { street: 'Sejbahar', city: 'Raipur', state: 'Chhattisgarh', pincode: '492015' },
+      hospitalType: 'PRIVATE',
+      legalDetails: { registrationNumber: 'REG-SSIPMT-01' },
+      transplantCapabilities: ['KIDNEY', 'CORNEA']
+    });
+
+    await Hospital.create({
+      hospitalCode: 'NOTTO-HOSP-3011',
+      name: 'Fortis Escorts Heart Institute',
+      licenseNumber: 'LIC-0005',
+      licenseExpiry: new Date('2030-01-01'),
+      status: 'ACTIVE',
+      region: 'NORTH',
+      state: 'Delhi',
+      geoLocation: { type: 'Point', coordinates: [77.2762, 28.5583] },
+      createdBy: platformAdminId,
+      contact: { email: 'transplant@fortishealth.com', phone: '9123456781' },
+      address: { street: 'Okhla Road', city: 'New Delhi', state: 'Delhi', pincode: '110025' },
+      hospitalType: 'PRIVATE',
+      legalDetails: { registrationNumber: 'REG-FORTIS-01' },
+      transplantCapabilities: ['HEART', 'LUNG', 'KIDNEY']
+    });
+
+    await Hospital.create({
+      hospitalCode: 'NOTTO-HOSP-4052',
+      name: 'Apollo Hospitals Greams Road',
+      licenseNumber: 'LIC-0006',
+      licenseExpiry: new Date('2030-01-01'),
+      status: 'ACTIVE',
+      region: 'SOUTH',
+      state: 'Tamil Nadu',
+      geoLocation: { type: 'Point', coordinates: [80.2520, 13.0617] },
+      createdBy: platformAdminId,
+      contact: { email: 'transplant@apollohospitals.com', phone: '9123456782' },
+      address: { street: 'Greams Road', city: 'Chennai', state: 'Tamil Nadu', pincode: '600006' },
+      hospitalType: 'PRIVATE',
+      legalDetails: { registrationNumber: 'REG-APOLLO-01' },
+      transplantCapabilities: ['HEART', 'LIVER', 'KIDNEY', 'PANCREAS']
+    });
+
+    await Hospital.create({
+      hospitalCode: 'NOTTO-HOSP-5099',
+      name: 'Max Super Speciality Hospital',
+      licenseNumber: 'LIC-0007',
+      licenseExpiry: new Date('2030-01-01'),
+      status: 'ACTIVE',
+      region: 'NORTH',
+      state: 'Delhi',
+      geoLocation: { type: 'Point', coordinates: [77.2081, 28.5284] },
+      createdBy: platformAdminId,
+      contact: { email: 'organ.transplant@maxhealthcare.com', phone: '9123456783' },
+      address: { street: 'Press Enclave Road', city: 'New Delhi', state: 'Delhi', pincode: '110017' },
+      hospitalType: 'PRIVATE',
+      legalDetails: { registrationNumber: 'REG-MAX-01' },
+      transplantCapabilities: ['KIDNEY', 'LIVER']
+    });
+
 
     // 2. Create Donor
     console.log('👤 Seeding Donors...');
@@ -245,7 +355,6 @@ if (process.argv[1] && process.argv[1].endsWith('seed.js')) {
   (async () => {
     try {
       await connectDB();
-      initializeAuditSubscriber();
       console.log('🌱 Connected to DB. Starting Seeder...');
 
       const isReset = process.argv.includes('--reset');

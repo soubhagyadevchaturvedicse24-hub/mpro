@@ -10,11 +10,12 @@
   z-index: 20;
   overflow: hidden;
   transition: width 0.3s ease, min-width 0.3s ease;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.03);
 }
 
 .sidebar.collapsed {
-  width: 72px;
-  min-width: 72px;
+  width: 64px;
+  min-width: 64px;
 }
 
 .collapseBtn {
@@ -112,6 +113,19 @@
   gap: 2px;
   padding: 0 var(--sp-3);
   flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  /* Custom thin scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border) transparent;
+}
+
+.nav::-webkit-scrollbar {
+  width: 4px;
+}
+.nav::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 4px;
 }
 
 .navLink {
@@ -125,7 +139,7 @@
   font-size: 0.9rem;
   transition: all var(--t-normal);
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden removed so ::before indicator can bleed to the left edge */
 }
 
 .navLink:hover {
@@ -160,13 +174,14 @@
 .navLink.active::before {
   content: '';
   position: absolute;
+  /* Attach to the left edge of the pill itself */
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 3px;
+  width: 4px;
   height: 60%;
   background: linear-gradient(180deg, var(--brand-green), var(--brand-blue));
-  border-radius: 0 3px 3px 0;
+  border-radius: 0 4px 4px 0;
 }
 
 /* Simulator special nav – amber accent */
@@ -183,6 +198,13 @@
   background: linear-gradient(180deg, var(--brand-amber), #f59e0b);
 }
 .navLink.simulator:hover { color: var(--brand-amber); }
+
+/* When Collapsed */
+.collapsed .navLink {
+  padding-left: 0;
+  padding-right: 0;
+  justify-content: center;
+}
 
 /* ── Footer ─────────────────────── */
 .footer {

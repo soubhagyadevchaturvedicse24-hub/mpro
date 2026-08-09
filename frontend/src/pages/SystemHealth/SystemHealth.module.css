@@ -1,0 +1,457 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   SystemHealth.module.css — Horizontal Flowchart Layout (Light Mode)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Night Mode Design Tokens (Default) ── */
+.container {
+  --bg-page: #090912;
+  --card-bg: rgba(16, 16, 30, 0.65);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.7);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.07);
+  
+  --status-healthy: #22d3a0;
+  --status-warning: #fbbf24;
+  --status-critical: #f87171;
+
+  /* Column Accents */
+  --accent-client: #60a5fa;
+  --accent-hub: #22d3a0;
+  --accent-offchain: #a78bfa;
+  --accent-onchain: #fbbf24;
+
+  background-color: var(--bg-page);
+  padding: 1rem 1.5rem;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ── Light Mode Overrides ── */
+:global(html[data-theme='day']) .container {
+  --bg-page: var(--bg-primary); /* Use global grey background to contrast with white sidebar */
+  --card-bg: var(--bg-secondary);
+  --card-shadow: var(--shadow-sm);
+  --text-primary: var(--text-primary);
+  --text-secondary: var(--text-secondary);
+  --border-color: var(--glass-border);
+  
+  --status-healthy: #16A34A;
+  --status-warning: #D97706;
+  --status-critical: #DC2626;
+
+  --accent-client: #2563EB;
+  --accent-hub: #059669;
+  --accent-offchain: #0D9488;
+  --accent-onchain: #7C3AED;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.5rem;
+}
+.headerLeft h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.headerLeft p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.overallStatusPill {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: color-mix(in srgb, var(--status-healthy) 10%, transparent);
+  color: var(--status-healthy);
+  border: 1px solid color-mix(in srgb, var(--status-healthy) 30%, transparent);
+  padding: 0.6rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--status-healthy) 10%, transparent);
+}
+.overallStatusPill.degraded {
+  background: color-mix(in srgb, var(--status-warning) 10%, transparent);
+  color: var(--status-warning);
+  border-color: color-mix(in srgb, var(--status-warning) 40%, transparent);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--status-warning) 15%, transparent);
+}
+.overallStatusPill.offline {
+  background: color-mix(in srgb, var(--status-critical) 10%, transparent);
+  color: var(--status-critical);
+  border-color: color-mix(in srgb, var(--status-critical) 40%, transparent);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--status-critical) 15%, transparent);
+}
+
+.lastUpdated {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.refreshIcon {
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+.refreshIcon:hover {
+  color: var(--text-primary);
+}
+
+/* ── Horizontal Scroll Canvas ── */
+.canvasWrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  /* padding-bottom removed to save vertical space */
+  /* Scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.canvasWrapper::-webkit-scrollbar {
+  height: 8px;
+}
+.canvasWrapper::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+.flowchartGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  min-width: 1000px;
+  position: relative; /* For absolute SVG */
+  padding-right: 1.5rem; /* Ensure padding on the right for scrolling affordance */
+}
+
+/* ── Column Wrapper ── */
+.column {
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.columnHeader {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ── Node Card ── */
+.nodeCard {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 10;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+.nodeCard.degraded {
+  border-color: var(--status-warning);
+  animation: pulseWarning 2s infinite;
+}
+.nodeCard.offline {
+  border-color: var(--status-critical);
+  animation: pulseCritical 2s infinite;
+}
+
+@keyframes pulseWarning {
+  0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.2); }
+  50% { box-shadow: 0 0 24px rgba(251, 191, 36, 0.6); }
+}
+@keyframes pulseCritical {
+  0%, 100% { box-shadow: 0 0 12px rgba(248, 113, 113, 0.2); }
+  50% { box-shadow: 0 0 24px rgba(248, 113, 113, 0.6); }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cardIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  flex: 1;
+}
+.cardTitle h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.cardStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.statusDot.healthy { background: var(--status-healthy); }
+.statusDot.warning { background: var(--status-warning); }
+.statusDot.critical { background: var(--status-critical); }
+
+/* Metrics Grid */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 0.5rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+}
+.metricItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* Removed overflow: hidden because it clipped vertical text */
+}
+.metricLabel {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+.metricValue {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ── Connectors ── */
+/* Anchor points for SVG lines to attach to */
+.anchor {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.anchor.right { right: -4px; }
+.anchor.left { left: -4px; }
+
+/* SVG Canvas */
+.svgLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.svgLayer.visible {
+  opacity: 1;
+}
+
+.animLine {
+  stroke-dasharray: 8 6;
+  animation: dataFlow 1s linear infinite;
+}
+
+@keyframes dataFlow {
+  to { stroke-dashoffset: -14; }
+}
+
+/* ── Bottom Section ── */
+.bottomSection {
+  display: grid;
+  grid-template-columns: minmax(auto, 300px) 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* ── Legend Row ── */
+.legendRow {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 1rem;
+  font-size: 0.8rem;
+  gap: 1rem;
+}
+.legendGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+}
+.legendLine {
+  width: 30px;
+  height: 2px;
+}
+.legendLine.dashed {
+  background-image: linear-gradient(to right, transparent 50%, currentColor 50%);
+  background-size: 8px 100%;
+}
+.legendLine.animated {
+  background-image: linear-gradient(to right, transparent 50%, currentColor 50%);
+  background-size: 8px 100%;
+  animation: dataFlowLegend 1s linear infinite;
+}
+@keyframes dataFlowLegend {
+  to { background-position: 14px 0; }
+}
+
+/* ── Simulator Log Terminal ── */
+.terminalContainer {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+.terminalHeader {
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--card-bg) 90%, #000);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+}
+.terminalDots {
+  display: flex;
+  gap: 6px;
+  position: absolute;
+}
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+
+.terminalTitle {
+  flex: 1;
+  text-align: center;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.terminalBody {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+.logLine {
+  display: flex;
+  gap: 0.5rem;
+}
+.logTime {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.logContent {
+  flex: 1;
+}
+.logContent.info { color: var(--text-secondary); }
+.logContent.tick { color: #60a5fa; }
+.logContent.success { color: #22d3a0; }
+.logContent.override { color: var(--text-primary); }
+
+/* ── Bottom Metrics Dashboard ── */
+.bottomMetricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.bottomMetricCard {
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.bottomMetricHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.bottomMetricIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bottomMetricLabel {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.bottomMetricValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+}
+.bottomMetricSubtext {
+  font-size: 0.75rem;
+}
+.sparkline {
+  margin-top: auto;
+  height: 30px;
+  width: 100%;
+}

@@ -24,12 +24,26 @@ const Heart3D = ({ mousePos, modelUrl, className }) => {
   }, [modelUrl]);
 
   useEffect(() => {
+    let animationFrameId;
+
     if (modelRef.current && mousePos) {
-      // Calculate angles based on mouse position (-1 to 1)
-      const theta = mousePos.x * -45; // rotate left/right
-      const phi = 90 + (mousePos.y * -20); // rotate up/down (90 is straight on)
-      modelRef.current.cameraOrbit = `${theta}deg ${phi}deg 105%`;
+      const updateOrbit = () => {
+        // Calculate angles based on mouse position (-1 to 1)
+        const theta = mousePos.x * -45; // rotate left/right
+        const phi = 90 + (mousePos.y * -20); // rotate up/down (90 is straight on)
+        if (modelRef.current) {
+          modelRef.current.cameraOrbit = `${theta}deg ${phi}deg 105%`;
+        }
+      };
+      
+      animationFrameId = requestAnimationFrame(updateOrbit);
     }
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
   }, [mousePos]);
 
   return (
@@ -44,7 +58,7 @@ const Heart3D = ({ mousePos, modelUrl, className }) => {
       <model-viewer 
         ref={modelRef}
         src={modelUrl || "/heart3d.glb"} 
-        alt="NeoLife 3D Holographic Heart"
+        alt="Jeevan Setu 3D Holographic Heart"
         shadow-intensity="0.4"
         shadow-softness="1" 
         environment-image="neutral"

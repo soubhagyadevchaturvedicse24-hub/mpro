@@ -253,11 +253,18 @@ const Home = () => {
           {/* Bottom Typography & Progress Group */}
           <div className={styles.loaderBottomGroup}>
             <div className={styles.brandContainer}>
-              <span className={styles.brandText}>Ne</span>
-              <div className={styles.brandLogo}>
-                <div className={styles.brandLogoInner} />
+              <div className={styles.loaderLogoWrap}>
+                <img
+                  src="/White and Blue Modern Health Care Presentation.png"
+                  alt="Jeevan Setu"
+                  className={styles.loaderLogoImg}
+                />
               </div>
-              <span className={styles.brandText}>Life</span>
+              <div className={styles.loaderBrandWords}>
+                <span className={styles.brandText}>Jeevan</span>
+                <span className={styles.brandDot} />
+                <span className={`${styles.brandText} ${styles.brandAccent}`}>Setu</span>
+              </div>
             </div>
             <div className={styles.loaderSubtitle}>THE FUTURE OF ORGAN TRANSPLANTATION</div>
             
@@ -277,21 +284,56 @@ const Home = () => {
           {/* NAVIGATION BAR */}
           <nav className={styles.navbar}>
             <div className={styles.navLogoSection}>
-              <div className={styles.navLogoIcon}>
-                <HeartPulse size={24} className={styles.accentIcon} strokeWidth={2} />
+              <div className={styles.navLogoIcon} style={{
+                width: 67, height: 67, borderRadius: 16,
+                overflow: 'hidden', flexShrink: 0,
+                border: theme === 'dark'
+                  ? '2px solid rgba(255,255,255,0.9)'
+                  : '2px solid rgba(20,184,166,0.5)',
+                background: theme === 'dark'
+                  ? '#ffffff'
+                  : 'rgba(20,184,166,0.08)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: theme === 'dark'
+                  ? '0 0 0 3px rgba(255,255,255,0.2), 0 0 22px rgba(255,255,255,0.55), 0 0 48px rgba(255,255,255,0.18)'
+                  : '0 0 28px rgba(20,184,166,0.4), inset 0 0 12px rgba(20,184,166,0.1)',
+                transition: 'all 0.35s ease'
+              }}>
+                <img
+                  src="/White and Blue Modern Health Care Presentation.png"
+                  alt="Jeevan Setu"
+                  style={{
+                    width: 65, height: 65, objectFit: 'contain',
+                    filter: theme === 'dark'
+                      ? 'drop-shadow(0 0 4px rgba(20,184,166,0.6))'
+                      : 'none',
+                    transition: 'filter 0.35s ease'
+                  }}
+                />
               </div>
               <div className={styles.navLogoTextGroup}>
-                <div className={styles.navBrandText}>
-                  Neo<span className={styles.accentText}>Life</span>
+                <div className={styles.navBrandText} style={{ fontSize: '1.25rem', fontWeight: 900 }}>
+                  Jeevan<span className={styles.accentText}> Setu</span>
                 </div>
-                <div className={styles.navSubtitle}>OrganChain Network</div>
+                <div className={styles.navSubtitle}>Smart Organ Transit Network</div>
               </div>
             </div>
 
             <div className={styles.navCenterLinks}>
-              <a href="#home" className={`${styles.navLink} ${styles.navLinkActive}`}>Home</a>
-              <a href="#about" className={styles.navLink}>About</a>
-              <a href="#contact" className={styles.navLink}>Contact</a>
+              <a href="#home" className={`${styles.navLink} ${styles.navLinkActive}`} onClick={(e) => {
+                e.preventDefault();
+                if (containerRef.current) containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+              }}>Home</a>
+              <a href="#ecosystem-segment" className={styles.navLink} onClick={(e) => {
+                e.preventDefault();
+                const eco = document.getElementById('ecosystem-segment');
+                if (eco) eco.scrollIntoView({ behavior: 'smooth' });
+              }}>Ecosystem</a>
+              <a href="#life-saved-segment" className={styles.navLink} onClick={(e) => {
+                e.preventDefault();
+                const lifeSaved = document.getElementById('life-saved-segment');
+                if (lifeSaved) lifeSaved.scrollIntoView({ behavior: 'smooth' });
+              }}>Life Saved</a>
             </div>
 
             <div className={styles.navRight}>
@@ -343,50 +385,16 @@ const Home = () => {
                 <span className={styles.highlightText}>absolute trust.</span>
               </h1>
               <p className={styles.paragraph}>
-                NeoLife is a blockchain-powered organ transplant ecosystem. 
-                We bring total transparency, impenetrable security, and AI-driven 
+                Jeevan Setu is a blockchain-powered organ transit ecosystem. 
+                We bring total transparency, impenetrable cold-chain security, and AI-driven 
                 matching to the gift of life.
               </p>
 
               <div className={styles.featureGrid}>
-                <Link to="/login?role=donor" className={`${styles.portalCard} ${styles.cardBlue}`} data-theme={theme}>
-                  <div className={styles.portalLeft}>
-                    <div className={styles.portalIconRing}>
-                      <Heart size={20} strokeWidth={2} />
-                    </div>
-                    <div className={styles.portalTextGroup}>
-                      <div className={styles.portalTitle}>Enter as Donor</div>
-                      <div className={styles.portalSub}>Pledge & donor registry</div>
-                    </div>
-                  </div>
-                  <div className={styles.portalArrowOuter}>
-                    <div className={styles.portalArrowInner}>
-                      <ArrowRight size={16} strokeWidth={2.5} />
-                    </div>
-                  </div>
-                </Link>
-
-                <Link to="/login?role=receiver" className={`${styles.portalCard} ${styles.cardPurple}`} data-theme={theme}>
-                  <div className={styles.portalLeft}>
-                    <div className={styles.portalIconRing}>
-                      <User size={20} strokeWidth={2} />
-                    </div>
-                    <div className={styles.portalTextGroup}>
-                      <div className={styles.portalTitle}>Enter as Receiver</div>
-                      <div className={styles.portalSub}>Allocation & recipient queue</div>
-                    </div>
-                  </div>
-                  <div className={styles.portalArrowOuter}>
-                    <div className={styles.portalArrowInner}>
-                      <ArrowRight size={16} strokeWidth={2.5} />
-                    </div>
-                  </div>
-                </Link>
-
                 <Link to="/login?role=hospital" className={`${styles.portalCard} ${styles.cardGreen}`} data-theme={theme}>
                   <div className={styles.portalLeft}>
                     <div className={styles.portalIconRing}>
-                      <Building2 size={20} strokeWidth={2} />
+                      <Building2 size={24} strokeWidth={2} />
                     </div>
                     <div className={styles.portalTextGroup}>
                       <div className={styles.portalTitle}>Enter as Hospital</div>
@@ -395,7 +403,7 @@ const Home = () => {
                   </div>
                   <div className={styles.portalArrowOuter}>
                     <div className={styles.portalArrowInner}>
-                      <ArrowRight size={16} strokeWidth={2.5} />
+                      <ArrowRight size={18} strokeWidth={2.5} />
                     </div>
                   </div>
                 </Link>
@@ -403,7 +411,7 @@ const Home = () => {
                 <Link to="/login?role=admin" className={`${styles.portalCard} ${styles.cardAmber}`} data-theme={theme}>
                   <div className={styles.portalLeft}>
                     <div className={styles.portalIconRing}>
-                      <ShieldCheck size={20} strokeWidth={2} />
+                      <ShieldCheck size={24} strokeWidth={2} />
                     </div>
                     <div className={styles.portalTextGroup}>
                       <div className={styles.portalTitle}>Enter as Admin</div>
@@ -412,19 +420,18 @@ const Home = () => {
                   </div>
                   <div className={styles.portalArrowOuter}>
                     <div className={styles.portalArrowInner}>
-                      <ArrowRight size={16} strokeWidth={2.5} />
+                      <ArrowRight size={18} strokeWidth={2.5} />
                     </div>
                   </div>
                 </Link>
               </div>
 
               <div className={styles.ctaGroup}>
-                <Button variant="primary" size="lg" className={styles.btnExplore}>
-                  Explore the Network
-                </Button>
-                <Button variant="outline" size="lg" className={styles.btnWhitepaper}>
-                  Read Whitepaper
-                </Button>
+                <Link to="/login?role=network" style={{ textDecoration: 'none' }}>
+                  <Button variant="primary" size="lg" className={styles.btnExplore}>
+                    Enter Network Portal
+                  </Button>
+                </Link>
               </div>
             </div>
             </main>
@@ -447,7 +454,7 @@ const Home = () => {
       >
         <Heart3D 
           mousePos={mousePos} 
-          modelUrl={theme === 'light' ? "/heart3d.glb" : "/heart3d_night.glb"} 
+          modelUrl={theme === 'light' ? "/heart3d_draco.glb" : "/heart3d_night_draco.glb"} 
           className={theme === 'light' ? styles.heart3DBeatingDay : styles.heart3DBeating}
         />
       </div>

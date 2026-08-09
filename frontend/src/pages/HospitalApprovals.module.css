@@ -1,8 +1,3 @@
-.pageContainer {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
 
 .header {
   display: flex;
@@ -24,19 +19,35 @@
 
 .statsRow {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
 .statCard {
-  background: var(--bg-surface);
+  background: var(--bg-elevated);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  border-color: rgba(96, 165, 250, 0.4);
+}
+
+.statCardActive {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 1px var(--brand-blue), 0 4px 12px rgba(59, 130, 246, 0.1);
+  background: linear-gradient(145deg, var(--bg-elevated) 0%, rgba(59, 130, 246, 0.04) 100%);
 }
 
 .statIconBox {
@@ -57,13 +68,14 @@
 .statLabel {
   color: var(--text-secondary);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .controlsRow {
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  align-items: center;
 }
 
 .searchBox {
@@ -75,40 +87,82 @@
 
 .searchIcon {
   position: absolute;
-  left: 1rem;
+  left: 1.25rem;
   color: var(--text-tertiary);
 }
 
 .searchInput {
   width: 100%;
-  background: var(--bg-surface);
+  background: var(--bg-elevated);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border-radius: 10px;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
   color: var(--text-primary);
   outline: none;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
 }
 
-.filterSelect {
-  background: var(--bg-surface);
+.searchInput:focus {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.segmentControl {
+  display: flex;
+  background: rgba(0, 0, 0, 0.03);
+  padding: 4px;
+  border-radius: 10px;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
+  gap: 4px;
+}
+
+.segmentBtn {
+  background: transparent;
+  border: none;
+  padding: 0.6rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.segmentBtn:hover {
   color: var(--text-primary);
-  outline: none;
-  min-width: 150px;
+}
+
+.segmentBtnActive {
+  background: var(--bg-elevated);
+  color: var(--brand-blue);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .tableCard {
-  background: var(--bg-surface);
+  background: var(--bg-elevated);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 4rem 2rem;
+  color: var(--text-tertiary);
+  font-weight: 500;
 }
 
 .table th {

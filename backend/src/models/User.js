@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minlength: 12,
+      minlength: 8,
     },
     displayName: {
       type: String,
@@ -32,6 +32,9 @@ const userSchema = new mongoose.Schema(
         'TRANSPORT_COORDINATOR',
         'COURIER',
         'AUDITOR',
+        'APPROPRIATE_AUTHORITY',
+        'AUTHORIZATION_COMMITTEE_MEMBER',
+        'ICU_NODAL_OFFICER',
       ],
     },
     status: {
@@ -51,6 +54,31 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
       index: true, // Fast lookup during token refresh
+    },
+    totpSecret: {
+      type: String,
+      default: null,
+    },
+    isTotpEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    scopes: {
+      type: [{ type: String }],
+      default: []
+    },
+    // ── Hospital Association (for HOSPITAL_* roles) ──────────────────────────
+    // Populated at user-creation time by the hospital approval workflow.
+    // NULL for Nodal Officers (NOTTO / ROTTO / SOTTO) who have global scope.
+    hospitalId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Hospital',
+      default: null,
+      index: true,
+    },
+    hospitalName: {
+      type: String,
+      default: null,
     },
   },
   {

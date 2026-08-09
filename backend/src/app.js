@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import healthRoute from './health/health.route.js';
+import systemHealthRoute from './system/routes/health.route.js';
+import settingsRoute from './system/routes/settings.route.js';
+import { apiLimiter, authLimiter, criticalActionLimiter, auditLimiter } from './config/rateLimit.js';
 
 import authRoute from './auth/routes/auth.route.js';
 import hospitalRoute from './hospital/routes/hospital.route.js';
@@ -15,6 +18,8 @@ import deviceRoutes from './transport/routes/device.route.js';
 import auditRoutes from './blockchain/routes/audit.route.js';
 import simulatorRoutes from './simulator/routes/simulator.route.js';
 import specRoute from './transport/routes/spec.route.js';
+import authorizationRoute from './authorization/routes/authorization.route.js';
+import brainDeathRouter from './brainDeath/routes/brainDeath.route.js';
 import cookieParser from 'cookie-parser';
 import { errorHandler } from './middleware/errorHandler.js';
 
@@ -28,6 +33,12 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
+
+// Apply general API limiter
+app.use('/api', apiLimiter);
+
+// Health check
+app.use('/api/system', systemHealthRoute);
 
 // Routes
 app.get('/', (req, res) => {
@@ -56,17 +67,20 @@ app.get(['/api/v1', '/api/v1/'], (req, res) => {
   });
 });
 
-app.use('/api/v1/auth', authRoute);
-app.use('/api/v1/hospitals', hospitalRoute);
+app.use('/api/v1/auth', authLimiter, authRoute);
+app.use('/api/v1/hospitals', criticalActionLimiter, hospitalRoute);
 app.use('/api/v1/donors', donorRoute);
 app.use('/api/v1/organs', organRoute);
 app.use('/api/v1/matching', matchingRoutes);
 app.use('/api/v1/recipients', recipientRoutes);
+app.use('/api/v1/authorization', authorizationRoute); // Fix: mount specifically
+app.use('/api/v1/brain-death', brainDeathRouter);     // Fix: mount specifically
 app.use('/api/v1/transport/boxes', boxRoutes);
 app.use('/api/v1/transport/missions', missionRoutes);
 app.use('/api/v1/device', deviceRoutes);
-app.use('/api/v1/audit', auditRoutes);
+app.use('/api/v1/audit', auditLimiter, auditRoutes);
 app.use('/api/v1/simulator', simulatorRoutes);
+app.use('/api/v1/system', settingsRoute);
 app.use('/api/v1', healthRoute);
 app.use('/api', specRoute);
 

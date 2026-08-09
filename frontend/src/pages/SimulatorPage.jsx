@@ -311,6 +311,33 @@ const SimulatorPage = () => {
   const [completedSteps, setCompletedSteps] = useState(new Set());
   const [executing, setExecuting] = useState(false);
   const [stepResult, setStepResult] = useState({}); // stepId -> { ok, hash, blockIndex }
+  const [isSimEnabled, setIsSimEnabled] = useState(false); // Default to Live Hardware Mode
+
+  useEffect(() => {
+    fetch(`${getBaseUrl()}/system/settings`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.settings) {
+          setIsSimEnabled(!!data.settings.IOT_SIMULATOR_ENABLED);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const toggleSimMode = async () => {
+    const nextVal = !isSimEnabled;
+    setIsSimEnabled(nextVal);
+    if (!nextVal) {
+      sim.stop();
+    }
+    try {
+      await fetch(`${getBaseUrl()}/system/settings`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'IOT_SIMULATOR_ENABLED', value: nextVal })
+      });
+    } catch(e) {}
+  };
 
   const steps = makeSteps(cfg);
 
@@ -385,6 +412,23 @@ const SimulatorPage = () => {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button 
+              onClick={toggleSimMode} 
+              style={{ 
+                background: isSimEnabled ? 'rgba(99,102,241,0.2)' : 'rgba(16,185,129,0.2)', 
+                border: `1px solid ${isSimEnabled ? '#6366f1' : '#10b981'}`, 
+                color: isSimEnabled ? '#a5b4fc' : '#34d399', 
+                borderRadius: '8px', 
+                padding: '6px 12px', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '6px', 
+                fontSize: '0.75rem',
+                fontWeight: 600
+              }}>
+              {isSimEnabled ? '💻 Mode: Virtual Simulator' : '⚡ Mode: Live IoT Hardware'}
+            </button>
             {sim.connected === true && <span className="badge badge-online"><Wifi size={10} /> Live</span>}
             {sim.connected === false && <span className="badge badge-danger"><WifiOff size={10} /> Offline</span>}
             <button onClick={resetAll} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#94a3b8', borderRadius: '8px', padding: '6px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem' }}>
@@ -631,6 +675,53 @@ const SimulatorPage = () => {
             </div>
           </motion.div>
         )}
+
+        {/* RFID Card Management Panel */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="glass-panel"
+          style={{ padding: '1rem' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '10px' }}>
+            <span style={{ fontSize: '1rem' }}>🔑</span>
+            <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#f8fafc' }}>RFID Card Management</span>
+            <span style={{ marginLeft: 'auto', fontSize: '0.65rem', color: '#475569', background: 'rgba(255,255,255,0.05)', padding: '2px 7px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>3 Cards Registered</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {[
+              { slot: 1, uid: '3913DDB7', label: 'RFID Card 1' },
+              { slot: 2, uid: '19DB5AB7', label: 'RFID Card 2' },
+              { slot: 3, uid: '29EE69B7', label: 'RFID Card 3' },
+            ].map(card => (
+              <div key={card.slot} style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '8px 10px', borderRadius: '8px',
+                background: card.uid === 'PENDING' ? 'rgba(251,191,36,0.07)' : 'rgba(139,92,246,0.1)',
+                border: `1px solid ${card.uid === 'PENDING' ? 'rgba(251,191,36,0.25)' : 'rgba(139,92,246,0.3)'}`,
+              }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: card.uid === 'PENDING' ? 'rgba(251,191,36,0.15)' : 'rgba(139,92,246,0.2)', fontSize: '0.75rem', fontWeight: 700, color: card.uid === 'PENDING' ? '#fbbf24' : '#a78bfa' }}>
+                  {card.slot}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#cbd5e1' }}>{card.label}</div>
+                  <div style={{ fontFamily: 'monospace', fontSize: '0.68rem', color: card.uid === 'PENDING' ? '#fbbf24' : '#7c3aed', marginTop: '1px', letterSpacing: '1px' }}>{card.uid}</div>
+                </div>
+                <div style={{ fontSize: '0.6rem', padding: '2px 6px', borderRadius: '4px', fontWeight: 600,
+                  background: card.uid === 'PENDING' ? 'rgba(251,191,36,0.15)' : 'rgba(16,185,129,0.15)',
+                  color: card.uid === 'PENDING' ? '#fbbf24' : '#34d399',
+                  border: `1px solid ${card.uid === 'PENDING' ? 'rgba(251,191,36,0.3)' : 'rgba(16,185,129,0.3)'}`,
+                }}>
+                  {card.uid === 'PENDING' ? '⏳ PENDING' : '✅ ACTIVE'}
+                </div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: '0.65rem', color: '#475569', marginTop: '10px', lineHeight: 1.5 }}>
+            Tapping a card on the ESP32 RFID reader will auto-start the transport assigned to that card slot.
+          </p>
+        </motion.div>
 
         {/* Log Console */}
         <motion.div

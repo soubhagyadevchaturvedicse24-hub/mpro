@@ -27,6 +27,7 @@ import { Router } from 'express';
 import * as hospitalController from '../controllers/hospital.controller.js';
 import { requireAuth }        from '../../middleware/requireAuth.js';
 import { requirePermission }  from '../../middleware/requirePermission.js';
+import { requirePermission as requireRbacPermission, requirePermissionWithScope } from '../../middleware/rbac.js';
 import { uploadHospitalDocs } from '../../middleware/upload.middleware.js';
 import { HOSPITAL_PERMISSIONS } from '../../permissions/hospital.permissions.js';
 
@@ -45,6 +46,12 @@ router.get(
   hospitalController.getHospitalStatus
 );
 
+// Public list of hospitals (for dropdowns, maps, and mission creation)
+router.get(
+  '/',
+  hospitalController.listHospitals
+);
+
 // ── All routes below require authentication ────────────────────────────────────
 router.use(requireAuth);
 
@@ -56,9 +63,15 @@ router.post(
 );
 
 router.get(
-  '/',
-  requirePermission(HOSPITAL_PERMISSIONS.VIEW),
-  hospitalController.listHospitals
+  '/admin/hospitals/state',
+  requirePermissionWithScope('hospital.view_all', 'state'),
+  hospitalController.listHospitalsForStateController
+);
+
+router.get(
+  '/admin/hospitals/all',
+  requirePermissionWithScope('hospital.view_all', 'global'),
+  hospitalController.listAllHospitalsController
 );
 
 router.get(
@@ -92,9 +105,9 @@ router.post(
 );
 
 router.post(
-  '/:id/approve',
-  requirePermission(HOSPITAL_PERMISSIONS.APPROVE),
-  hospitalController.approveHospital
+  '/admin/hospitals/:id/approve',
+  requireRbacPermission('hospital.approve'),
+  hospitalController.approveHospitalController
 );
 
 router.post(
@@ -110,9 +123,9 @@ router.post(
 );
 
 router.post(
-  '/:id/suspend',
-  requirePermission(HOSPITAL_PERMISSIONS.SUSPEND),
-  hospitalController.suspendHospital
+  '/admin/hospitals/:id/suspend',
+  requireRbacPermission('hospital.suspend'),
+  hospitalController.suspendHospitalController
 );
 
 router.post(

@@ -9,5 +9,7 @@ router.use(requireDeviceAuth);
 
 router.post('/telemetry', deviceController.postTelemetry);
 router.post('/milestone', deviceController.triggerMilestone);
+router.post('/access', deviceController.postAccess);
+router.post('/lock-event', deviceController.postLockEvent);
 
 export default router;

@@ -10,9 +10,7 @@ import { useSimulatorContext } from '../context/SimulatorContext';
 
 const COMMANDS = [
   { id: 'overview', name: 'Go to Command Center', icon: LayoutDashboard, category: 'Navigation', shortcut: 'G O', path: '/dashboard/overview' },
-  { id: 'matching', name: 'Go to Matching Queue', icon: GitFork, category: 'Navigation', shortcut: 'G M', path: '/dashboard/matching' },
   { id: 'transport', name: 'Go to Live Transport', icon: Map, category: 'Navigation', shortcut: 'G T', path: '/dashboard/transport' },
-  { id: 'donor', name: 'Go to Donor Consent Compliance', icon: FileCheck, category: 'Navigation', shortcut: 'G D', path: '/dashboard/donor-consent' },
   { id: 'hospital', name: 'Go to Hospital Compliance Registry', icon: Building2, category: 'Navigation', shortcut: 'G H', path: '/dashboard/hospital-registry' },
   { id: 'committee', name: 'Go to Committee Approval Control', icon: Scale, category: 'Navigation', shortcut: 'G C', path: '/dashboard/committee' },
   { id: 'analytics', name: 'Go to Analytics Insights', icon: BarChart3, category: 'Navigation', shortcut: 'G A', path: '/dashboard/analytics' },
@@ -21,7 +19,6 @@ const COMMANDS = [
   { id: 'report', name: 'Go to Daily Reports', icon: FileCheck, category: 'Navigation', shortcut: 'G R', path: '/dashboard/audit-report' },
   { id: 'simulator', name: 'Go to IoT Telemetry Simulator', icon: Cpu, category: 'Navigation', shortcut: 'G S', path: '/dashboard/simulator' },
 
-  { id: 'add-donor', name: 'Register New Donor', icon: Plus, category: 'Actions', shortcut: 'A D', path: '/dashboard/donor-consent' },
   { id: 'register-hospital', name: 'Register New Hospital', icon: Plus, category: 'Actions', shortcut: 'A H', path: '/dashboard/hospital-registry' },
   { id: 'create-mission', name: 'Create Transport Mission', icon: Plus, category: 'Actions', shortcut: 'A M', path: '/dashboard/data-entry' },
   { id: 'approve-request', name: 'Approve Pending Match Clearances', icon: CheckCircle, category: 'Actions', shortcut: 'A C', path: '/dashboard/committee' },
@@ -276,7 +273,7 @@ const CommandPalette = ({ isOpen, onClose }) => {
                 <span><strong style={{ color: '#ffffff' }}>esc</strong> to close</span>
               </div>
               <div style={{ fontFamily: 'var(--font-mono)' }}>
-                NEOLIFE MISSION CORE
+                JEEVAN SETU MISSION CORE
               </div>
             </div>
           </motion.div>

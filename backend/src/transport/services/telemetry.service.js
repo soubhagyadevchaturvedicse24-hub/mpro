@@ -15,12 +15,24 @@ export const logTelemetry = async (boxId, missionId, payload) => {
 
   // Resolve missionId (logical string like 'TRN-2026-001' or MongoDB ObjectId)
   let resolvedMissionId = missionId;
+  let mission = null;
+
   if (!mongoose.Types.ObjectId.isValid(missionId)) {
-    const mission = await TransportMission.findOne({ missionId });
-    if (mission) {
-      resolvedMissionId = mission._id;
-    }
+    mission = await TransportMission.findOne({ missionId });
+    if (mission) resolvedMissionId = mission._id;
+  } else {
+    mission = await TransportMission.findById(missionId);
   }
+
+  // ── TELEMETRY GATE ──────────────────────────────────────────────────────────
+  // Sensor data is ONLY recorded (DB + blockchain) when the transport is actively
+  // IN_TRANSIT. Idle sensor heartbeats are silently dropped to keep the blockchain
+  // clean. RFID scan is what opens this gate.
+  if (!mission || mission.status !== 'IN_TRANSIT') {
+    logger.info(`TELEMETRY_GATED: missionId=${missionId} status=${mission?.status || 'NO_ACTIVE_MISSION'} — data discarded (not IN_TRANSIT)`);
+    return { gated: true, status: mission?.status || 'NO_ACTIVE_MISSION' };
+  }
+  // ────────────────────────────────────────────────────────────────────────────
 
   const geoLocation = (payload.geoLocation && Array.isArray(payload.geoLocation.coordinates))
     ? payload.geoLocation
@@ -55,28 +67,59 @@ export const logTelemetry = async (boxId, missionId, payload) => {
     }).catch(() => {});
   }
 
+  eventBus.on; // no-op reference check
   eventBus.emit(TRANSPORT_EVENTS.TELEMETRY_RECEIVED, {
     boxId,
     missionId: resolvedMissionId,
-    telemetry: log.telemetry,
+    telemetry: {
+      // Use toObject() to properly spread Mongoose subdocument fields
+      ...(log.telemetry.toObject ? log.telemetry.toObject() : log.telemetry),
+      // ESP32 hardware fields — use payload directly (not from Mongoose model which doesn't store them)
+      buzzerStatus:    payload.buzzerStatus    || 'Normal',
+      rgbColor:        payload.rgbColor        || 'Green',
+      rfidLastScanned: payload.rfidLastScanned || '3913DDB7',
+      speedKmh:        payload.speedKmh        || 0.0,
+      firmwareVersion: payload.firmwareVersion || 'v3.1.0',
+      reedStatus:      payload.reedStatus      || (payload.isTampered ? 'Box Open' : 'Box Closed'),
+      relayStatus:     payload.relayStatus     || 'Locked',
+    },
     location: log.telemetry.geoLocation,
     arweaveTxId: log.arweaveTxId
   });
 
   // Evaluate thresholds and emit alerts if necessary
-  const alerts = evaluateAlerts(boxId, resolvedMissionId, log.telemetry);
+  const alerts = await evaluateAlerts(boxId, resolvedMissionId, log.telemetry);
   await updateMissionHealth(resolvedMissionId, alerts);
 
   return log;
 };
 
-export const evaluateAlerts = (boxId, missionId, telemetry) => {
+export const evaluateAlerts = async (boxId, missionId, telemetry) => {
   const alerts = [];
+  
+  // Default thresholds in case we can't find the specific organ config
+  let minTemp = TRANSPORT_THRESHOLDS.MIN_TEMP;
+  let maxTemp = TRANSPORT_THRESHOLDS.MAX_TEMP;
+  
+  try {
+    // missionId might be a String like 'TRN-2026-001' or an ObjectId. We handle both.
+    const query = mongoose.Types.ObjectId.isValid(missionId) ? { _id: missionId } : { missionId };
+    const mission = await TransportMission.findOne(query).populate('organId');
+    if (mission && mission.organId && mission.organId.organType) {
+      const organConfig = (await import('../../organ/utils/organDefaults.js')).ORGAN_DEFAULTS[mission.organId.organType];
+      if (organConfig) {
+        minTemp = organConfig.minTemp;
+        maxTemp = organConfig.maxTemp;
+      }
+    }
+  } catch (error) {
+    logger.error(`Failed to fetch organ thresholds for mission ${missionId}: ${error.message}`);
+  }
 
-  if (telemetry.temperature > TRANSPORT_THRESHOLDS.MAX_TEMP) {
+  if (telemetry.temperature > maxTemp) {
     alerts.push(`Temperature high: ${telemetry.temperature}°C`);
   }
-  if (telemetry.temperature < TRANSPORT_THRESHOLDS.MIN_TEMP) {
+  if (telemetry.temperature < minTemp) {
     alerts.push(`Temperature low: ${telemetry.temperature}°C`);
   }
   if (telemetry.batteryLevel < TRANSPORT_THRESHOLDS.LOW_BATTERY) {
@@ -95,7 +138,9 @@ export const evaluateAlerts = (boxId, missionId, telemetry) => {
 };
 
 export const updateMissionHealth = async (missionId, alerts) => {
-  const mission = await TransportMission.findById(missionId);
+  // missionId might be a String like 'TRN-2026-001' or an ObjectId. We handle both.
+  const query = mongoose.Types.ObjectId.isValid(missionId) ? { _id: missionId } : { missionId };
+  const mission = await TransportMission.findOne(query);
   if (!mission) return;
 
   const previousStatus = mission.health?.status || 'NORMAL';

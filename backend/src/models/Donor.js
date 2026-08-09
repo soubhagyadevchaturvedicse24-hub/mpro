@@ -20,6 +20,13 @@ const donorSchema = new mongoose.Schema(
       required: true,
       enum: ['LIVING', 'DECEASED'],
     },
+    relationshipType: {
+      type: String,
+      enum: ['NEAR_RELATIVE', 'NON_NEAR_RELATIVE', 'FOREIGN_NATIONAL'],
+      required: function() {
+        return this.donorType === 'LIVING';
+      }
+    },
     bloodGroup: {
       type: String,
       required: true,
@@ -115,6 +122,16 @@ const donorSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+    },
+    authorizationApprovalId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'AuthorizationApproval',
+      default: null,
+    },
+    brainDeathCertificationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BrainDeathCertification',
+      default: null,
     },
   },
   {

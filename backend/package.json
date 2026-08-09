@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "vitest run",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "vitest",
     "simulate": "node src/simulator/iotSimulator.js",
     "seed": "node src/scripts/seed.js",
@@ -21,18 +21,22 @@
     "dotenv": "^16.4.5",
     "ethers": "^6.17.0",
     "express": "^4.19.2",
+    "express-rate-limit": "^8.6.1",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.3",
-    "mongodb-memory-server": "^11.2.0",
     "mongoose": "^9.8.0",
     "multer": "^2.2.0",
+    "node-cron": "^4.6.0",
     "nodemailer": "^9.0.3",
     "socket.io": "^4.8.3",
     "winston": "^3.13.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "jest": "^30.4.2",
+    "mongodb-memory-server": "^11.2.0",
     "nodemon": "^3.1.14",
+    "supertest": "^7.2.2",
     "vitest": "^4.1.10"
   }
 }

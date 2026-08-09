@@ -1,0 +1,140 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Incidents.module.css
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.container {
+  padding: 1rem 0;
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.table th {
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--bg-elevated) 95%, black);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--text-primary);
+}
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.missionGroupCard {
+  background: var(--bg-elevated);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.missionGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  background: color-mix(in srgb, var(--bg-elevated) 95%, black);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.missionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.missionStatus {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.incidentCount {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ── Status Pills ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+.pill.critical {
+  background: color-mix(in srgb, var(--status-critical, #ef4444) 15%, transparent);
+  color: var(--status-critical, #ef4444);
+}
+.pill.warning {
+  background: color-mix(in srgb, var(--status-warning, #f59e0b) 15%, transparent);
+  color: var(--status-warning, #f59e0b);
+}
+
+.pill.audit {
+  background: color-mix(in srgb, var(--accent-hub, #10b981) 15%, transparent);
+  color: var(--accent-hub, #10b981);
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+}
+
+.emptyState {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.loading {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-secondary);
+}

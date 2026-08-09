@@ -14,17 +14,21 @@ import {
   CheckCircle2,
   FileText,
   Boxes,
-  HeartPulse
+  HeartPulse,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import styles from './NetworkLogin.module.css';
 
 const NetworkLogin = () => {
   const { login } = useAuth();
+  const { isDayMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('notto@gov.in');
-  const [password, setPassword] = useState('network123');
+  const [password, setPassword] = useState('notto123notto');
   const [organization, setOrganization] = useState('NOTTO');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -74,27 +78,49 @@ const NetworkLogin = () => {
   };
 
   return (
-    <div className={styles.pageContainer}>
+    <div className={styles.pageContainer} data-theme={isDayMode ? 'day' : 'night'}>
 
       {/* ── TOP NAV HEADER ── */}
       <nav className={styles.navbar}>
         <Link to="/" className={styles.navLogo}>
-          <div className={styles.logoIconWrapper}>
-            <HeartPulse size={22} strokeWidth={2.5} />
+          <div style={{
+            width: 54, height: 54, borderRadius: 12,
+            overflow: 'hidden', flexShrink: 0,
+            border: '2px solid rgba(20,184,166,0.45)',
+            background: '#ffffff',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 0 14px rgba(20,184,166,0.25)'
+          }}>
+            <img
+              src="/White and Blue Modern Health Care Presentation.png"
+              alt="Jeevan Setu Logo"
+              style={{ width: 50, height: 50, objectFit: 'contain' }}
+            />
           </div>
-          <div className={styles.logoTextGroup}>
-            <span className={styles.brandName}>JeevanSetu</span>
-            <span className={styles.brandTagline}>Secure. Connect. Save Lives.</span>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className={styles.navLogoTitle} style={{ fontSize: '1.15rem', fontWeight: 900, color: isDayMode ? '#0f172a' : '#ffffff', letterSpacing: '0.01em', lineHeight: 1.1 }}>
+              Jeevan <span style={{ color: '#0d9488' }}>Setu</span>
+            </div>
+            <div className={styles.navLogoSub} style={{ fontSize: '0.65rem', color: isDayMode ? '#64748b' : '#94a3b8', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: '2px' }}>
+              Smart Organ Transit Network
+            </div>
           </div>
         </Link>
 
         <div className={styles.navLinks}>
           <Link to="/" className={styles.navLink}>Home</Link>
-          <a href="#" className={styles.navLink}>About</a>
-          <a href="#" className={styles.navLink}>Contact</a>
         </div>
 
-        <div className={styles.navRight} ref={dropdownRef}>
+        <div className={styles.navRight} ref={dropdownRef} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button 
+            type="button" 
+            className={styles.themeToggleBtn} 
+            onClick={toggleTheme}
+            title={isDayMode ? "Switch to Night Mode" : "Switch to Day Mode"}
+          >
+            {isDayMode ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
+
           <button 
             type="button" 
             className={styles.portalDropdownBtn}
@@ -164,16 +190,16 @@ const NetworkLogin = () => {
                 <CheckCircle2 size={18} />
               </div>
               <div>
-                <div className={styles.trustTitle}>GovNet Secure</div>
-                <div className={styles.trustSubtitle}>Real-time allocation across 36 States/UTs</div>
+                <div className={styles.trustTitle}>SHA-256 Audit Chain</div>
+                <div className={styles.trustSubtitle}>Immutable cold-chain telemetry & verified identity</div>
               </div>
             </div>
 
             <div className={styles.trustDivider} />
 
             <div className={styles.trustRight}>
-              <div className={styles.trustStatLabel}>Connected Regions</div>
-              <div className={styles.trustStatNumber}>100%</div>
+              <div className={styles.trustStatLabel}>Ledger Integrity</div>
+              <div className={styles.trustStatNumber}>Active</div>
             </div>
           </div>
         </div>
