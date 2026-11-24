@@ -81,6 +81,7 @@ app.use('/api/v1/device', deviceRoutes);
 app.use('/api/v1/audit', auditLimiter, auditRoutes);
 app.use('/api/v1/simulator', simulatorRoutes);
 app.use('/api/v1/system', settingsRoute);
+app.use('/api/v1/system', systemHealthRoute); // alias: /api/v1/system/health
 app.use('/api/v1', healthRoute);
 app.use('/api', specRoute);
 

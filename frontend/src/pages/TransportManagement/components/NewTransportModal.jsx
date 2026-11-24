@@ -499,7 +499,7 @@ const NewTransportModal = ({ isOpen, onClose, onTransportCreated, activeHospital
                   />
                 </div>
 
-                <div>
+                <div className="md:col-span-2">
                   <label className={labelStyle}>Priority Level<RequiredStar/></label>
                   <select 
                     name="priority" 
@@ -513,31 +513,6 @@ const NewTransportModal = ({ isOpen, onClose, onTransportCreated, activeHospital
                     <option value="High">High</option>
                     <option value="Critical">Critical</option>
                   </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className={labelStyle}>Est. Distance</label>
-                    <input 
-                      type="text" 
-                      name="distance" 
-                      value={formData.distance} 
-                      onChange={handleChange} 
-                      className={inputStyle} 
-                      placeholder="e.g. 18.2 km" 
-                    />
-                  </div>
-                  <div>
-                    <label className={labelStyle}>Est. Duration</label>
-                    <input 
-                      type="text" 
-                      name="duration" 
-                      value={formData.duration} 
-                      onChange={handleChange} 
-                      className={inputStyle} 
-                      placeholder="e.g. 35 mins" 
-                    />
-                  </div>
                 </div>
               </div>
             </div>

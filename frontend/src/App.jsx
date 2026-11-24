@@ -7,6 +7,7 @@ import { SimulatorProvider } from './context/SimulatorContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import { initHospitals } from './data/hospitals';
 import './App.css';
+import IoTRemoteControl from './components/IoTRemoteControl';
 
 /* ── Lazy-loaded pages for code splitting ── */
 const Home             = lazy(() => import('./pages/Home'));
@@ -149,6 +150,7 @@ function App() {
                 </Suspense>
               </ErrorBoundary>
             </Router>
+          <IoTRemoteControl />
           </SimulatorProvider>
         </SocketProvider>
       </AuthProvider>

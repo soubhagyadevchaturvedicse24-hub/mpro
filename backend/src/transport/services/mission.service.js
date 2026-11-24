@@ -6,6 +6,7 @@ import { transportMachine } from '../../workflow/transitions/transport.transitio
 import { eventBus } from '../../domain/events/index.js';
 import { TRANSPORT_EVENTS } from '../../domain/events/transport.events.js';
 import logger from '../../logger/index.js';
+import mongoose from 'mongoose';
 
 export const createMission = async (missionData, actorId) => {
   // Check if box is available, or find one if not provided
@@ -112,8 +113,40 @@ export const updateMissionWorkflow = async (missionId, action, actorId, location
 };
 
 export const getMissionById = async (id) => {
-  const mission = await TransportMission.findById(id).populate('boxId courierId originHospital destinationHospital');
+  const query = mongoose.Types.ObjectId.isValid(id) ? { _id: id } : { missionId: id };
+  const mission = await TransportMission.findOne(query).populate('boxId courierId originHospital destinationHospital');
   if (!mission) throw TRANSPORT_ERRORS.NOT_FOUND;
+  return mission;
+};
+
+export const updateMissionDetails = async (id, updateData, actorId) => {
+  const mongoose = (await import('mongoose')).default;
+  const query = mongoose.Types.ObjectId.isValid(id) ? { _id: id } : { missionId: id };
+  const mission = await TransportMission.findOne(query);
+  if (!mission) throw TRANSPORT_ERRORS.NOT_FOUND;
+
+  if (updateData.destination && !updateData.destinationHospital) {
+    const dest = await Hospital.findOne({ name: new RegExp(updateData.destination, 'i') });
+    if (dest) mission.destinationHospital = dest._id;
+  }
+  if (updateData.destinationHospital) {
+    mission.destinationHospital = updateData.destinationHospital;
+  }
+  if (updateData.organType) {
+    mission.organType = updateData.organType;
+  }
+  if (updateData.patientName) {
+    mission.patientName = updateData.patientName;
+  }
+  if (updateData.patientId) {
+    mission.patientId = updateData.patientId;
+  }
+  if (updateData.priority) {
+    mission.priority = updateData.priority;
+  }
+
+  await mission.save();
+  logger.info(`MISSION_EDITED: ${mission.missionId} (organ: ${mission.organType}) updated by actor ${actorId}`);
   return mission;
 };
 
@@ -132,7 +165,7 @@ export const listMissions = async ({ isNodalAdmin = false, hospitalId } = {}) =>
   // Nodal officers (isNodalAdmin = true) get no filter → see all missions globally
 
   const missions = await TransportMission.find(query)
-    .populate('originHospital destinationHospital', 'name hospitalCode address')
+    .populate('originHospital destinationHospital', 'name hospitalCode address geoLocation')
     .sort({ createdAt: -1 });
 
   return { missions };

@@ -2,21 +2,28 @@ import { getBlockchainAdapter }           from '../subscribers/audit.subscriber.
 import { BlockchainAdapterFactory }       from '../adapters/BlockchainAdapterFactory.js';
 import crypto from 'crypto';
 import LedgerBlock from '../../models/LedgerBlock.js';
+import { generateEvidenceReport } from '../../transport/services/report.service.js';
 
 // ── GET /api/v1/audit/blocks ─────────────────────────────────────────────────
 export const getAllBlocks = async (req, res, next) => {
   try {
-    const activeType = BlockchainAdapterFactory.getCurrentType();
-
-    // We used to filter blocks here to strictly require `txHash` for Ethereum mode.
-    // However, if the adapter falls back to MongoDB-only (e.g., when the node is offline),
-    // those fallback blocks would be completely hidden from the UI, causing an empty screen.
-    // The UI already shows a special "On-Chain" badge for blocks that DO have a txHash,
-    // so it's better to return all blocks to preserve the audit trail.
     let query = {};
+    const totalCount = await LedgerBlock.countDocuments(query);
+    const limit = req.query.limit !== undefined ? parseInt(req.query.limit, 10) : 0;
 
-    const blocks = await LedgerBlock.find(query).sort({ blockIndex: -1 }).limit(300);
-    res.status(200).json({ success: true, data: blocks });
+    let findQuery = LedgerBlock.find(query).sort({ blockIndex: -1 });
+    if (limit > 0) {
+      findQuery = findQuery.limit(limit);
+    }
+    const blocks = await findQuery;
+
+    res.status(200).json({
+      success: true,
+      total: totalCount,
+      count: blocks.length,
+      data: blocks,
+      blocks: blocks,
+    });
   } catch (error) {
     next(error);
   }
@@ -259,6 +266,16 @@ export const confirmTamper = async (req, res, next) => {
       message: 'Tampering confirmed and notarized on blockchain.',
       data: block
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ── GET /api/v1/audit/evidence-report/:id ────────────────────────────────────
+export const downloadEvidenceReport = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await generateEvidenceReport(id, res);
   } catch (error) {
     next(error);
   }

@@ -27,6 +27,20 @@ export const createMission = async (req, res, next) => {
 };
 
 /**
+ * PATCH /api/v1/transport/missions/:missionId
+ * Edit scheduled mission specifications (organType, patientName, priority, destination, etc.)
+ */
+export const updateMission = async (req, res, next) => {
+  try {
+    const { sub } = req.user;
+    const mission = await missionService.updateMissionDetails(req.params.missionId, req.body, sub);
+    res.status(200).json({ success: true, data: { mission } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * GET /api/v1/transport/missions
  * Multi-tenant isolation:
  *   - Nodal Officers → all missions globally
@@ -99,26 +113,13 @@ export const updateMissionWorkflow = async (req, res, next) => {
     const userHospId = hospitalId?.toString();
 
     if (!isNodalAdmin) {
-      // Source actions: dispatch, startTransit — only origin hospital
-      if (['dispatch', 'startTransit'].includes(action)) {
-        if (originId !== userHospId) {
-          return res.status(403).json({
-            success: false,
-            error: 'DISPATCH_DENIED',
-            message: `Only the origin hospital (${mission.originHospital?.name || originId}) can dispatch this transport mission.`,
-          });
-        }
-      }
-
-      // Destination actions: arrive, complete — only destination hospital
-      if (['arrive', 'complete'].includes(action)) {
-        if (destId !== userHospId) {
-          return res.status(403).json({
-            success: false,
-            error: 'ARRIVAL_DENIED',
-            message: `Only the destination hospital (${mission.destinationHospital?.name || destId}) can confirm arrival for this transport mission.`,
-          });
-        }
+      const isPartyToMission = (originId === userHospId) || (destId === userHospId);
+      if (!isPartyToMission) {
+        return res.status(403).json({
+          success: false,
+          error: 'MISSION_ACCESS_DENIED',
+          message: `Only participating hospitals in this transport route (${mission.originHospital?.name || originId} → ${mission.destinationHospital?.name || destId}) may update its workflow.`,
+        });
       }
 
       // Cancel is Nodal-only

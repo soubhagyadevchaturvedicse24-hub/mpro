@@ -1,5 +1,6 @@
 import express from 'express';
 import * as auditController from '../controllers/audit.controller.js';
+import { getMissionAuditReport } from '../../transport/controllers/missionReport.controller.js';
 import { requireAuth } from '../../middleware/requireAuth.js';
 
 const router = express.Router();
@@ -11,6 +12,8 @@ router.get('/verify',                auditController.verifyLedger);
 router.get('/verify-block/:blockIndex', auditController.verifyBlock);
 router.get('/network-status',        auditController.getNetworkStatus);
 router.get('/incidents',             requireAuth, auditController.getIncidents);
+router.get('/evidence-report/:id',   auditController.downloadEvidenceReport);
+router.get('/mission-report/:missionId', getMissionAuditReport);
 
 // ── Emergency & Tampering ─────────────────────────────────────────────────────
 router.post('/incidents/:id/report-emergency', requireAuth, auditController.reportEmergency);

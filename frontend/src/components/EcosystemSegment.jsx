@@ -219,7 +219,7 @@ const EcosystemSegment = ({ id, theme = 'dark', mousePos }) => {
                 <MapPin size={16} className={styles.vaultIconCyan} />
                 <span className={styles.vaultTitle}>LOCATION</span>
               </div>
-              <div className={styles.vaultValueSmall}>21.2514° N</div>
+              <div className={styles.vaultValueSmall}>21.1348° N</div>
 
               <div className={styles.combinationLockWheel}>
                 <div className={styles.lockDialTicks} />

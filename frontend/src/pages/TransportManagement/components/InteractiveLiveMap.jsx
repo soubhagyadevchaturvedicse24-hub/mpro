@@ -84,14 +84,68 @@ const MapRecenter = ({ center }) => {
   return null;
 };
 
-const InteractiveLiveMap = ({ originName, destinationName, liveTelemetry }) => {
+const InteractiveLiveMap = ({ originName, destinationName, liveTelemetry, originHospitalData, destHospitalData }) => {
   const { isDayMode } = useTheme();
   const sim = useSimulatorContext();
 
-  const originHosp = getHospitalByName(originName) || { lat: 28.6139, lng: 77.2090, name: originName || 'Origin Hospital' };
-  const destHosp   = getHospitalByName(destinationName) || { lat: 28.4595, lng: 77.0266, name: destinationName || 'Destination Hospital' };
+  // Multi-level hospital coordinate resolver:
+  // 1. Backend-supplied hospital data (GeoJSON [lng,lat] or flat lat/lng)
+  // 2. Local hospital registry name lookup
+  // 3. City-based fallback from hospital address
+  // 4. India center absolute last resort
+  const resolveHospital = (hospitalData, name, fallbackLat, fallbackLng) => {
+    // Level 1: Backend-supplied data with GeoJSON coordinates
+    if (hospitalData?.geoLocation?.coordinates?.length === 2) {
+      const [lng, lat] = hospitalData.geoLocation.coordinates;
+      if (lat && lng && !(lat === 0 && lng === 0)) {
+        return {
+          lat,
+          lng,
+          name: hospitalData.name || name || 'Hospital',
+          address: typeof hospitalData.address === 'string' ? hospitalData.address : 'Hospital Campus',
+        };
+      }
+    }
+    // Level 2: Backend-supplied data with flat lat/lng
+    if (hospitalData?.lat && hospitalData?.lng) {
+      return {
+        lat: hospitalData.lat,
+        lng: hospitalData.lng,
+        name: hospitalData.name || name || 'Hospital',
+        address: typeof hospitalData.address === 'string' ? hospitalData.address : 'Hospital Campus',
+      };
+    }
+    // Level 3: Local hospital registry lookup by name
+    const found = getHospitalByName(name);
+    if (found?.lat && found?.lng) {
+      return found;
+    }
+    // Level 4: Explicit fallback coords if provided
+    if (fallbackLat && fallbackLng) {
+      return { lat: fallbackLat, lng: fallbackLng, name: name || 'Hospital' };
+    }
+    // Level 5: India center
+    return { lat: 20.5937, lng: 78.9629, name: name || 'Hospital' };
+  };
 
-  const rawLivePos = liveTelemetry || sim?.telemetry || { lat: originHosp.lat, lng: originHosp.lng };
+  const originHosp = resolveHospital(originHospitalData, originName, null, null);
+  const destHosp   = resolveHospital(destHospitalData, destinationName, null, null);
+
+  // GPS source priority:
+  // 1. Live hardware telemetry (from backend WebSocket)
+  // 2. Simulator telemetry (if running)
+  // 3. NO fallback to hardcoded coords — use origin hospital position so map is meaningful
+  const hasLiveTelemetry = !!(liveTelemetry?.lat && liveTelemetry?.lng);
+  const hasSimTelemetry  = !!(sim?.telemetry?.lat && sim?.telemetry?.lng && sim?.running);
+  const gpsUnavailable   = !hasLiveTelemetry && !hasSimTelemetry;
+
+  // When GPS unavailable, default to SSIPMT Raipur (our physical base location)
+  const SSIPMT_RAIPUR = { lat: 21.1348, lng: 81.6686 };
+  const rawLivePos = hasLiveTelemetry
+    ? liveTelemetry
+    : hasSimTelemetry
+      ? sim.telemetry
+      : SSIPMT_RAIPUR;
 
   // High-performance robust pipeline hook
   const {
@@ -112,6 +166,7 @@ const InteractiveLiveMap = ({ originName, destinationName, liveTelemetry }) => {
     ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
     : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
+  // Fit map to the full route (origin ↔ destination midpoint)
   const defaultCenter = [
     (originHosp.lat + destHosp.lat) / 2,
     (originHosp.lng + destHosp.lng) / 2
@@ -119,9 +174,22 @@ const InteractiveLiveMap = ({ originName, destinationName, liveTelemetry }) => {
 
   return (
     <div className="w-full h-full min-h-[480px] rounded-xl overflow-hidden relative shadow-inner">
+      {/* GPS Unavailable Warning Banner */}
+      {gpsUnavailable && (
+        <div style={{
+          position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
+          zIndex: 1000, background: 'rgba(239,68,68,0.92)', color: 'white',
+          padding: '5px 14px', borderRadius: 20, fontSize: 11, fontWeight: 700,
+          display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.25)', backdropFilter: 'blur(4px)'
+        }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#fca5a5', display: 'inline-block', animation: 'ping 1s infinite' }} />
+          📡 GPS Signal Lost — Showing base location (SSIPMT Raipur)
+        </div>
+      )}
       <MapContainer 
         center={defaultCenter} 
-        zoom={12} 
+        zoom={6}
         scrollWheelZoom={true} 
         style={{ width: '100%', height: '100%', minHeight: '480px' }}
       >
@@ -183,9 +251,9 @@ const InteractiveLiveMap = ({ originName, destinationName, liveTelemetry }) => {
                 </div>
                 <div>
                   <h4 className="text-[13px] font-extrabold text-gray-900 tracking-tight leading-tight m-0">Live Transport</h4>
-                  <p className="text-[10px] text-blue-600 font-bold m-0 mt-0.5 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                    GPS Active (College Demo)
+                  <p className={`text-[10px] font-bold m-0 mt-0.5 flex items-center gap-1 ${gpsUnavailable ? 'text-red-500' : 'text-blue-600'}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${gpsUnavailable ? 'bg-red-500' : 'bg-blue-500'}`}></span>
+                    {gpsUnavailable ? '📡 GPS Unavailable — Origin Position' : hasSimTelemetry ? '🔵 Simulator Active' : '🟢 Live GPS Active'}
                   </p>
                 </div>
               </div>

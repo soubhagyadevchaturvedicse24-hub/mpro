@@ -86,6 +86,8 @@ export const createRecipient = (data) => fetchApi('/recipients', { method: 'POST
 
 export const getMissions = () => fetchApi('/transport/missions');
 export const createMission = (data) => fetchApi('/transport/missions', { method: 'POST', body: JSON.stringify(data) });
+export const updateMission = (missionId, data) =>
+  fetchApi(`/transport/missions/${missionId}`, { method: 'PATCH', body: JSON.stringify(data) });
 export const updateMissionWorkflow = (missionId, action) =>
   fetchApi(`/transport/missions/${missionId}/workflow/${action}`, { method: 'POST', body: JSON.stringify({}) });
 
@@ -100,6 +102,7 @@ export const confirmTamper = (missionId, notes) =>
 export const getBlockchainNetworkStatus = () => fetchApi('/audit/network-status');
 export const switchBlockchainNetwork = (network) =>
   fetchApi('/audit/switch-network', { method: 'POST', body: JSON.stringify({ network }) });
+export const getMissionAuditReport = (missionId) => fetchApi(`/audit/mission-report/${missionId}`);
 
 /**
  * Direct Arweave Permaweb Data Fetcher via Irys / Arweave Public Gateways

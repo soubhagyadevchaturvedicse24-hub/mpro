@@ -16,8 +16,8 @@ const defaults = {
   tempSpike:   0.0,      // NO automatic random temp spikes (user controlled only)
   tamperChance:0.0,      // NO automatic random lid open (user controlled only)
   batteryDrain:0.0,      // NO automatic battery drain (user controlled only)
-  startLat:    28.5659,
-  startLng:    77.2090,
+  startLat:    21.1348,
+  startLng:    81.6686,
 };
 
 export const ORGAN_PROFILES = {
@@ -74,10 +74,10 @@ export const SimulatorProvider = ({ children }) => {
 
   // Fetch realistic route coordinates via OSRM or fallback interpolation
   const setRoute = useCallback(async (origin, destination) => {
-    const startLat = origin?.lat || 28.6675;
-    const startLng = origin?.lng || 77.2274;
-    const endLat = destination?.lat || 28.4682;
-    const endLng = destination?.lng || 77.0378;
+    const startLat = origin?.lat || 21.1348;
+    const startLng = origin?.lng || 81.6686;
+    const endLat = destination?.lat || 21.2330;
+    const endLng = destination?.lng || 81.6360;
 
     const routeKey = `${origin?.name || startLat}_${destination?.name || endLat}`;
 
@@ -223,9 +223,28 @@ export const SimulatorProvider = ({ children }) => {
     } catch(e) {}
   }, [cfg.interval, addLog]);
 
-  const start = useCallback((originHospital, destinationHospital, fastForwardTimeStr = null) => {
+  const setMissionContext = useCallback((missionId, organType, boxId) => {
+    if (!missionId) return;
+    setCfg(prev => ({
+      ...prev,
+      missionId,
+      ...(organType ? { organType } : {}),
+      ...(boxId ? { boxId } : {}),
+    }));
+    addLog('info', `Linked simulator to Mission: ${missionId}`);
+  }, [addLog]);
+
+  const start = useCallback((originHospital, destinationHospital, fastForwardTimeStr = null, missionContext = null) => {
     if (running) return;
-    addLog('info', `▶ Simulator started — Box:${cfg.boxId}  Mission:${cfg.missionId}  Interval:${cfg.interval}s`);
+    if (missionContext?.missionId) {
+      setCfg(prev => ({
+        ...prev,
+        missionId: missionContext.missionId,
+        ...(missionContext.organType ? { organType: missionContext.organType } : {}),
+        ...(missionContext.boxId ? { boxId: missionContext.boxId } : {}),
+      }));
+    }
+    addLog('info', `▶ Simulator started — Box:${missionContext?.boxId || cfg.boxId}  Mission:${missionContext?.missionId || cfg.missionId}  Interval:${cfg.interval}s`);
     setRunning(true);
 
     if (originHospital && destinationHospital) {
@@ -374,7 +393,7 @@ export const SimulatorProvider = ({ children }) => {
   return (
     <SimulatorContext.Provider value={{
       cfg, setCfg, running, telemetry, logs, ticks, connected, isManualMode, isTamperedMode, defaults,
-      currentTemp, currentBattery, routePolyline, setRoute,
+      currentTemp, currentBattery, routePolyline, setRoute, setMissionContext,
       start, stop, reset, overrideTemp, overrideBattery, overrideTamper, releaseManual, triggerMilestone, setOrganProfile
     }}>
       {children}

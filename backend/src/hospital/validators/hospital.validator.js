@@ -121,6 +121,7 @@ export const createHospitalSchema = z.object({
 
   // Geo (optional)
   geoLocation: z.object({
+    type: z.literal('Point').optional().default('Point'),
     coordinates: z.tuple([
       z.number().min(-180).max(180),
       z.number().min(-90).max(90),
@@ -138,6 +139,7 @@ export const listHospitalsSchema = z.object({
   status: z.enum([
     'DRAFT', 'PENDING_VERIFICATION', 'UNDER_REVIEW',
     'APPROVED', 'ACTIVE', 'SUSPENDED', 'REJECTED', 'DEACTIVATED',
+    'PENDING',
   ]).optional(),
   page:   z.coerce.number().int().min(1).optional().default(1),
   limit:  z.coerce.number().int().min(1).max(100).optional().default(20),

@@ -28,8 +28,6 @@ const getSimulatorEntities = async () => {
     h1 = await Hospital.create({
       hospitalCode: 'HOS-DEL-0001',
       name: 'AIIMS New Delhi',
-      licenseNumber: 'LIC-0001',
-      licenseExpiry: new Date('2030-01-01'),
       status: 'ACTIVE',
       region: 'NORTH',
       state: 'Delhi',
@@ -38,8 +36,8 @@ const getSimulatorEntities = async () => {
       contact: { email: 'contact@aiims.edu', phone: '9876543210' },
       address: { street: 'Ansari Nagar', city: 'New Delhi', state: 'Delhi', pincode: '110029' },
       hospitalType: 'GOVERNMENT',
-      registrationNumber: 'REG-AIIMS-01',
-      transplantCapabilities: ['KIDNEY', 'LIVER']
+      legalDetails: { registrationNumber: 'REG-AIIMS-SIM-01', licenseNumber: 'LIC-SIM-0001' },
+      transplantCapabilities: ['KIDNEY', 'LIVER'],
     });
   }
 
@@ -48,8 +46,6 @@ const getSimulatorEntities = async () => {
     h2 = await Hospital.create({
       hospitalCode: 'HOS-BLR-0002',
       name: 'NIMHANS Bengaluru',
-      licenseNumber: 'LIC-0002',
-      licenseExpiry: new Date('2030-01-01'),
       status: 'ACTIVE',
       region: 'SOUTH',
       state: 'Karnataka',
@@ -58,8 +54,8 @@ const getSimulatorEntities = async () => {
       contact: { email: 'info@nimhans.ac.in', phone: '8765432109' },
       address: { street: 'Hosur Road', city: 'Bengaluru', state: 'Karnataka', pincode: '560029' },
       hospitalType: 'GOVERNMENT',
-      registrationNumber: 'REG-NIMHANS-02',
-      transplantCapabilities: ['KIDNEY', 'HEART']
+      legalDetails: { registrationNumber: 'REG-NIMHANS-SIM-02', licenseNumber: 'LIC-SIM-0002' },
+      transplantCapabilities: ['KIDNEY', 'HEART'],
     });
   }
 

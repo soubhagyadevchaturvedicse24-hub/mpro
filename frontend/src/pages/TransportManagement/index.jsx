@@ -13,8 +13,9 @@ import {
 import { useTheme } from '../../context/ThemeContext';
 import { useSimulatorContext } from '../../context/SimulatorContext';
 import { useHospitals } from '../../data/useHospitals';
+import { getHospitalByName } from '../../data/hospitals';
 
-import { createMission, getMissions, updateMissionWorkflow } from '../../services/api';
+import { createMission, getMissions, updateMission, updateMissionWorkflow } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 
@@ -69,12 +70,23 @@ const TransportManagement = () => {
     const tempVal    = raw.temperature ?? 4.0;
     const spiked     = raw.spiked ?? (tempVal > 8 || tempVal < 2);
     const buzzer     = raw.buzzerStatus || (reedOpen ? 'Beeping Alert' : isTampered ? 'Tamper Recorded' : spiked ? 'Beeping Alert' : 'Normal');
+
+    // Robust lat/lng extraction across all potential schema formats
+    const latVal = raw.lat ?? raw.latitude ?? raw.geoLocation?.coordinates?.[1] ?? raw.location?.coordinates?.[1] ?? raw.gps?.lat ?? raw.gps?.latitude;
+    const lngVal = raw.lng ?? raw.longitude ?? raw.geoLocation?.coordinates?.[0] ?? raw.location?.coordinates?.[0] ?? raw.gps?.lng ?? raw.gps?.longitude;
+
+    const nLat = Number(latVal);
+    const nLng = Number(lngVal);
+
+    const validLat = (!isNaN(nLat) && nLat !== 0) ? nLat : null;
+    const validLng = (!isNaN(nLng) && nLng !== 0) ? nLng : null;
+
     return {
       // Core sensor values
       temperature:     tempVal,
       batteryLevel:    raw.batteryLevel ?? 95,
-      lat:             raw.lat ?? (raw.geoLocation?.coordinates?.[1] ?? 0),
-      lng:             raw.lng ?? (raw.geoLocation?.coordinates?.[0] ?? 0),
+      lat:             validLat,
+      lng:             validLng,
       speedKmh:        raw.speedKmh ?? 0,
       // Status flags
       isTampered,
@@ -119,6 +131,21 @@ const TransportManagement = () => {
           const completed = [];
 
           rawMissions.forEach(m => {
+            // Normalize backend populated hospital objects → { lat, lng, name }
+            // Backend stores GeoJSON [longitude, latitude] — we convert to { lat, lng }
+            const normalizeHosp = (h) => {
+              if (!h) return null;
+              return {
+                ...h,
+                name: h.name || h.hospitalLegalName || 'Hospital',
+                lat: h.geoLocation?.coordinates?.[1] || h.lat || null,
+                lng: h.geoLocation?.coordinates?.[0] || h.lng || null,
+                address: typeof h.address === 'object'
+                  ? [h.address.street, h.address.city, h.address.state, h.address.pincode].filter(Boolean).join(', ')
+                  : (h.address || 'Hospital Campus'),
+              };
+            };
+
             const mapped = {
               id: m.missionId || m._id || `TRN-${Math.floor(8000 + Math.random() * 1000)}`,
               _id: m._id,          // real MongoDB ObjectId
@@ -127,6 +154,10 @@ const TransportManagement = () => {
               patientName: m.patientName || m.recipient?.name || 'Patient',
               origin: m.originHospitalName || m.originHospital?.name || 'CityCare Hospital',
               destination: m.destinationHospitalName || m.destinationHospital?.name || 'Green Valley Hospital',
+              originHospital: normalizeHosp(m.originHospital),
+              destinationHospital: normalizeHosp(m.destinationHospital),
+              originAddress: m.originHospital?.address || null,
+              destinationAddress: m.destinationHospital?.address || null,
               time: m.requestedPickup || m.time || '12:00 PM',
               date: m.date || new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
               distance: m.distance || '18.2 km',
@@ -199,8 +230,8 @@ const TransportManagement = () => {
         });
         setTimeout(() => setRfidToast(null), 5000);
 
-        const originHosp = getHospitalByName(match.origin || 'Shri Shankaracharya Institute of Professional Management and Technology (SSIPMT)');
-        const destHosp = getHospitalByName(match.destination || 'Shri Shankaracharya Technical Campus (SSTC)');
+        const originHosp = match.originHospital || getHospitalByName(match.origin) || { lat: 21.1348, lng: 81.6686, name: match.origin || 'Origin Hospital' };
+        const destHosp = match.destinationHospital || getHospitalByName(match.destination) || { lat: 21.2330, lng: 81.6360, name: match.destination || 'Destination Hospital' };
 
         const liveItem = {
           ...match,
@@ -224,7 +255,7 @@ const TransportManagement = () => {
             temp: '4.3°C',
             tamper: 'Secure',
             blockchain: 'Verified',
-            location: `${(originHosp?.lat || 21.2514).toFixed(4)}° N, ${(originHosp?.lng || 81.6296).toFixed(4)}° E`
+            location: `${(originHosp?.lat || 21.1348).toFixed(4)}° N, ${(originHosp?.lng || 81.6686).toFixed(4)}° E`
           }
         };
 
@@ -338,13 +369,22 @@ const TransportManagement = () => {
     setUnifiedTelemetry(normalized);
   }, [sim?.telemetry, normalizeTelemetry, ongoingItems]);
 
+  // Auto-sync Simulator Target Mission to the active in-transit transport
+  useEffect(() => {
+    if (ongoingItems && ongoingItems.length > 0 && sim?.setMissionContext) {
+      const active = ongoingItems[0];
+      sim.setMissionContext(active.id || active.missionId, active.organType, active.iotBoxId);
+    }
+  }, [ongoingItems, sim]);
+
 
   const handleTransportCreated = async (newPayload) => {
     // Backend Cloud & Blockchain Persistence
     try {
       const res = await createMission({
         missionId:              newPayload.id,
-        organType:              newPayload.organType?.toUpperCase() || 'KIDNEY',
+        organType:              newPayload.organType || 'Kidney',
+        transportType:          newPayload.transportType || 'Organ Transport',
         originHospitalName:     newPayload.origin,
         destinationHospitalName: newPayload.destination,
         patientId:              newPayload.patientId,
@@ -377,13 +417,15 @@ const TransportManagement = () => {
   };
 
   const handleStartTransport = async (transport) => {
-
-    const originHosp = getHospitalByName(transport.origin || 'CityCare Hospital');
-    const destHosp = getHospitalByName(transport.destination || 'Green Valley Hospital');
+    // Prefer backend-supplied hospital objects (with real coordinates) over local name lookup
+    const originHosp = transport.originHospital || getHospitalByName(transport.origin) || { lat: 21.1348, lng: 81.6686, name: transport.origin || 'Origin Hospital' };
+    const destHosp = transport.destinationHospital || getHospitalByName(transport.destination) || { lat: 21.2330, lng: 81.6360, name: transport.destination || 'Destination Hospital' };
 
     const liveItem = {
       ...transport,
       id: transport.id || 'TRN-8901',
+      _id: transport._id || transport.dbId,
+      dbId: transport.dbId || transport._id,
       originHospital: originHosp,
       destinationHospital: destHosp,
       startedAt: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
@@ -393,42 +435,55 @@ const TransportManagement = () => {
         temp: '4.0°C',
         tamper: 'Secure',
         blockchain: 'Verified',
-        location: `${(originHosp?.lat || 21.2514).toFixed(4)}° N, ${(originHosp?.lng || 81.6296).toFixed(4)}° E`
+        location: `${(originHosp?.lat || 21.1348).toFixed(4)}° N, ${(originHosp?.lng || 81.6686).toFixed(4)}° E`
       }
     };
 
+    // Ensure backend status is transitioned to IN_TRANSIT
+    const dbId = transport.dbId || transport._id || transport.id;
+    if (dbId) {
+      try {
+        await updateMissionWorkflow(dbId, 'dispatch').catch(() => {});
+        await updateMissionWorkflow(dbId, 'startTransit').catch(() => {});
+      } catch (err) {
+        console.warn('Start transport backend workflow sync:', err.message);
+      }
+    }
+
     if (!isLiveMode && sim) {
-      sim.start(originHosp, destHosp);
+      sim.start(originHosp, destHosp, null, {
+        missionId: transport.id || transport.missionId,
+        organType: transport.organType || 'KIDNEY',
+        boxId: transport.iotBoxId || 'BOX-2026-FABRIC-ALPHA'
+      });
       if (sim.triggerMilestone) {
         sim.triggerMilestone('transport.dispatched');
       }
     }
 
-    setOngoingItems(prev => [liveItem, ...prev]);
+    setOngoingItems(prev => [liveItem, ...prev.filter(t => t.id !== transport.id)]);
     setScheduledItems(prev => prev.filter(t => t.id !== transport.id));
     setScheduledModalData(null);
     setTrackingModalData(liveItem);
   };
 
   const handleMarkAsDone = async (transportId) => {
-    const transport = ongoingItems.find(t => t.id === transportId);
+    const transport = ongoingItems.find(t => t.id === transportId || t.missionId === transportId || t._id === transportId);
     if (!transport) return;
 
-
     // Get the real MongoDB _id from the transport (set during creation/fetch)
-    const dbId = transport.dbId || transport._id;
-    if (!dbId) {
-      alert('Cannot complete: this transport has no backend ID. Please refresh and try again.');
-      return;
-    }
+    const dbId = transport.dbId || transport._id || transport.id;
 
     try {
-      // Step 1: arrive (IN_TRANSIT → ARRIVED)
-      await updateMissionWorkflow(dbId, 'arrive');
-      // Step 2: complete (ARRIVED → COMPLETED)
-      await updateMissionWorkflow(dbId, 'complete');
+      if (dbId) {
+        // Step 1: arrive (IN_TRANSIT → ARRIVED)
+        await updateMissionWorkflow(dbId, 'arrive').catch(e => console.warn('Arrive step:', e));
+        // Step 2: complete (ARRIVED → COMPLETED)
+        await updateMissionWorkflow(dbId, 'complete').catch(e => console.warn('Complete step:', e));
+      }
 
       if (sim?.triggerMilestone) sim.triggerMilestone('transport.completed');
+      if (sim?.stop) sim.stop();
 
       const completedItem = {
         ...transport,
@@ -440,8 +495,8 @@ const TransportManagement = () => {
         verifiedOn: new Date().toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace(',', '')
       };
 
-      setOngoingItems(prev => prev.filter(t => t.id !== transportId));
-      setCompletedItems(prev => [completedItem, ...prev]);
+      setOngoingItems(prev => prev.filter(t => t.id !== transportId && t._id !== transportId));
+      setCompletedItems(prev => [completedItem, ...prev.filter(c => c.id !== transportId && c._id !== transportId)]);
       setTrackingModalData(null);
 
       // Clean up hardware-seen flag so future simulator tests are unblocked
@@ -453,10 +508,30 @@ const TransportManagement = () => {
     }
   };
 
-  const handleUpdateTransport = (updatedData) => {
+  const handleUpdateTransport = async (updatedData) => {
     setScheduledItems(prev => prev.map(item => item.id === updatedData.id ? { ...item, ...updatedData } : item));
     setOngoingItems(prev => prev.map(item => item.id === updatedData.id ? { ...item, ...updatedData } : item));
     setScheduledModalData(updatedData);
+
+    // Persist edits directly to Backend MongoDB
+    const dbId = updatedData._id || updatedData.dbId || updatedData.id;
+    if (dbId) {
+      try {
+        await updateMission(dbId, {
+          organType: updatedData.organType,
+          patientName: updatedData.patientName,
+          patientId: updatedData.patientId,
+          priority: updatedData.priority,
+          destination: updatedData.destination,
+        });
+      } catch (err) {
+        console.warn('Backend mission edit persistence failed:', err.message);
+      }
+    }
+
+    if (updatedData.organType && sim?.setMissionContext) {
+      sim.setMissionContext(updatedData.id, updatedData.organType, updatedData.iotBoxId);
+    }
   };
 
   // All users see all transports — backend enforces real tenant isolation via JWT

@@ -18,22 +18,23 @@ const CITY_COORDINATES = {
   'hyderabad': { lat: 17.3850, lng: 78.4867 },
   'kolkata': { lat: 22.5726, lng: 88.3639 },
   'ranchi': { lat: 23.3441, lng: 85.3096 },
-  'ahmedabad': { lat: 23.0225, lng: 72.5714 }
+  'ahmedabad': { lat: 23.0225, lng: 72.5714 },
+  'raipur': { lat: 21.1348, lng: 81.6686 },
+  'bhilai': { lat: 21.2167, lng: 81.4333 },
+  'durg': { lat: 21.1904, lng: 81.2849 },
+  'bilaspur': { lat: 22.0735, lng: 82.1392 },
 };
 
 export const getCityCoordinates = (cityName) => {
   const key = (cityName || '').toLowerCase().trim();
   if (CITY_COORDINATES[key]) {
     return {
-      lat: CITY_COORDINATES[key].lat + (Math.random() - 0.5) * 0.03,
-      lng: CITY_COORDINATES[key].lng + (Math.random() - 0.5) * 0.03
+      lat: CITY_COORDINATES[key].lat,
+      lng: CITY_COORDINATES[key].lng
     };
   }
-  // Default NCR coordinates with slight random jitter
-  return {
-    lat: 28.5398 + (Math.random() - 0.5) * 0.05,
-    lng: 77.2831 + (Math.random() - 0.5) * 0.05
-  };
+  // Default to India center (no random jitter — stable coordinates)
+  return { lat: 20.5937, lng: 78.9629 };
 };
 
 export const getRegisteredHospitalsFromStorage = () => {
@@ -85,7 +86,7 @@ let BACKEND_HOSPITALS = null;
 export const initHospitals = async () => {
   try {
     const res = await getHospitals();
-    const arr = Array.isArray(res) ? res : (res.hospitals || []);
+    const arr = Array.isArray(res) ? res : (res?.data?.hospitals || res?.hospitals || []);
     BACKEND_HOSPITALS = arr.map(h => {
       const city = h.city || h.address?.city || h.district || h.state || 'Delhi';
       const fallbackCoords = getCityCoordinates(city);
@@ -93,8 +94,8 @@ export const initHospitals = async () => {
         id: h.id || h._id || `hosp-reg-${Math.random()}`,
         name: h.name || h.hospitalLegalName || h.displayName || 'Unknown Hospital',
         address: typeof h.address === 'string' ? h.address : `${h.address?.street || 'Campus'}, ${city}`,
-        lat: h.lat || h.location?.lat || fallbackCoords.lat,
-        lng: h.lng || h.location?.lng || fallbackCoords.lng,
+        lat: h.lat || h.geoLocation?.coordinates?.[1] || h.location?.lat || fallbackCoords.lat,
+        lng: h.lng || h.geoLocation?.coordinates?.[0] || h.location?.lng || fallbackCoords.lng,
         city: city,
         ...h
       };
@@ -117,6 +118,20 @@ export const HOSPITALS = getALLHospitals();
 
 export const getHospitalByName = (name) => {
   const all = getALLHospitals();
-  const searchName = String(name || '').toLowerCase();
-  return all.find(h => String(h?.name || '').toLowerCase() === searchName) || all[0];
+  const searchName = String(name || '').toLowerCase().trim();
+  if (!searchName) return null;
+
+  // 1. Exact match
+  const exact = all.find(h => String(h?.name || '').toLowerCase().trim() === searchName);
+  if (exact) return exact;
+
+  // 2. Partial/contains match (e.g. "Max Super" matches "Max Super Speciality Hospital")
+  const partial = all.find(h => {
+    const hName = String(h?.name || '').toLowerCase().trim();
+    return hName.includes(searchName) || searchName.includes(hName);
+  });
+  if (partial) return partial;
+
+  // 3. Return null — do NOT return all[0] which silently gives wrong coordinates
+  return null;
 };

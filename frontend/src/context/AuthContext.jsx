@@ -75,6 +75,7 @@ export const AuthProvider = ({ children }) => {
       let accessToken = null;
 
       // Always try real backend first
+      let backendAuthFailed = false;
       try {
         const response = await fetch(`${baseUrl}/auth/login`, {
           method: 'POST',
@@ -88,15 +89,21 @@ export const AuthProvider = ({ children }) => {
           loggedInUser = result.data.user;
           accessToken = result.data.accessToken;
         } else if (!response.ok) {
-          // Backend explicitly rejected — throw the real error
-          throw new Error(result?.message || result?.error || `Login failed (${response.status})`);
+          if (response.status === 401 || response.status === 403) {
+            // Credentials not found in real DB — fall through to local mock auth
+            backendAuthFailed = true;
+            console.warn('Backend credential check failed — falling back to local auth.');
+          } else {
+            // Server error (5xx) or other non-auth failure — hard fail
+            throw new Error(result?.message || result?.error || `Login failed (${response.status})`);
+          }
         }
       } catch (err) {
-        // Only fall through to mock if it's a network error (backend offline)
+        // Fall through to mock if it's a network error (backend offline)
         if (err.name === 'TypeError' && err.message.includes('fetch')) {
           console.warn('Backend offline — falling back to local auth.');
         } else {
-          throw err; // Re-throw real backend rejections
+          throw err; // Re-throw non-auth errors
         }
       }
 

@@ -222,6 +222,21 @@ const DashboardLayout = () => {
               </button>
             </div>
 
+            {/* Active Mission Indicator */}
+            <div style={{
+              background: 'rgba(99, 102, 241, 0.1)',
+              border: '1px solid rgba(99, 102, 241, 0.3)',
+              borderRadius: '6px',
+              padding: '6px 8px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '0.7rem'
+            }}>
+              <span style={{ color: 'var(--text-secondary)' }}>Target Mission:</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#818cf8' }}>{sim.cfg.missionId}</span>
+            </div>
+
             {/* Organ Mission Selection */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Active Mission Type</div>

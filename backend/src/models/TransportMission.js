@@ -43,6 +43,26 @@ const transportMissionSchema = new mongoose.Schema(
       required: false,
       default: null,
     },
+    organType: {
+      type: String,
+      default: 'Kidney',
+    },
+    transportType: {
+      type: String,
+      default: 'Organ Transport',
+    },
+    patientName: {
+      type: String,
+      default: null,
+    },
+    patientId: {
+      type: String,
+      default: null,
+    },
+    priority: {
+      type: String,
+      default: 'High',
+    },
     matchId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Match',

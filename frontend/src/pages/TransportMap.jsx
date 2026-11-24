@@ -472,8 +472,8 @@ const TransportMap = () => {
     traveledPath,
     remainingPath,
   } = useLiveRoutePipeline({
-    origin: origin || { lat: 28.6139, lng: 77.2090 },
-    destination: dest || { lat: 28.4595, lng: 77.0266 },
+    origin: origin || { lat: 21.1348, lng: 81.6686 },
+    destination: dest || { lat: 21.2330, lng: 81.6360 },
     rawLivePos: currentLocation,
     lerpDuration: 2000,
   });

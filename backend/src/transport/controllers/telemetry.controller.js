@@ -71,7 +71,7 @@ export const postIngressTelemetry = async (req, res, next) => {
     // Find active mission for the box
     const activeMission = await TransportMission.findOne({
       boxId: box._id,
-      status: { $in: ['DISPATCHED', 'IN_TRANSIT'] }
+      status: { $in: ['DISPATCHED', 'IN_TRANSIT', 'ARRIVED'] }
     });
 
     const missionId = activeMission ? activeMission._id.toString() : 'DEMO_MISSION';
@@ -85,7 +85,9 @@ export const postIngressTelemetry = async (req, res, next) => {
       arweaveTxId: arweaveTxIdHeader,
       geoLocation: {
         type: 'Point',
-        coordinates: [gps.longitude, gps.longitude ? gps.latitude : null].filter(c => c !== null)
+        coordinates: (gps.longitude !== undefined && gps.latitude !== undefined)
+          ? [Number(gps.longitude), Number(gps.latitude)]
+          : []
       }
     };
 

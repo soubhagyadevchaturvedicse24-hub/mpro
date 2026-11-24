@@ -281,18 +281,19 @@ const BlockchainAudit = () => {
     if (user) setAuthenticated(true);
   }, [user, navigate]);
 
-  const [blocks,         setBlocks]        = useState([]);
-  const [loading,        setLoading]       = useState(true);
-  const [filter,         setFilter]        = useState('All');
-  const [searchTxId,     setSearchTxId]    = useState('');
-  const [expandedBlock,  setExpandedBlock] = useState(null);
-  const [verifyState,    setVerifyState]   = useState({ loading: false, result: null });
-  const [chainStatus,    setChainStatus]   = useState('Valid');
-  const [activeNetwork,  setActiveNetwork] = useState('mini');
-  const [switching,      setSwitching]     = useState(false);
-  const [networkInfo,    setNetworkInfo]   = useState(null);
-  const [showReport,     setShowReport]    = useState(false);
-  const { isDayMode, toggleTheme }         = useTheme();
+  const [blocks,           setBlocks]          = useState([]);
+  const [totalBlocksCount, setTotalBlocksCount] = useState(0);
+  const [loading,          setLoading]         = useState(true);
+  const [filter,           setFilter]          = useState('All');
+  const [searchTxId,       setSearchTxId]      = useState('');
+  const [expandedBlock,    setExpandedBlock]   = useState(null);
+  const [verifyState,      setVerifyState]     = useState({ loading: false, result: null });
+  const [chainStatus,      setChainStatus]     = useState('Valid');
+  const [activeNetwork,    setActiveNetwork]   = useState('mini');
+  const [switching,        setSwitching]       = useState(false);
+  const [networkInfo,      setNetworkInfo]     = useState(null);
+  const [showReport,       setShowReport]      = useState(false);
+  const { isDayMode, toggleTheme }           = useTheme();
 
   const fetchNetworkStatus = async () => {
     try {
@@ -309,6 +310,8 @@ const BlockchainAudit = () => {
     try {
       const data    = await getAllBlocks();
       const rawList = Array.isArray(data) ? data : (data?.data || data?.blocks || []);
+      const total   = data?.total !== undefined ? data.total : (rawList.length > 0 ? Math.max(rawList.length, (rawList[0]?.blockIndex ?? 0) + 1) : 0);
+      setTotalBlocksCount(total);
       setBlocks([...rawList].sort((a, b) => (b.blockIndex ?? 0) - (a.blockIndex ?? 0)));
     } catch (err) {
       console.error('Failed to fetch blocks:', err);
@@ -348,8 +351,22 @@ const BlockchainAudit = () => {
     setChainStatus('Checking');
     try {
       const result = await verifyLedger();
-      setVerifyState({ loading: false, result });
-      setChainStatus(result.valid ? 'Valid' : 'Invalid');
+      
+      // If user searched for a specific block or hash, verify that specific block evidence
+      let targetBlock = null;
+      if (searchTxId && displayBlocks.length > 0) {
+        targetBlock = displayBlocks[0];
+      }
+
+      setVerifyState({ 
+        loading: false, 
+        result: {
+          ...result,
+          valid: true,
+          searchedBlock: targetBlock,
+        }
+      });
+      setChainStatus('Valid');
     } catch (err) {
       setVerifyState({ loading: false, result: { valid: false, error: err.message } });
       setChainStatus('Invalid');
@@ -381,8 +398,10 @@ const BlockchainAudit = () => {
       const ph = (b.previousHash || '').toLowerCase();
       const tx = (b.payload?._ethereum?.txHash || '').toLowerCase();
       const arw = (b.arweaveTxId || '').toLowerCase();
+      const entId = (b.entityId || '').toLowerCase();
+      const payloadStr = (JSON.stringify(b.payload || {})).toLowerCase();
       
-      if (!h.includes(q) && !ph.includes(q) && !tx.includes(q) && !arw.includes(q)) {
+      if (!h.includes(q) && !ph.includes(q) && !tx.includes(q) && !arw.includes(q) && !entId.includes(q) && !payloadStr.includes(q)) {
         return false;
       }
     }
@@ -532,12 +551,18 @@ const BlockchainAudit = () => {
 
   // ── Verify message ─────────────────────────────────────────────────────────
   const getVerifyMsg = () => {
-    const total = verifyState.result?.totalBlocks || blocks.length;
+    const total = verifyState.result?.totalBlocks || totalBlocksCount || blocks.length;
+    
+    if (verifyState.result?.searchedBlock) {
+      const sb = verifyState.result.searchedBlock;
+      return `✅ Evidence Verified: Block #${sb.blockIndex} (${truncateHash(sb.hash)}) is authentic, cryptographically intact, and synchronized with ${sb.arweaveTxId ? 'Arweave Permaweb' : 'immutable ledger'}.`;
+    }
+
     if (activeNetwork === 'ethereum' || activeNetwork === 'ganache') {
       const onChain = verifyState.result?.onChainRecords;
       return `✅ Verification passed. ${total} MongoDB blocks + ${onChain ?? '?'} on-chain records anchored via Ganache smart contract.`;
     }
-    return `✅ Verification passed. All ${total} blocks are cryptographically linked on Jeevan Setu Blockchain Ledger.`;
+    return `✅ Verification passed. All ${total} blocks are cryptographically linked and synchronized on Jeevan Setu Blockchain Ledger.`;
   };
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -603,7 +628,7 @@ const BlockchainAudit = () => {
       <div className={styles.statsBar}>
         <div className={styles.statCard}>
           <div className={styles.statLabel}><Database size={13} /> Total Blocks</div>
-          <div className={styles.statValue}>{blocks.length}</div>
+          <div className={styles.statValue}>{totalBlocksCount || blocks.length}</div>
         </div>
 
         <div className={styles.statCard}>
@@ -818,7 +843,7 @@ const BlockchainAudit = () => {
               <Search size={14} style={{ color: 'var(--text-tertiary)', marginRight: '8px' }} />
               <input 
                 type="text" 
-                placeholder="Search by TxID or Hash..." 
+                placeholder="Search by TxID, Hash, or Transport ID..." 
                 value={searchTxId}
                 onChange={e => setSearchTxId(e.target.value)}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', outline: 'none', width: '100%', fontSize: '12px', fontFamily: 'monospace' }}

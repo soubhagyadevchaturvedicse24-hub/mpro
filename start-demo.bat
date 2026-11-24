@@ -1,35 +1,58 @@
 @echo off
-setlocal EnableDelayedExpansion
-title Smart THOTA - Lightweight Demo Startup
-
-echo ==============================================================
-echo        SMART THOTA - SHADOW MODE DEMO (No Docker)
-echo ==============================================================
+title OrganShield Demo Launcher
+color 0A
 echo.
-echo Running in Lightweight Mode (Shadow Mode + Arweave/Irys)
-echo No local blockchain containers will be started.
-echo All hashes will be permanently notarized on Arweave via Irys!
+echo  ╔══════════════════════════════════════════════════════╗
+echo  ║          ORGANSHIELD — Demo Launcher                ║
+echo  ║          Organ Transport Platform v1.0              ║
+echo  ╚══════════════════════════════════════════════════════╝
 echo.
 
-echo Cleaning up any old running instances...
-for /f "tokens=5" %%a in ('netstat -aon ^| find ":5000" ^| find "LISTENING"') do taskkill /f /pid %%a >nul 2>&1
-for /f "tokens=5" %%a in ('netstat -aon ^| find ":5173" ^| find "LISTENING"') do taskkill /f /pid %%a >nul 2>&1
+:: Kill any existing node processes on port 5000
+echo [1/4] Cleaning up old processes...
+taskkill /F /IM node.exe >nul 2>&1
+timeout /t 2 /nobreak >nul
+
+:: Start Backend
+echo [2/4] Starting Backend (WiredTiger DB + Mini Blockchain)...
+start "OrganShield Backend" /D "d:\Development\Projects\Organ-Transport-System\backend" cmd /c "node src/server.js"
+echo       Waiting 15s for database to initialize...
+timeout /t 15 /nobreak >nul
+
+:: Verify backend is up
+echo [3/4] Verifying Backend...
+curl -s http://localhost:5000/ >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo       WARNING: Backend may not be ready yet. Waiting 10 more seconds...
+    timeout /t 10 /nobreak >nul
+)
+
+:: Start Frontend
+echo [4/4] Starting Frontend (Vite Dev Server)...
+start "OrganShield Frontend" /D "d:\Development\Projects\Organ-Transport-System\frontend" cmd /c "npm run dev"
+timeout /t 5 /nobreak >nul
+
+:: Open browser
 echo.
-
-echo Starting Node.js Backend Server (Port 5000)...
-start "Smart THOTA Backend" cmd /k "cd backend && npm start"
-
-timeout /t 3 >nul
-echo Starting React Frontend (Port 5173)...
-start "Smart THOTA Frontend" cmd /k "cd frontend && npm run dev"
-
-timeout /t 5 >nul
-echo Starting the IoT Simulator...
-start "Smart THOTA IoT Simulator" cmd /k "cd backend && npm run simulate DEV-DEMO-001 secret123 MIS-DEMO-001"
-
+echo  ════════════════════════════════════════════════════════
+echo   DEMO READY!
 echo.
-echo ==============================================================
-echo Launch Complete! The dashboard will open in your browser shortly.
-echo System is running entirely on MongoDB + Arweave via Shadow Mode.
-echo ZERO local Docker containers are running!
-echo ==============================================================
+echo   Frontend:  http://localhost:5173
+echo   Backend:   http://localhost:5000
+echo.
+echo   Login Credentials:
+echo   ──────────────────────────────────────────────────────
+echo   Admin:     admin@platform.com   / admin123admin
+echo   NOTTO:     notto@gov.in         / notto123notto
+echo   Courier:   courier@transport.com / courier123courier
+echo   Hospital:  contact@aiims.edu    / aiims123aiims
+echo   Hospital:  info@tmc.gov.in      / tmc123tmc
+echo  ════════════════════════════════════════════════════════
+echo.
+start "" "http://localhost:5173"
+echo Press any key to stop demo servers...
+pause >nul
+
+:: Cleanup
+taskkill /F /IM node.exe >nul 2>&1
+echo Servers stopped. Goodbye!

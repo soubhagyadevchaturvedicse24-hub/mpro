@@ -7,6 +7,7 @@ import {
 import { useTheme } from '../../../context/ThemeContext';
 import { getALLHospitals, getHospitalByName } from '../../../data/hospitals';
 import { useSocket } from '../../../context/SocketContext';
+import { updateMissionWorkflow } from '../../../services/api';
 
 const formatAddressString = (addr) => {
   if (!addr) return 'Hospital Campus Address';
@@ -72,7 +73,10 @@ const ScheduledDetailsModal = ({ isOpen, onClose, transportData, onStartTranspor
   const originHosp = getHospitalByName(transportData?.origin || 'CityCare Hospital');
 
   const data = {
+    ...transportData,
     id: transportData?.id || 'TRN-8903',
+    _id: transportData?._id,
+    dbId: transportData?.dbId || transportData?._id,
     patientName: editFields.patientName || transportData?.patientName || 'Alice Johnson',
     patientId: transportData?.patientId || 'P-10046',
     ageGender: transportData?.ageGender || '32 Years / Female',
@@ -86,8 +90,6 @@ const ScheduledDetailsModal = ({ isOpen, onClose, transportData, onStartTranspor
     destination: editFields.destination || transportData?.destination || 'Sunrise Hospital',
     destinationAddress: formatAddressString(transportData?.destinationAddress || destHosp?.address),
     requestedPickup: editFields.requestedPickup || transportData?.requestedPickup || `${transportData?.date || '05 Aug 2026'}, ${transportData?.time || '02:30 PM'}`,
-    distance: transportData?.distance || '18.2 km',
-    duration: transportData?.duration || '35 mins',
     priority: editFields.priority || transportData?.priority || 'High',
     pairingHash: transportData?.pairingHash || '0x8f3a9b1c4e7d2f0a...c9e2'
   };
@@ -106,17 +108,16 @@ const ScheduledDetailsModal = ({ isOpen, onClose, transportData, onStartTranspor
   const handleManualStart = async () => {
     setManualStarting(true);
     try {
-      // Call the backend workflow API to officially start transit
-      const token = localStorage.getItem('neolife_token');
-      const missionDbId = transportData?._id || transportData?.dbId;
+      const missionDbId = transportData?._id || transportData?.dbId || transportData?.id;
       if (missionDbId) {
-        await fetch(`/api/v1/transport/missions/${missionDbId}/workflow/startTransit`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({})
-        });
+        // Step 1: Dispatch (moves from PENDING to DISPATCHED)
+        await updateMissionWorkflow(missionDbId, 'dispatch').catch(() => {});
+        // Step 2: Start Transit (moves from DISPATCHED to IN_TRANSIT)
+        await updateMissionWorkflow(missionDbId, 'startTransit').catch(() => {});
       }
-    } catch (e) { /* Handled by parent refresh */ }
+    } catch (e) {
+      console.warn('Manual start workflow call:', e);
+    }
     setManualStarting(false);
     if (onStartTransport) onStartTransport(data);
     onClose();
@@ -342,28 +343,12 @@ const ScheduledDetailsModal = ({ isOpen, onClose, transportData, onStartTranspor
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Navigation size={14} className="text-blue-500 shrink-0" />
-                    <div>
-                      <span className="text-[10px] text-gray-400 font-medium block">Est. Distance</span>
-                      <span className={`font-semibold ${isDayMode ? 'text-gray-800' : 'text-slate-200'}`}>{data.distance}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Clock size={14} className="text-amber-500 shrink-0" />
-                    <div>
-                      <span className="text-[10px] text-gray-400 font-medium block">Est. Duration</span>
-                      <span className={`font-semibold ${isDayMode ? 'text-gray-800' : 'text-slate-200'}`}>{data.duration}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
                     <Flag size={14} className="text-purple-500 shrink-0" />
                     <div>
                       <span className="text-[10px] text-gray-400 font-medium block">Priority Level</span>
                       {isEditing ? (
                         <select 
-                          value={editFields.priority}
+                          value={editFields.priority} 
                           onChange={(e) => setEditFields(p => ({ ...p, priority: e.target.value }))}
                           className="text-xs font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 outline-none mt-0.5"
                         >

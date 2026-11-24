@@ -75,8 +75,8 @@ export const useLiveRoutePipeline = ({
   lerpDuration = 2000,
 }) => {
   // ── 1. Extract and sanitize coordinates ──
-  const safeOrigin = useRef({ lat: 28.6139, lng: 77.2090 });
-  const safeDest   = useRef({ lat: 28.4595, lng: 77.0266 });
+  const safeOrigin = useRef({ lat: 20.5937, lng: 78.9629 }); // India center — overridden immediately if valid coords provided
+  const safeDest   = useRef({ lat: 20.5937, lng: 78.9629 });
 
   if (origin && isValidLatLng(origin.lat, origin.lng)) {
     safeOrigin.current = { lat: Number(origin.lat), lng: Number(origin.lng) };

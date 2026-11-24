@@ -7,6 +7,7 @@ import { executeSimulatorStep } from '../../simulator/controllers/simulator.cont
 import { getRfidCards } from '../../system/controllers/settings.controller.js';
 import logger from '../../logger/index.js';
 import TransportMission from '../../models/TransportMission.js';
+import TransportBox from '../../models/TransportBox.js';
 import * as missionService from '../services/mission.service.js';
 import mongoose from 'mongoose';
 
@@ -14,37 +15,46 @@ export const postTelemetry = async (req, res, next) => {
   try {
     let { missionId, milestone, ...payload } = req.body;
 
-    // Auto-resolve missionId — handles missing, empty, or unresolvable values
-    let needsResolve = !missionId;
-
-    // If missionId is provided but not a valid ObjectId, try to find by string missionId field
-    if (missionId && !mongoose.Types.ObjectId.isValid(missionId)) {
-      const foundByString = await TransportMission.findOne({ missionId, status: 'IN_TRANSIT' });
-      if (foundByString) {
-        missionId = foundByString.missionId;
-      } else {
-        // String doesn't match any mission — fall back to boxId auto-resolve
-        needsResolve = true;
+    // 1. Try to find active mission by provided missionId (string or ObjectId)
+    let activeMission = null;
+    if (missionId) {
+      if (mongoose.Types.ObjectId.isValid(missionId)) {
+        activeMission = await TransportMission.findOne({
+          _id: missionId,
+          status: { $in: ['DISPATCHED', 'IN_TRANSIT', 'ARRIVED'] }
+        });
+      }
+      if (!activeMission) {
+        activeMission = await TransportMission.findOne({
+          missionId: missionId,
+          status: { $in: ['DISPATCHED', 'IN_TRANSIT', 'ARRIVED'] }
+        });
       }
     }
 
-    // Auto-resolve from device's boxId if missionId still unresolved
-    if (needsResolve && req.device?.boxId) {
-      const boxIdQuery = mongoose.Types.ObjectId.isValid(req.device.boxId)
-        ? { boxId: req.device.boxId }
-        : {};
-      
-      if (Object.keys(boxIdQuery).length > 0) {
-        const activeMission = await TransportMission.findOne({
-          ...boxIdQuery,
-          status: { $in: ['DISPATCHED', 'IN_TRANSIT'] }
+    // 2. If not found by missionId, try to resolve from device's boxId
+    if (!activeMission && req.device?.boxId) {
+      const box = await TransportBox.findOne({
+        $or: [{ boxId: req.device.boxId }, { deviceId: req.device.boxId }]
+      });
+      if (box) {
+        activeMission = await TransportMission.findOne({
+          boxId: box._id,
+          status: { $in: ['DISPATCHED', 'IN_TRANSIT', 'ARRIVED'] }
         }).sort({ createdAt: -1 });
-
-        if (activeMission) {
-          missionId = activeMission.missionId;
-          logger.info(`TELEMETRY_AUTO_RESOLVE: Resolved missionId=${missionId} from boxId=${req.device.boxId}`);
-        }
       }
+    }
+
+    // 3. If STILL not found (e.g. simulator sent default ID while a real mission is in transit), fallback to the latest active mission
+    if (!activeMission) {
+      activeMission = await TransportMission.findOne({
+        status: { $in: ['DISPATCHED', 'IN_TRANSIT', 'ARRIVED'] }
+      }).sort({ createdAt: -1 });
+    }
+
+    if (activeMission) {
+      missionId = activeMission.missionId;
+      logger.info(`TELEMETRY_RESOLVE: Bound telemetry to active mission ${missionId} (${activeMission.status})`);
     }
 
     if (milestone) {

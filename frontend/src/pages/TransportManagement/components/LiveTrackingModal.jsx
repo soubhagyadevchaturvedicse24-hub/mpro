@@ -47,17 +47,8 @@ const LiveTrackingModal = ({ isOpen, onClose, transportData, onMarkAsDone, liveT
     source:          'simulator',
   } : null);
 
-  // If simulator is not running (e.g. page was reloaded or opened on another LO's tab), 
-  // jump-start it and fast-forward it so it doesn't reset to the origin hospital!
-  useEffect(() => {
-    if (isOpen && transportData && start && !running) {
-      import('../../../data/hospitals').then(({ getHospitalByName }) => {
-        const originHosp = getHospitalByName(transportData.origin);
-        const destHosp = getHospitalByName(transportData.destination);
-        start(originHosp, destHosp, transportData.startedAt);
-      });
-    }
-  }, [isOpen, transportData, start, running]);
+  // Removed auto-start simulator logic to strictly enforce physical hardware telemetry.
+  // The simulator will no longer fake movement when the physical box is stationary.
 
   useEffect(() => {
     if (!isOpen) return;
@@ -116,6 +107,8 @@ const formatAddressString = (addr) => {
   return String(addr);
 };
 
+  const hasValidGps = effectiveTelemetry && typeof effectiveTelemetry.lat === 'number' && typeof effectiveTelemetry.lng === 'number' && !(effectiveTelemetry.lat === 0 && effectiveTelemetry.lng === 0);
+
   // Safely construct data with full fallbacks
   const data = {
     id: transportData?.id || 'TRN-8901',
@@ -133,7 +126,7 @@ const formatAddressString = (addr) => {
     temp: displayTemp,
     tamper: isTampered ? 'TAMPERED' : 'Secure',
     blockchain: connected === false ? 'Offline Notarization' : 'Verified',
-    location: effectiveTelemetry ? `${effectiveTelemetry.lat.toFixed(4)}° N, ${effectiveTelemetry.lng.toFixed(4)}° E` : (transportData?.iotData?.location || '28.6675° N, 77.2274° E'),
+    location: hasValidGps ? `${effectiveTelemetry.lat.toFixed(4)}° N, ${effectiveTelemetry.lng.toFixed(4)}° E` : (transportData?.iotData?.location || 'Searching Signal...'),
     driver: {
       name: typeof transportData?.driver === 'string' ? transportData.driver : (transportData?.driver?.name || 'Amit Verma'),
       role: transportData?.driver?.role || 'Driver',
@@ -251,17 +244,9 @@ const formatAddressString = (addr) => {
                 </div>
 
                 {/* Sub-stats Banner */}
-                <div className={`grid grid-cols-4 gap-2 pt-3 border-t rounded-lg p-2.5 ${
+                <div className={`grid grid-cols-2 gap-2 pt-3 border-t rounded-lg p-2.5 ${
                   isDayMode ? 'border-gray-100 bg-gray-50/50' : 'border-slate-700/50 bg-slate-700/30'
                 }`}>
-                  <div className="flex items-center gap-2">
-                    <Navigation size={14} className="text-blue-500 shrink-0" />
-                    <div>
-                      <p className="text-[10px] text-gray-400 font-medium uppercase">Distance</p>
-                      <p className={`text-xs font-bold ${isDayMode ? 'text-gray-800' : 'text-slate-200'}`}>{data.distance}</p>
-                    </div>
-                  </div>
-
                   <div className="flex items-center gap-2">
                     <Calendar size={14} className="text-purple-500 shrink-0" />
                     <div>
@@ -340,7 +325,7 @@ const formatAddressString = (addr) => {
                       <span className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">GPS 7M</span>
                     </div>
                     <div className={`text-base font-black tracking-tight ${isDayMode ? 'text-gray-800' : 'text-slate-100'}`}>
-                      {effectiveTelemetry ? `${effectiveTelemetry.lat.toFixed(2)}°N` : '28.56°N'}
+                      {hasValidGps ? `${effectiveTelemetry.lat.toFixed(2)}°N` : 'Searching'}
                     </div>
                     <span className="text-[10px] text-gray-400 font-medium">{effectiveTelemetry?.speedKmh ? `${effectiveTelemetry.speedKmh.toFixed(1)} km/h` : '0 km/h'}</span>
                   </div>
@@ -510,7 +495,13 @@ const formatAddressString = (addr) => {
               <div className={`relative w-full h-full min-h-[480px] rounded-xl overflow-hidden border shadow-sm flex flex-col ${
                 isDayMode ? 'border-gray-200' : 'border-slate-700'
               }`}>
-                <InteractiveLiveMap originName={data.origin} destinationName={data.destination} liveTelemetry={effectiveTelemetry} />
+                <InteractiveLiveMap 
+                  originName={data.origin} 
+                  destinationName={data.destination} 
+                  liveTelemetry={effectiveTelemetry}
+                  originHospitalData={transportData?.originHospital}
+                  destHospitalData={transportData?.destinationHospital}
+                />
               </div>
             </div>
 

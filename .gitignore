@@ -10,3 +10,5 @@ coverage/
 *.bak
 .local-db/
 uploads/hospitals/tmp/
+
+*.log

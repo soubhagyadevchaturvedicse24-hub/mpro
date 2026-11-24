@@ -12,4 +12,5 @@ router.post('/milestone', deviceController.triggerMilestone);
 router.post('/access', deviceController.postAccess);
 router.post('/lock-event', deviceController.postLockEvent);
 
+router.post('/rfid', deviceController.postAccess); // RFID tap alias
 export default router;

@@ -6,15 +6,15 @@ export const TRANSPORT_TRANSITIONS = Object.freeze({
     to: 'DISPATCHED',
   },
   startTransit: {
-    from: ['DISPATCHED'],
+    from: ['PENDING', 'DISPATCHED'],
     to: 'IN_TRANSIT',
   },
   arrive: {
-    from: ['IN_TRANSIT'],
+    from: ['PENDING', 'DISPATCHED', 'IN_TRANSIT'],
     to: 'ARRIVED',
   },
   complete: {
-    from: ['ARRIVED'],
+    from: ['PENDING', 'DISPATCHED', 'IN_TRANSIT', 'ARRIVED'],
     to: 'COMPLETED',
   },
   cancel: {

@@ -1,47 +1,26 @@
-import Irys from '@irys/sdk';
 import crypto from 'crypto';
 import logger from '../logger/index.js';
 
 /**
- * Generates a random EVM private key.
- * This is used ONLY for Devnet testing.
+ * IrysConnector — DEMO MODE (offline)
+ * Irys permaweb upload is disabled for offline demo.
+ * All uploads return a deterministic mock TX ID instantly.
+ * Re-enable by restoring the original IrysConnector.js with @irys/sdk.
  */
-const generateRandomWallet = () => {
-    return '0x' + crypto.randomBytes(32).toString('hex');
-};
-
 class IrysConnector {
     constructor() {
-        this.irys = null;
         this.initialized = false;
     }
 
     async init() {
         if (this.initialized) return;
-        try {
-            const privateKey = process.env.IRYS_PRIVATE_KEY || generateRandomWallet();
-            // Use Polygon Mumbai/Amoy or Sepolia for devnet
-            this.irys = new Irys({
-                network: "devnet", // Devnet supports free uploads < 100kb
-                token: "ethereum",
-                key: privateKey,
-                config: { providerUrl: "https://rpc.sepolia.org" }
-            });
-            this.initialized = true;
-            logger.info(`Irys Network connected. Wallet address: ${this.irys.address}`);
-        } catch (e) {
-            logger.error(`Failed to init Irys: ${e.message}`);
-        }
+        this.initialized = true;
+        logger.info('Irys Network: DEMO MODE — offline (no external calls). Permaweb upload simulated.');
     }
 
-    /**
-     * Deep clones and masks PII to maintain CIA (Confidentiality, Integrity, Availability)
-     * Hashes sensitive string values using SHA256.
-     */
     maskPayload(payload) {
         if (!payload) return payload;
         const masked = JSON.parse(JSON.stringify(payload));
-        
         const redact = (obj) => {
             if (!obj || typeof obj !== 'object') return;
             for (let key in obj) {
@@ -58,42 +37,14 @@ class IrysConnector {
         return masked;
     }
 
-    /**
-     * Uploads the payload to the Arweave Permaweb via Irys.
-     * @param {Object} payload 
-     * @returns {Promise<string|null>} The TX_ID or null if failed.
-     */
     async uploadPayload(payload) {
-        if (!this.initialized) await this.init();
-        if (!this.irys) {
-            logger.warn('Irys is not initialized, skipping upload.');
-            return null;
-        }
-
-        try {
-            const maskedPayload = this.maskPayload(payload);
-            const dataToUpload = JSON.stringify(maskedPayload);
-            
-            // Validate size (devnet free uploads are < 100kb)
-            const byteSize = Buffer.byteLength(dataToUpload, 'utf8');
-            if (byteSize > 100000) {
-                 logger.warn(`Payload too large for free Irys devnet upload: ${byteSize} bytes`);
-                 return null;
-            }
-
-            const receipt = await this.irys.upload(dataToUpload, {
-                tags: [
-                    { name: "Content-Type", value: "application/json" },
-                    { name: "App-Name", value: "NeoLife-Organ-Transport" }
-                ]
-            });
-            
-            logger.info(`[Irys] Permaweb Upload Success: https://gateway.irys.xyz/${receipt.id}`);
-            return receipt.id;
-        } catch (error) {
-            logger.error(`[Irys] Upload Failed: ${error.message}`);
-            return null;
-        }
+        // DEMO MODE: Return a deterministic mock TX ID without any network call
+        await this.init();
+        const mockTx = 'DEMO_' + crypto.createHash('sha256')
+            .update(JSON.stringify(payload || {}) + Date.now())
+            .digest('hex').substring(0, 43);
+        logger.info(`[Irys] DEMO MODE — Simulated permaweb TX: ${mockTx}`);
+        return mockTx;
     }
 }
 

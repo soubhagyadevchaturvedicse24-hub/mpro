@@ -6,47 +6,57 @@ import fs from 'fs';
 let mongoServer;
 
 export const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/organ-transport', { serverSelectionTimeoutMS: 5000 });
-    logger.info(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    logger.warn(`Primary DB connection failed (${error.message}), using robust local fallback database...`);
+  const mongoUri = process.env.MONGODB_URI;
+
+  // ── Try Atlas / remote URI first (only if it looks like a real URI) ───
+  const useAtlas = mongoUri && mongoUri.startsWith('mongodb') && !mongoUri.startsWith('mongodb://localhost') && mongoUri !== 'local';
+
+  if (useAtlas) {
     try {
-      const { MongoMemoryServer } = await import('mongodb-memory-server');
-      
-      const dbPath = path.join(process.cwd(), '.local-db');
-      if (!fs.existsSync(dbPath)) {
-        fs.mkdirSync(dbPath, { recursive: true });
-      }
-
-      mongoServer = await MongoMemoryServer.create({
-        instance: {
-          dbPath,
-          storageEngine: 'wiredTiger'
-        }
-      });
-      const uri = mongoServer.getUri();
-      const conn = await mongoose.connect(uri);
-      logger.info(`Robust Local Database Connected: ${conn.connection.host} (Persistent)`);
-      
-      // Auto-seed only if the database is completely empty
-      try {
-        const collections = await mongoose.connection.db.listCollections().toArray();
-        if (collections.length === 0) {
-          const { seedData } = await import('../scripts/seed.js');
-          logger.info(`Auto-seeding robust local database...`);
-          await seedData();
-          logger.info(`Auto-seeding complete!`);
-        } else {
-          logger.info(`Local database already contains data. Skipping seed.`);
-        }
-      } catch (seedErr) {
-        logger.error(`Auto-seeding failed: ${seedErr.message}`);
-      }
-
-    } catch (inMemErr) {
-      logger.error(`Error starting in-memory DB: ${inMemErr.message}`);
-      process.exit(1);
+      const conn = await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 4000 });
+      logger.info(`MongoDB Connected (Atlas): ${conn.connection.host}`);
+      return; // ← success, done
+    } catch (error) {
+      logger.warn(`Atlas connection failed (${error.message}) — switching to local persistent DB...`);
     }
+  }
+
+  // ── Persistent local WiredTiger DB (guaranteed offline-first) ─────────
+  try {
+    const { MongoMemoryServer } = await import('mongodb-memory-server');
+
+    const dbPath = path.join(process.cwd(), '.local-db');
+    if (!fs.existsSync(dbPath)) {
+      fs.mkdirSync(dbPath, { recursive: true });
+    }
+
+    mongoServer = await MongoMemoryServer.create({
+      instance: {
+        dbPath,
+        storageEngine: 'wiredTiger',
+      },
+    });
+
+    const uri = mongoServer.getUri();
+    const conn = await mongoose.connect(uri);
+    logger.info(`Local Persistent DB Connected: ${conn.connection.host} (WiredTiger @ ${dbPath})`);
+
+    // Auto-seed ONLY if DB is completely empty
+    try {
+      const collections = await mongoose.connection.db.listCollections().toArray();
+      if (collections.length === 0) {
+        logger.info('Empty DB detected — running auto-seed...');
+        const { seedData } = await import('../scripts/seed.js');
+        await seedData();
+        logger.info('Auto-seed complete!');
+      } else {
+        logger.info(`Local DB has existing data (${collections.length} collections). Skipping seed.`);
+      }
+    } catch (seedErr) {
+      logger.error(`Auto-seed failed: ${seedErr.message}`);
+    }
+  } catch (localErr) {
+    logger.error(`FATAL: Cannot start local DB — ${localErr.message}`);
+    process.exit(1);
   }
 };

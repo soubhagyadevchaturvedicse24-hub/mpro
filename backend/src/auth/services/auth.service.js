@@ -19,6 +19,22 @@ export const loginUser = async (email, password) => {
     throw AUTH_ERRORS.INVALID_CREDENTIALS;
   }
 
+  // Auto-link hospital to User if missing (especially for seeded users)
+  if (user.role === 'HOSPITAL_COORDINATOR' && !user.hospitalId) {
+    try {
+      const Hospital = (await import('../../models/Hospital.js')).default;
+      const hosp = await Hospital.findOne({ 'contact.email': user.email });
+      if (hosp) {
+        user.hospitalId = hosp._id;
+        user.hospitalName = hosp.name;
+        await user.save();
+        logger.info(`AUTO_LINKED: User ${user.email} linked to hospital ${hosp.name}`);
+      }
+    } catch (e) {
+      logger.error('Failed to auto-link user to hospital during login:', e);
+    }
+  }
+
   // Check account status before password comparison
   if (user.status === 'LOCKED' && user.lockUntil && user.lockUntil > Date.now()) {
     logger.warn(`LOGIN_FAILED: Account locked - ${email}`);

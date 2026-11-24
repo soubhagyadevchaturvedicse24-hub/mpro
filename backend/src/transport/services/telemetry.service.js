@@ -7,6 +7,41 @@ import TransportMission from '../../models/TransportMission.js';
 import logger from '../../logger/index.js';
 import mongoose from 'mongoose';
 
+export const extractCoordinates = (payload) => {
+  if (!payload) return null;
+
+  // 1. Array in geoLocation.coordinates, location.coordinates, or coordinates
+  let coords = payload.geoLocation?.coordinates || payload.location?.coordinates || payload.coordinates;
+  if (Array.isArray(coords) && coords.length === 2) {
+    let [c1, c2] = coords.map(Number);
+    if (!isNaN(c1) && !isNaN(c2) && !(c1 === 0 && c2 === 0)) {
+      // GeoJSON requires [longitude, latitude].
+      // If c1 is latitude (-90..90) and c2 is longitude (>90 or <-90), e.g. [28.6139, 77.2090], c1 and c2 are inverted.
+      if (Math.abs(c1) <= 90 && Math.abs(c2) > 90) {
+        return [c2, c1]; // Swap to [lng, lat]
+      }
+      return [c1, c2]; // [lng, lat]
+    }
+  }
+
+  // 2. Direct lat/lng or latitude/longitude in payload or sub-objects
+  const candidates = [payload, payload.gps, payload.location, payload.geoLocation, payload.telemetry];
+  for (const item of candidates) {
+    if (!item) continue;
+    const lat = item.lat ?? item.latitude ?? item.gpsLat;
+    const lng = item.lng ?? item.longitude ?? item.gpsLng;
+    if (lat !== undefined && lng !== undefined) {
+      const nLat = Number(lat);
+      const nLng = Number(lng);
+      if (!isNaN(nLat) && !isNaN(nLng) && !(nLat === 0 && nLng === 0)) {
+        return [nLng, nLat]; // Return GeoJSON [lng, lat]
+      }
+    }
+  }
+
+  return null;
+};
+
 export const logTelemetry = async (boxId, missionId, payload) => {
   // Validate basic payload
   if (payload.temperature === undefined || payload.batteryLevel === undefined) {
@@ -18,25 +53,32 @@ export const logTelemetry = async (boxId, missionId, payload) => {
   let mission = null;
 
   if (!mongoose.Types.ObjectId.isValid(missionId)) {
-    mission = await TransportMission.findOne({ missionId });
+    mission = await TransportMission.findOne({ missionId }).populate('originHospital');
     if (mission) resolvedMissionId = mission._id;
   } else {
-    mission = await TransportMission.findById(missionId);
+    mission = await TransportMission.findById(missionId).populate('originHospital');
   }
 
   // ── TELEMETRY GATE ──────────────────────────────────────────────────────────
-  // Sensor data is ONLY recorded (DB + blockchain) when the transport is actively
-  // IN_TRANSIT. Idle sensor heartbeats are silently dropped to keep the blockchain
-  // clean. RFID scan is what opens this gate.
-  if (!mission || mission.status !== 'IN_TRANSIT') {
-    logger.info(`TELEMETRY_GATED: missionId=${missionId} status=${mission?.status || 'NO_ACTIVE_MISSION'} — data discarded (not IN_TRANSIT)`);
+  // Sensor data is recorded (DB + blockchain) when the transport is actively
+  // DISPATCHED, IN_TRANSIT, or ARRIVED. This is crucial for establishing a
+  // complete Digital Evidence chain of custody from origin to destination.
+  const activeStatuses = ['DISPATCHED', 'IN_TRANSIT', 'ARRIVED'];
+  if (!mission || !activeStatuses.includes(mission.status)) {
+    logger.info(`TELEMETRY_GATED: missionId=${missionId} status=${mission?.status || 'NO_ACTIVE_MISSION'} — data discarded (not in active state)`);
     return { gated: true, status: mission?.status || 'NO_ACTIVE_MISSION' };
   }
   // ────────────────────────────────────────────────────────────────────────────
 
-  const geoLocation = (payload.geoLocation && Array.isArray(payload.geoLocation.coordinates))
-    ? payload.geoLocation
-    : { type: 'Point', coordinates: [77.2090, 28.5659] };
+  const extracted = extractCoordinates(payload);
+  let geoLocation;
+  if (extracted) {
+    geoLocation = { type: 'Point', coordinates: extracted };
+  } else if (mission?.originHospital?.geoLocation?.coordinates?.length === 2) {
+    geoLocation = mission.originHospital.geoLocation;
+  } else {
+    geoLocation = { type: 'Point', coordinates: [77.2090, 28.5659] };
+  }
 
   const log = new TelemetryLog({
     boxId: mongoose.Types.ObjectId.isValid(boxId) ? boxId : new mongoose.Types.ObjectId(),
@@ -53,28 +95,25 @@ export const logTelemetry = async (boxId, missionId, payload) => {
   await log.save();
 
   // Update Transport Box latest status if found
+  const boxUpdate = {
+    batteryHealth: payload.batteryLevel,
+    lastHeartbeat: Date.now(),
+    lastKnownLocation: geoLocation,
+  };
+
   if (mongoose.Types.ObjectId.isValid(boxId)) {
-    await TransportBox.findByIdAndUpdate(boxId, {
-      batteryHealth: payload.batteryLevel,
-      lastHeartbeat: Date.now(),
-      lastKnownLocation: payload.geoLocation,
-    }).catch(() => {});
+    await TransportBox.findByIdAndUpdate(boxId, boxUpdate).catch(() => {});
   } else {
-    await TransportBox.findOneAndUpdate({ boxId }, {
-      batteryHealth: payload.batteryLevel,
-      lastHeartbeat: Date.now(),
-      lastKnownLocation: payload.geoLocation,
-    }).catch(() => {});
+    await TransportBox.findOneAndUpdate({ boxId }, boxUpdate).catch(() => {});
   }
 
-  eventBus.on; // no-op reference check
   eventBus.emit(TRANSPORT_EVENTS.TELEMETRY_RECEIVED, {
     boxId,
     missionId: resolvedMissionId,
     telemetry: {
-      // Use toObject() to properly spread Mongoose subdocument fields
       ...(log.telemetry.toObject ? log.telemetry.toObject() : log.telemetry),
-      // ESP32 hardware fields — use payload directly (not from Mongoose model which doesn't store them)
+      lat: geoLocation.coordinates[1],
+      lng: geoLocation.coordinates[0],
       buzzerStatus:    payload.buzzerStatus    || 'Normal',
       rgbColor:        payload.rgbColor        || 'Green',
       rfidLastScanned: payload.rfidLastScanned || '3913DDB7',
@@ -83,7 +122,7 @@ export const logTelemetry = async (boxId, missionId, payload) => {
       reedStatus:      payload.reedStatus      || (payload.isTampered ? 'Box Open' : 'Box Closed'),
       relayStatus:     payload.relayStatus     || 'Locked',
     },
-    location: log.telemetry.geoLocation,
+    location: geoLocation,
     arweaveTxId: log.arweaveTxId
   });
 
@@ -105,12 +144,11 @@ export const evaluateAlerts = async (boxId, missionId, telemetry) => {
     // missionId might be a String like 'TRN-2026-001' or an ObjectId. We handle both.
     const query = mongoose.Types.ObjectId.isValid(missionId) ? { _id: missionId } : { missionId };
     const mission = await TransportMission.findOne(query).populate('organId');
-    if (mission && mission.organId && mission.organId.organType) {
-      const organConfig = (await import('../../organ/utils/organDefaults.js')).ORGAN_DEFAULTS[mission.organId.organType];
-      if (organConfig) {
-        minTemp = organConfig.minTemp;
-        maxTemp = organConfig.maxTemp;
-      }
+    const organKey = (mission?.organType || mission?.organId?.organType || 'KIDNEY').toUpperCase();
+    const organConfig = (await import('../../organ/utils/organDefaults.js')).ORGAN_DEFAULTS[organKey];
+    if (organConfig) {
+      minTemp = organConfig.minTemp;
+      maxTemp = organConfig.maxTemp;
     }
   } catch (error) {
     logger.error(`Failed to fetch organ thresholds for mission ${missionId}: ${error.message}`);
