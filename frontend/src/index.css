@@ -411,3 +411,8 @@ html[data-theme='dark'] .modern-live-popup .leaflet-popup-tip,
   margin: 12px 14px !important;
   width: auto !important;
 }
+
+/* Dark mode map tiles filter (replaces watermarked CartoDB tiles) */
+.map-tiles-dark {
+  filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(95%);
+}

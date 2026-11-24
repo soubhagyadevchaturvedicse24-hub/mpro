@@ -162,9 +162,7 @@ const InteractiveLiveMap = ({ originName, destinationName, liveTelemetry, origin
     lerpDuration: 2000
   });
 
-  const tileUrl = isDayMode 
-    ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+  const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   // Fit map to the full route (origin ↔ destination midpoint)
   const defaultCenter = [
@@ -187,6 +185,11 @@ const InteractiveLiveMap = ({ originName, destinationName, liveTelemetry, origin
           📡 GPS Signal Lost — Showing base location (SSIPMT Raipur)
         </div>
       )}
+      <style>{`
+        .map-tiles-dark {
+          filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(95%);
+        }
+      `}</style>
       <MapContainer 
         center={defaultCenter} 
         zoom={6}
@@ -194,8 +197,10 @@ const InteractiveLiveMap = ({ originName, destinationName, liveTelemetry, origin
         style={{ width: '100%', height: '100%', minHeight: '480px' }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url={tileUrl}
+          className={isDayMode ? '' : 'map-tiles-dark'}
+          maxZoom={19}
         />
 
         <MapRecenter center={displayPos} />
