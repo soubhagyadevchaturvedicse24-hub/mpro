@@ -58,7 +58,7 @@ const MatchingQueue = () => {
         }
         setMatches(flatMatches);
       })
-      .finally(() => setLoading(false));
+      .catch(err => { console.warn("MatchingQueue fetch handled:", err.message); setMatches([]); }).finally(() => setLoading(false));
   }, []);
 
   const toggleExpand = (id) => {

@@ -426,18 +426,6 @@ const TransportMap = () => {
     setLastUpdate(new Date());
   }, [sim?.telemetry, sim?.running]);
 
-  // ─── Render: Loading ───
-  if (loading) {
-    return (
-      <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', color: 'var(--text-secondary)' }}>
-          <div className={styles.spinning} style={{ width: 32, height: 32, border: '3px solid rgba(255,255,255,0.08)', borderTop: '3px solid #22d3a0', borderRadius: '50%' }} />
-          <span>Loading transport missions…</span>
-        </div>
-      </div>
-    );
-  }
-
   // ─── Derived data ───
   const health = mission?.health || { status: 'NORMAL' };
   const telemetry = mission?.telemetry || { temperature: 4.0, batteryLevel: 100, isTampered: false };
@@ -477,6 +465,19 @@ const TransportMap = () => {
     rawLivePos: currentLocation,
     lerpDuration: 2000,
   });
+
+  // ─── Render: Loading ───
+  if (loading) {
+    return (
+      <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', color: 'var(--text-secondary)' }}>
+          <div className={styles.spinning} style={{ width: 32, height: 32, border: '3px solid rgba(255,255,255,0.08)', borderTop: '3px solid #22d3a0', borderRadius: '50%' }} />
+          <span>Loading transport missions…</span>
+        </div>
+      </div>
+    );
+  }
+
 
   // Build custody timeline
   const custodyEvents = [];

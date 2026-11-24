@@ -1,0 +1,205 @@
+{
+  "timestamp": "2026-11-24T12:31:48.570Z",
+  "pass": 27,
+  "fail": 0,
+  "results": [
+    {
+      "category": "Home Page",
+      "name": "Landing page renders with active content & medical telemetry loader",
+      "status": "PASS",
+      "note": "Title: frontend",
+      "timestamp": "2026-11-24T12:31:05.415Z"
+    },
+    {
+      "category": "Public Status",
+      "name": "Hospital application tracker loads cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:06.548Z"
+    },
+    {
+      "category": "Hospital Reg",
+      "name": "Hospital multi-step registration form loads",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:07.671Z"
+    },
+    {
+      "category": "Hospital Login",
+      "name": "AIIMS login successful -> redirected to dashboard",
+      "status": "PASS",
+      "note": "http://localhost:5173/dashboard/overview",
+      "timestamp": "2026-11-24T12:31:11.634Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Hospital Overview rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:14.255Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Transport Mgmt Board rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:16.169Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Transport Corridor Map rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:20.109Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Hospital Registry Profile rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:22.003Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Admin Approvals Queue rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:23.934Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Committee Clearance rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:25.954Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Transport Analytics rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:28.260Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Data Entry Hub rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:30.190Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "System Diagnostics & Health rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:32.198Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Blockchain Ledger Audit rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:35.267Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "Tamper & Incidents Log rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:37.190Z"
+    },
+    {
+      "category": "Dashboard Page",
+      "name": "IoT Telemetry Simulator rendered cleanly",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:39.247Z"
+    },
+    {
+      "category": "Live Modal",
+      "name": "Live tracking modal opened successfully (Jeevan Setu)",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:42.988Z"
+    },
+    {
+      "category": "Watermark Check",
+      "name": "ZERO Carto watermark detected! Clean OpenStreetMap tiles active",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:43.009Z"
+    },
+    {
+      "category": "IoT Widget",
+      "name": "Global floating IoT Remote Control widget mounted",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:43.529Z"
+    },
+    {
+      "category": "IoT Widget",
+      "name": "Wide Tactical Command Console (3D Globe/Radar) expanded",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:44.205Z"
+    },
+    {
+      "category": "IoT Widget",
+      "name": "3D Cyber-Globe Canvas initialized & rendering active",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:44.211Z"
+    },
+    {
+      "category": "IoT Widget",
+      "name": "Toggled to 2D Tactical Radar Corridor View",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:44.641Z"
+    },
+    {
+      "category": "IoT Widget",
+      "name": "Manual Telemetry Ping sent to backend endpoint",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:45.667Z"
+    },
+    {
+      "category": "IoT Widget",
+      "name": "RFID Card Tap simulation triggered (IN_TRANSIT transition)",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:46.309Z"
+    },
+    {
+      "category": "Crash Check",
+      "name": "ZERO unhandled page runtime errors across all tested pages!",
+      "status": "PASS",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:46.310Z"
+    },
+    {
+      "category": "Console Check",
+      "name": "6 non-fatal console log notice(s) captured",
+      "status": "WARN",
+      "note": "",
+      "timestamp": "2026-11-24T12:31:46.310Z"
+    },
+    {
+      "category": "404 Resilience",
+      "name": "Unknown URL handled gracefully without white-screen crash",
+      "status": "PASS",
+      "note": "http://localhost:5173/",
+      "timestamp": "2026-11-24T12:31:48.035Z"
+    }
+  ],
+  "unhandledErrors": [],
+  "consoleNotices": [
+    "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but",
+    "Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ]
+}

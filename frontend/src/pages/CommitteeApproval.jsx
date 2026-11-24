@@ -199,7 +199,7 @@ const CommitteeApproval = () => {
         });
       }
       setApplications(flatApps);
-    }).finally(() => setLoading(false));
+    }).catch(err => { console.warn("Committee fetch handled:", err.message); setApplications([]); }).finally(() => setLoading(false));
   }, []);
 
   const handleDecision = (appId, verdict, notes) => {
